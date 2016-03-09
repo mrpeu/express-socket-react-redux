@@ -9,9 +9,6 @@ process.env['DEBUG'] = '*'
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/client/index.html');
 });
-app.get('/redux.js', (req, res) => {
-  res.sendFile(require.resolve('redux'));
-});
 app.use(express.static(__dirname + '/client'));
 
 
@@ -76,7 +73,7 @@ function onClientConnection( state, id ){
 
 function onClientDisconnection( state, id ){
 
-  return state.filter(c=>c.id!==id);
+  return state.clients.filter(c=>c.id!==id);
 }
 
 

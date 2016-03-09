@@ -1,3 +1,6 @@
+import io from 'socket.io-client';
+import { createStore } from 'redux'
+
 (function(){
 
   var meId=-1;
@@ -49,9 +52,9 @@
   };
 
 
-  getMe = () => getClient(meId);
+  var getMe = () => getClient(meId);
 
-  getClient = (id) => state.clients.find(c=>c.id===id);
+  var getClient = (id) => state.clients.find(c=>c.id===id);
 
 
   socket.on('you', id=>{
@@ -65,9 +68,15 @@
 
     $.updateClientList(state.clients);
 
-    me = getMe();
+    var me = getMe();
     $.updateName(me);
   } );
+
+  socket.on('chat message', (msg)=>{
+    var me = getMe();
+    $.addMessage(msg);
+  });
+  
 
   $.form.addEventListener('submit', e=>{
     e.preventDefault();
@@ -76,11 +85,6 @@
       $.entry.value = '';
     }
     return false;
-  });
-
-  socket.on('chat message', (msg)=>{
-    var me = getMe();
-    $.addMessage(msg);
   });
 
 }())
