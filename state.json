@@ -1,0 +1,47 @@
+{
+  "clients": [
+    {
+      "sid": "oJLQhAUhWl9XmpftAAAD",
+      "cid": "oJLQhAUhWl9XmpftAAAD",
+      "name": "Henry",
+      "color": "#7a7a7a",
+      "ts": 1458058779268,
+      "te": 1458058839268
+    },
+    {
+      "sid": "AwXTYKzPAlb8B59hAAAC",
+      "cid": "AwXTYKzPAlb8B59hAAAC",
+      "name": "Henry",
+      "color": "#ad8989",
+      "ts": 1458058777795,
+      "te": 1458058837795
+    },
+    {
+      "sid": "q_JIdsUTFVBxXI30AAAA",
+      "cid": "q_JIdsUTFVBxXI30AAAA",
+      "name": "Akira",
+      "color": "#049451",
+      "ts": 1458058766038,
+      "te": 1458058826038
+    }
+  ],
+  "clientsOld": [],
+  "messages": [
+    {
+      "from": "hMKb7Lrw3SOgU60HAAAD",
+      "data": "hljklj"
+    },
+    {
+      "from": "hMKb7Lrw3SOgU60HAAAD",
+      "data": "igzuighuku"
+    },
+    {
+      "from": "pF1szP6u2W-eQNZsAAAB",
+      "data": "sfghfdgh"
+    },
+    {
+      "from": "oJLQhAUhWl9XmpftAAAD",
+      "data": "hjkhj"
+    }
+  ]
+}

@@ -52,16 +52,11 @@ import {
       }
     },
     addMessage: ( msg ) => {
-      if(!meId) {
-        console.warn('Cannot post message while not logged');
-        return;
-      }
-
-      let me = getMe();
+      let sender = getClient( msg.from );
       let li = document.createElement( 'li' );
       li.className = 'chat-line';
-      li.innerHTML = '<b style="color:' + me.color + ';">' +
-        ( msg.from == me.cid ? 'me' : getClient( msg.from ).name ) +
+      li.innerHTML = '<b style="color:' + sender.color + ';">' +
+        ( msg.from == meId ? 'me' : sender.name ) +
         '</b>: ' +
         msg.data;
       $.ul.appendChild( li );
@@ -74,7 +69,11 @@ import {
     return me
   };
 
-  var getClient = ( id ) => state.clients.find( c => c.cid === id );
+  var getClient = ( id ) => {
+    let client = state.clients.find( c => c.cid === id );
+    if(!client) throw ":o"
+    return client;
+  };
 
 
   socket.on( 'welcome', cid => {
@@ -123,6 +122,11 @@ import {
   $.form.addEventListener( 'submit', e => {
     e.preventDefault();
     if ( $.entry.value ) {
+      if(!meId) {
+        console.warn('Cannot post message while not logged');
+        return;
+      }
+
       socket.emit( 'chat message', {
         from: meId,
         data: $.entry.value

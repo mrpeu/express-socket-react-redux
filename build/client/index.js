@@ -114,15 +114,10 @@
 	      }
 	    },
 	    addMessage: function addMessage(msg) {
-	      if (!meId) {
-	        console.warn('Cannot post message while not logged');
-	        return;
-	      }
-	
-	      var me = getMe();
+	      var sender = getClient(msg.from);
 	      var li = document.createElement('li');
 	      li.className = 'chat-line';
-	      li.innerHTML = '<b style="color:' + me.color + ';">' + (msg.from == me.cid ? 'me' : getClient(msg.from).name) + '</b>: ' + msg.data;
+	      li.innerHTML = '<b style="color:' + sender.color + ';">' + (msg.from == meId ? 'me' : sender.name) + '</b>: ' + msg.data;
 	      $.ul.appendChild(li);
 	    }
 	  };
@@ -134,9 +129,11 @@
 	  };
 	
 	  var getClient = function getClient(id) {
-	    return state.clients.find(function (c) {
+	    var client = state.clients.find(function (c) {
 	      return c.cid === id;
 	    });
+	    if (!client) throw ":o";
+	    return client;
 	  };
 	
 	  socket.on('welcome', function (cid) {
@@ -188,6 +185,11 @@
 	  $.form.addEventListener('submit', function (e) {
 	    e.preventDefault();
 	    if ($.entry.value) {
+	      if (!meId) {
+	        console.warn('Cannot post message while not logged');
+	        return;
+	      }
+	
 	      socket.emit('chat message', {
 	        from: meId,
 	        data: $.entry.value

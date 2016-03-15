@@ -1,3 +1,4 @@
+const fs = require( 'fs' );
 const chalk = require( 'chalk' );
 const style = require( 'ansi-styles' );
 const path = require( 'path' );
@@ -22,10 +23,30 @@ app.use( '/static', express.static( path.resolve( 'client' ) ) );
 app.use( '/js', express.static( path.resolve( 'build/client' ) ) );
 
 
-var state = {
-  clients: [],
-  clientsOld: []
-};
+var state = null;
+
+function loadState( cb ){
+  fs.readFile( 'state.json', (err,data) => {
+    if( err ){
+      console.error( `loadState: ${err}` );
+      return cb( err, {
+        clients: [],
+        clientsOld: []
+      } );
+    } else {
+      return cb( err, JSON.parse( data ) );
+    }
+  } );
+}
+
+function saveState( state ){
+  fs.writeFile( 'state.json', JSON.stringify(state,null,2), (err,data) => {
+    if( err ){
+      console.error( `saveState: ${err}` );
+    }
+  } );
+  return state;
+}
 
 
 io.on( 'connection', function( socket ) {
@@ -43,6 +64,7 @@ io.on( 'connection', function( socket ) {
 
     if ( msg.data ) {
       console.log( `> ${client.name} #${client.cid}: ${JSON.stringify( msg.data, null, 1 )}` )
+      state = newMessage( state, msg );
       socket.emit( 'chat message', msg );
       socket.broadcast.emit( 'chat message', msg );
     }
@@ -128,9 +150,10 @@ function pruneClients( state ) {
   });
 
   // merge
-  let clientsOld = goneClients.concat( state.clientsOld.filter(
-    c => goneClients.findIndex( o => c.cid === o.cid ) < 0
-  ) );
+  let clientsOld = goneClients.concat( state.clientsOld.filter( old => {
+    (now - old.ts) > USER_TIMEOUT*2 &&
+    goneClients.findIndex( gone => old.cid === gone.cid ) < 0
+  } ) );
 
   let newState = {
     ...state,
@@ -145,14 +168,28 @@ function pruneClients( state ) {
   return newState;
 }
 
+function newMessage( state, msg ) {
+  return {
+    ...state,
+    messages: [...state.messages, msg]
+  };
+}
+
 
 // Start server
 http.listen( 3000, () => {
 
-  console.log( 'listening on *:3000' );
+  loadState( (err, data) => {
 
-  setInterval( () => {
-    state = pruneClients( state );
-  }, 1000);
+    state = data;
+
+    console.log( 'listening on *:3000' );
+
+    setInterval( () => {
+      state = pruneClients( state );
+      state = saveState( state );
+    }, 1000);
+
+  } );
 
 } );
