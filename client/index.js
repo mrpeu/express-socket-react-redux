@@ -5,7 +5,7 @@ import {
 
 ( function() {
 
-  var meId = -1;
+  var meId = 0;
   var state = {
     clients: []
   };
@@ -52,6 +52,11 @@ import {
       }
     },
     addMessage: ( msg ) => {
+      if(!meId) {
+        console.warn('Cannot post message while not logged');
+        return;
+      }
+
       let me = getMe();
       let li = document.createElement( 'li' );
       li.className = 'chat-line';
@@ -65,7 +70,7 @@ import {
 
   var getMe = () => {
     let me = getClient( meId )
-    // if ( !me ) throw "no me!!!"
+    if ( !me ) throw " loss of validity"
     return me
   };
 
@@ -81,16 +86,15 @@ import {
     meId = cid;
     console.log( 'welcome:', cid );
 
-    setInterval( () => {
-      let now = Date.now();
-      for ( var i = 0; i < $.clientList.childNodes.length; ++i ) {
-        let li = $.clientList.childNodes[ i ];
-        li.textContent = 't-' + (30-( now - getClient( li.title ).ts ) / 1000).toFixed(2) + 's';
-      }
-    }, 33 );
+    // setInterval( () => {
+    //   let now = Date.now();
+    //   for ( var i = 0; i < $.clientList.childNodes.length; ++i ) {
+    //     let li = $.clientList.childNodes[ i ];
+    //     li.textContent = 't-' + (30-( now - getClient( li.title ).ts ) / 1000).toFixed(2) + 's';
+    //   }
+    // }, 33 );
 
     ping = setInterval( () => {
-      // redumentary ping
       socket.emit( 'chat message', {
         from: meId
       } );
@@ -105,7 +109,7 @@ import {
 
     $.updateName( meId ? getMe() : null );
 
-    if( state.clients.findIndex( c => c.cid == meId ) > -1 ) {
+    if( state.clients.findIndex( c => c.cid == meId ) < 0 ) {
       // deconnected
       clearInterval( ping );
     }
@@ -124,6 +128,7 @@ import {
         data: $.entry.value
       } );
       $.entry.value = '';
+      $.entry.focus();
     }
     return false;
   } );

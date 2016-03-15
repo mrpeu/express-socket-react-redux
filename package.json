@@ -8,7 +8,7 @@
     "client": "webpack --watch",
     "server": "babel server/*.js -d build/ && node build/server/main.js",
 
-    "server-watch": "babel-node server/main.js --presets es2015,stage-2",
+    "server-watch": "babel-node server/main.js --presets es2015,stage-2 --watch",
     "build-babel": "babel client/*.js -d build/ --sourceMaps=true && babel server/*.js -d build/"
   },
   "keywords": [],

@@ -9,7 +9,7 @@ const io = require( 'socket.io' )( http );
 process.env[ 'DEBUG' ] = '*'
 
 
-const USER_TIMEOUT = 30 * 1000;
+const USER_TIMEOUT = 60 * 1000;
 
 const NAMES = [ 'Henry', 'Luna', 'Oliver', 'Alison', 'Desmond', 'Ava', 'Lincoln', 'Clémentine', 'Lucas', 'Ella', 'Akira', 'Amaterasu', 'Atsuko', 'Arisu', 'Ayaka', 'Jung', 'Iseul', 'Haneul' ];
 const COLORS = [ '#aaa', '#e44', '#4e4', '#44e', '#dcd7d2', '#2b2b2b', '#2a5fe3', '#d94835', '#30a28f', '#7a7a7a', '#049451', '#24364b', '#dadbda', '#84454a', '#c38f3d', '#758b9d', '#ad8989', '#2ea9c3' ];
@@ -39,26 +39,23 @@ io.on( 'connection', function( socket ) {
   socket.emit( 'welcome', client.cid );
 
   socket.on( 'chat message', function( msg ) {
-    client.ts = Date.now();
-    console.warn( `chat message from "${client.name}": "${msg.data}"`);
-    state = pruneClients( state );
-    broadcastState( state, socket );
+    state = markClientAlive( state, client );
 
     if ( msg.data ) {
-      console.log( '> %s #%s: %s', client.name, client.cid, JSON.stringify( msg.data, null, 1 ) )
+      console.log( `> ${client.name} #${client.cid}: ${JSON.stringify( msg.data, null, 1 )}` )
       socket.emit( 'chat message', msg );
       socket.broadcast.emit( 'chat message', msg );
     }
   } );
 
   socket.on( 'disconnect', function() {
-    console.log( '> a client disconnected: %s#%s', client.name, client.cid );
+    console.log( `> a client disconnected: ${client.name}#${client.cid}` );
     state = onClientDisconnection( state, socket.client.sid );
 
-    broadcastState( state, socket );
+    broadcastState( state );
   } );
 
-  broadcastState( state, socket );
+  broadcastState( state );
 } );
 
 function onClientConnection( state, socket ) {
@@ -73,7 +70,8 @@ function onClientConnection( state, socket ) {
       cid: socket.client.id, // client id
       name: NAMES[ ~~( ( NAMES.length - 1 ) * Math.random() ) ],
       color: COLORS[ ~~( ( COLORS.length - 1 ) * Math.random() ) ],
-      ts: Date.now()
+      ts: Date.now(),
+      te: Date.now() + USER_TIMEOUT
     };
   }
 
@@ -90,46 +88,71 @@ function onClientDisconnection( state, sid ) {
   };
 }
 
-function broadcastState( state, socket ) {
-  console.log( 'broadcast state.clients: [%s]',
-    state.clients.reduce( ( s, c ) => s + '  ' + style.bgColor.ansi.hex( c.color ) + c.name + style.bgColor.close + ', ', '' ),
-  );
-  socket.emit( 'state.clients', state.clients );
-  socket.broadcast.emit( 'state.clients', state.clients );
+function broadcastState( state ) {
+  console.log( `Broadcast state.clients: [${
+    state.clients.reduce( ( s, c ) => {
+      return s + `${style.bgColor.ansi.hex( c.color )}_${style.bgColor.close}${c.name}(${((c.te-Date.now())/1000).toFixed(2)}s), `
+    }, '' ).replace(/, $/,'')
+  }]`);
+  io.of('').emit( 'state.clients', state.clients );
 
   return state;
 }
 
+function markClientAlive( state, client ) {
+  return {
+    ...state,
+    clients: state.clients.map( c => {
+      return (c.cid !== client.cid) ? c : {
+        ...c,
+        ts: Date.now(),
+        te: Date.now() + USER_TIMEOUT
+      }
+    })
+  };
+}
+
 function pruneClients( state ) {
   let now = Date.now();
-console.warn('pruning...');
-  // todo: one loop
-  let clients = state.clients.filter( c => (now - c.ts) > USER_TIMEOUT );
-  let goneClients = state.clients.filter( c => (now - c.ts) <= USER_TIMEOUT );
+
+  let clients = [];
+  let goneClients = [];
 
   state.clients.forEach(c => {
-    if( clients.indexOf(c) < 0 ){
+    if( (now - c.ts) > USER_TIMEOUT ){
+      goneClients.push(c);
       console.log( `Client ${c.name} is no longer active.` );
+    } else {
+      clients.push(c);
     }
   });
 
+  // merge
   let clientsOld = goneClients.concat( state.clientsOld.filter(
-    c => goneClients.findIndex(
-      o => c.cid === o.cid
-    ) < 0
+    c => goneClients.findIndex( o => c.cid === o.cid ) < 0
   ) );
-// console.warn('before:',JSON.stringify(state.clients.map(c=> c.ts/1000 ),0,1));
-// console.warn('~~~');
-// console.warn('after:',JSON.stringify(state.clients.map(c=> c.ts/1000 ),0,1));
-  return {
+
+  let newState = {
     ...state,
     clients,
     clientsOld
-  }
+  };
+
+// if there has been changes
+  if( goneClients.length>0 )
+    newState = broadcastState( newState );
+
+  return newState;
 }
 
 
-// サーバーをポート3000番で起動
-http.listen( 3000, function() {
+// Start server
+http.listen( 3000, () => {
+
   console.log( 'listening on *:3000' );
+
+  setInterval( () => {
+    state = pruneClients( state );
+  }, 1000);
+
 } );

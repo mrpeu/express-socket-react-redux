@@ -2,7 +2,7 @@
 module.exports = {
   entry: ['./client/index.js'],//,'./server/main.js'],
   output: {
-    path: './build/',
+    path: './build/client/',
     filename: 'index.js'
   },
   devtool: 'source-map',
