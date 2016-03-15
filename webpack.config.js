@@ -1,18 +1,20 @@
 
 module.exports = {
-  entry: './client/index.js',
+  entry: ['./client/index.js'],//,'./server/main.js'],
   output: {
-    path: './client',
-    filename: 'bundle.js'
+    path: './build/',
+    filename: 'index.js'
   },
   devtool: 'source-map',
   module: {
     loaders: [
       {
         test: /\.js$/,
+        exclude: /node_modules/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015', 'react']
+          presets: ['es2015'],
+          plugins: ['transform-runtime']
         }
       }
     ]
