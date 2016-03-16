@@ -1,11 +1,15 @@
+'use strict';
+let path = require('path');
 
-module.exports = {
-  entry: ['./client/index.js'],//,'./server/main.js'],
+module.exports = [ {
+  name: 'client',
+  target: 'web',
+  entry: ['./client/index.js'],
   output: {
     path: './build/client/',
     filename: 'index.js'
   },
-  devtool: 'source-map',
+  devtool: 'eval', //prod: 'source-map',
   module: {
     loaders: [
       {
@@ -19,4 +23,4 @@ module.exports = {
       }
     ]
   }
-};
+} ];

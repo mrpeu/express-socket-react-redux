@@ -1,3 +1,5 @@
+"use strict";
+
 const fs = require( 'fs' );
 const chalk = require( 'chalk' );
 const style = require( 'ansi-styles' );
@@ -25,9 +27,9 @@ app.use( '/js', express.static( path.resolve( 'build/client' ) ) );
 
 var state = null;
 
-function loadState( cb ){
-  fs.readFile( 'state.json', (err,data) => {
-    if( err ){
+function loadState( cb ) {
+  fs.readFile( 'state.json', ( err, data ) => {
+    if ( err ) {
       console.error( `loadState: ${err}` );
       return cb( err, {
         clients: [],
@@ -39,9 +41,9 @@ function loadState( cb ){
   } );
 }
 
-function saveState( state ){
-  fs.writeFile( 'state.json', JSON.stringify(state,null,2), (err,data) => {
-    if( err ){
+function saveState( state ) {
+  fs.writeFile( 'state.json', JSON.stringify( state, null, 2 ), ( err, data ) => {
+    if ( err ) {
       console.error( `saveState: ${err}` );
     }
   } );
@@ -134,7 +136,7 @@ function markClientAlive( state, client ) {
   };
 }
 
-function pruneClients( state ) {
+function cleanState( state ) {
   let now = Date.now();
 
   let clients = [];
@@ -186,9 +188,9 @@ http.listen( 3000, () => {
     console.log( 'listening on *:3000' );
 
     setInterval( () => {
-      state = pruneClients( state );
+      state = cleanState( state );
       state = saveState( state );
-    }, 1000);
+    }, 10000);
 
   } );
 

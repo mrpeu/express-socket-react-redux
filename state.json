@@ -1,30 +1,5 @@
 {
-  "clients": [
-    {
-      "sid": "oJLQhAUhWl9XmpftAAAD",
-      "cid": "oJLQhAUhWl9XmpftAAAD",
-      "name": "Henry",
-      "color": "#7a7a7a",
-      "ts": 1458058779268,
-      "te": 1458058839268
-    },
-    {
-      "sid": "AwXTYKzPAlb8B59hAAAC",
-      "cid": "AwXTYKzPAlb8B59hAAAC",
-      "name": "Henry",
-      "color": "#ad8989",
-      "ts": 1458058777795,
-      "te": 1458058837795
-    },
-    {
-      "sid": "q_JIdsUTFVBxXI30AAAA",
-      "cid": "q_JIdsUTFVBxXI30AAAA",
-      "name": "Akira",
-      "color": "#049451",
-      "ts": 1458058766038,
-      "te": 1458058826038
-    }
-  ],
+  "clients": [],
   "clientsOld": [],
   "messages": [
     {
@@ -42,6 +17,10 @@
     {
       "from": "oJLQhAUhWl9XmpftAAAD",
       "data": "hjkhj"
+    },
+    {
+      "from": "hIQE2L6UPnP5BCZ8AAAA",
+      "data": "gfhfg"
     }
   ]
 }
