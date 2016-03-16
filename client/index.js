@@ -18,18 +18,44 @@ import {
     socket.close();
   };
 
+
   var $ = {
+    login: document.getElementById( 'login' ),
+    loginForm: document.getElementById( 'loginForm' ),
+    loginUserName: document.getElementById( 'loginUserName' ),
+    loginPassword: document.getElementById( 'loginPassword' ),
+    loginSend: document.getElementById( 'loginSend' ),
+
     clientList: document.getElementById( 'clients' ),
+
+    chat: document.getElementById( 'chat' ),
+    form: document.getElementById( 'form' ),
     ul: document.getElementById( 'messages' ),
     entry: document.getElementById( 'entry' ),
-    form: document.getElementById( 'form' ),
     name: document.getElementById( 'name' ),
 
+    updateDOM: ( state ) => {
+      let me = getClient( meId );
+
+      $.updateClientList( state.clients );
+
+      if( me ){
+        $.updateName( me );
+        $.login.classList[ 'remove' ]( 'isVisible' );
+        $.chat.classList[ 'add' ]( 'isVisible' );
+      } else {
+        $.updateName( null );
+        $.login.classList[ 'add' ]( 'isVisible' );
+        $.chat.classList[ 'remove' ]( 'isVisible' );
+      }
+
+      return state;
+    },
     updateClientList: ( clients ) => {
-      var el = document.createElement( 'ul' );
+      let el = document.createElement( 'ul' );
       el.id = 'clients';
       clients.map( c => {
-        var elc = document.createElement( 'li' );
+        let elc = document.createElement( 'li' );
         elc.className = 'client';
         elc.title = c.cid;
         elc.textContent = c.name;
@@ -41,16 +67,17 @@ import {
       $.clientList = document.getElementById( 'clients' );
     },
     updateName: ( me ) => {
-      if( me ){
+      if ( me ) {
         $.name.textContent = me.name;
         $.name.title = me.cid;
         $.name.style[ "border-left-color" ] = me.color;
       } else {
-        $.name.textContent = '';
+        $.name.textContent = 'Not logged in';
         $.name.title = '';
         delete $.name.style[ "border-left-color" ];
       }
     },
+
     addMessage: ( msg ) => {
       let sender = getClient( msg.from );
       let li = document.createElement( 'li' );
@@ -63,27 +90,22 @@ import {
     }
   };
 
-  var getMe = () => {
-    let me = getClient( meId )
-    if ( !me ) throw " loss of validity"
-    return me
-  };
-
-  var getClient = ( id ) => {
+  let getClient = ( id ) => {
     let client = state.clients.find( c => c.cid === id );
-    if(!client) throw ":o"
+    // if(!client) throw ":o"
     return client;
   };
 
 
+
   socket.on( 'welcome', cid => {
-    if(meId) {
+    if ( meId ) {
       console.warn( 'Welcome already arrived! ' + meId );
       return;
     }
 
     meId = cid;
-    console.log( 'welcome:', cid );
+    console.log( `welcome: ${cid}` );
 
     // setInterval( () => {
     //   let now = Date.now();
@@ -98,17 +120,17 @@ import {
         from: meId
       } );
     }, 10000 );
+
+    state = $.updateDOM( state );
   } );
 
   socket.on( 'state.clients', clients => {
     state.clients = clients;
     console.log( 'new state.clients %s', JSON.stringify( clients.map( c => c.name ) ) )
 
-    $.updateClientList( state.clients );
+    state = $.updateDOM( state );
 
-    $.updateName( meId ? getMe() : null );
-
-    if( state.clients.findIndex( c => c.cid == meId ) < 0 ) {
+    if ( state.clients.findIndex( c => c.cid == meId ) < 0 ) {
       // deconnected
       clearInterval( ping );
     }
@@ -118,12 +140,20 @@ import {
     $.addMessage( msg );
   } );
 
+  let authenticate = () => {
+    socket.emit('authentication', { username: $.loginUsername.value, password: $.loginPassword.value });
+    socket.on('authenticated', function() {
+      // use the socket as usual
+    });
+  };
+
+
 
   $.form.addEventListener( 'submit', e => {
     e.preventDefault();
     if ( $.entry.value ) {
-      if(!meId) {
-        console.warn('Cannot post message while not logged');
+      if ( !meId ) {
+        console.warn( 'Cannot post message while not logged' );
         return;
       }
 
@@ -137,6 +167,9 @@ import {
     return false;
   } );
 
+  $.loginForm.addEventListener( 'submit' , e => {
+    authenticate();
+  } );
 
 
 }() )

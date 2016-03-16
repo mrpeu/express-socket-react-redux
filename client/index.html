@@ -6,15 +6,23 @@
   </head>
   <body>
 
-    <ul id="clients"></ul>
-    
-    <ul id="messages"></ul>
+    <div id="login"><form id="loginForm">
+      <input id="loginUsername" autofocus />
+      <input id="loginPassword" type="password" />
+      <button id="loginSend">Login</button>
+    </form></div>
 
-    <form id="form" action="">
-      <span id="name" title="name"></span>
-      <input id="entry" autocomplete="off" autofocus />
-      <button id="send">Send</button>
-    </form>
+    <div id="chat">
+      <ul id="clients"></ul>
+
+      <ul id="messages"></ul>
+
+      <form id="form" action="">
+        <span id="name" title="name"></span>
+        <input id="entry" autocomplete="off" autofocus />
+        <button id="send">Send</button>
+      </form>
+    </div>
 
     <script src="js/index.js"></script>
 

@@ -1,5 +1,14 @@
 {
-  "clients": [],
+  "clients": [
+    {
+      "sid": "mZp2Is2RMyBb5K-0AAAP",
+      "cid": "mZp2Is2RMyBb5K-0AAAP",
+      "name": "Henry",
+      "color": "#049451",
+      "ts": 1458129218536,
+      "te": 1458129278536
+    }
+  ],
   "clientsOld": [],
   "messages": [
     {
@@ -21,6 +30,22 @@
     {
       "from": "hIQE2L6UPnP5BCZ8AAAA",
       "data": "gfhfg"
+    },
+    {
+      "from": "F8-T4zoIa_oifPVOAAAB",
+      "data": "fgzjgh"
+    },
+    {
+      "from": "66VtEtSmjOamYsGAAAAE",
+      "data": "fghj"
+    },
+    {
+      "from": "wDneXHvU0bLDRV6GAAAH",
+      "data": "sdf"
+    },
+    {
+      "from": "mZp2Is2RMyBb5K-0AAAP",
+      "data": "sdf"
     }
   ]
 }
