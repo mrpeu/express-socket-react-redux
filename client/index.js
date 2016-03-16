@@ -70,11 +70,11 @@ import {
       if ( me ) {
         $.name.textContent = me.name;
         $.name.title = me.cid;
-        $.name.style[ "border-left-color" ] = me.color;
+        $.name.style[ "border-color" ] = me.color;
       } else {
         $.name.textContent = 'Not logged in';
         $.name.title = '';
-        delete $.name.style[ "border-left-color" ];
+        delete $.name.style[ "border-color" ];
       }
     },
 

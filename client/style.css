@@ -3,13 +3,16 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    flex: 10 1 auto;
 }
+html { height: 100% }
 body {
     font-size: small;
     font-family: Segoe UI, Arial;
     color: #333333;
+    height: 100%;
     display: flex;
-    flex-flow: column nowrap;
+    flex-flow: row nowrap;
 }
 #login {
   position: absolute;
@@ -37,24 +40,32 @@ body {
   display: none;
 }
 #chat.isVisible {
-  display: block;
-  flex-basis: 100%;
+  box-shadow: .0em .0em .3em #aaa;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 1 1 auto;
+  align-self: flex-end;
 }
 #clients {
     background: #eee;
-    box-shadow: .0em .1em .3em #ccc;
+    /* box-shadow: .0em .0em .3em #aaa; */
     padding: 3px;
     position: static;
     top: 0;
-    width: 100%;
     display: flex;
+    flex-flow: row wrap;
+    flex: 0 1 auto;
+    justify-content: flex-start;
+    align-content: stretch;
 }
 .client {
+    flex: 0 1 auto;
     background-color: #fff;
-    border: 1px solid #eee;
+    /* border: 1px solid #eee; */
     border-radius: .1em;
-    border-left: .6em solid;
-    padding: .6em .9em;
+    border-top: .6em solid;
+    padding: .4em .9em;
     margin: .1em;
     display: inline-block;
     list-style-type: none;
@@ -63,21 +74,23 @@ body {
 }
 #chat form {
     background: #eee;
-    box-shadow: .0em -.1em .3em #ccc;
+    /* box-shadow: .0em .0em .3em #aaa; */
     padding: 3px;
-    position: fixed;
     bottom: 0;
-    width: 100%;
+    flex: 0 1 auto;
     display: flex;
+    flex-flow: row nowrap;
 }
 #chat form #name {
-    flex: 1 1 auto;
-    padding: 10px;
+    flex: 1 0 auto;
+    padding: .5em .9em;
+    margin: 0 .5em;
     border-radius: .1em;
-    border-left: .6em solid;
+    border-top: .6em solid;
+    text-align: center;
 }
 #chat form #entry {
-    flex: 1 1 80%;
+    flex: 2 1 80%;
     border: 0;
     border-radius: .1em;
     padding: 10px;
@@ -92,16 +105,21 @@ body {
     border: none;
     padding: 10px;
     border-radius: .1em;
+    border: 1px solid #57B;
 }
 
 #messages {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    min-height: 2em;
+    flex: 1 0 auto;
+    width: 100%;
 }
 #messages li {
     padding: 5px 10px;
+    border-bottom: 1px solid #fafafa;
 }
 #messages li:nth-child(even) {
-    background: #eee;
+    background: #fafafa;
 }
