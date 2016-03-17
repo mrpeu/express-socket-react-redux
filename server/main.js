@@ -30,7 +30,7 @@ var state = null;
 function loadState( cb ) {
   fs.readFile( 'state.json', ( err, data ) => {
     if ( err ) {
-      console.error( `loadState: ${err}` );
+      console.warn( chalk.yellow(`loadState: ${err}`) );
       return cb( err, {
         clients: [],
         clientsOld: []
@@ -56,18 +56,16 @@ io.on( 'connection', ( socket ) => {
 
   socket.on( 'authentication', data => {
 
-    if( !data.cid ) data.cid = socket.client.id;
-
 // console.warn( chalk.blue(`-----------: ${JSON.stringify(data)}`) );
-    authenticateUser( state, socket, data, ( err, _state ) => {
+    authenticateClient( state, socket, data.client, ( err, _state, isNew ) => {
       state = _state;
 
       if( err ) {
-        return failAuthenticate( state, socket, `Authentication of ${JSON.stringify(data)} failed: ${err}` );
-      } else if ( state.clients.some( c => c.sid == data.id ) ) {
-        return failAuthenticate( state, socket, `Authentication of ${JSON.stringify(data)} refused!` );
+        failAuthenticate( state, socket, `Authentication of ${JSON.stringify(data)} failed: ${err}` );
+      } else if ( state.clients.some( c => c.sid == data.client.cid ) ) {
+        failAuthenticate( state, socket, `Authentication of ${JSON.stringify(data)} refused!` );
       } else {
-        return postAuthenticate( state, socket );
+        if( isNew ) postAuthenticate( state, socket );
       }
 
     } );
@@ -75,27 +73,34 @@ io.on( 'connection', ( socket ) => {
   } );
 } );
 
-function authenticateUser ( state, socket, data, callback ) {
+function authenticateClient ( state, socket, dataClient, callback ) {
 
-  let client = state.clients.find( c => c.cid === data.cid );
+  // console.log( `Authentication of ${JSON.stringify(dataClient)}...` );
 
+  let isNew = false;
+
+  let client = state.clients.find( c => c.cid === dataClient.cid );
   if(client) console.warn( chalk.magenta(`  STILL ACTIVE: ${client.name} #${client.cid}`) );
+
+  if( !dataClient.cid )
+    console.warn( chalk.red(`  INVALID: ${dataClient.name} #${dataClient.cid}`) );
 
   // check if already in state.clientsOld
   if ( !client ) {
-    client = state.clientsOld.find( c => c.cid === data.cid );
+    client = state.clientsOld.find( c => c.cid === dataClient.cid );
     if(client) console.warn( chalk.magenta(`  RECENT: ${client.name} #${client.cid}`) );
   }
 
 
   if ( !client ) {
+    isNew = true;
     client = {
-      sid: data.sid, // session id
-      cid: data.cid, // client id
       name: NAMES[ ~~( ( NAMES.length - 1 ) * Math.random() ) ],
       color: COLORS[ ~~( ( COLORS.length - 1 ) * Math.random() ) ],
       chat: false,
-      ...data
+      ...dataClient,
+      sid: socket.client.id, // session id
+      cid: dataClient.cid || socket.client.id // client id
     };
     if(client) console.warn( chalk.magenta(`  NEW: ${client.name} #${client.cid}`) );
   }
@@ -108,13 +113,11 @@ function authenticateUser ( state, socket, data, callback ) {
     te: Date.now() + USER_TIMEOUT
   };
 
-  console.log( `Authentication of ${JSON.stringify(client)}...` );
-
   return callback( null, {
     ...state,
     clients: [ client, ...state.clients.filter( c => c.cid != client.cid ) ],
     clientsOld: [ ...state.clientsOld.filter( c => c.cid != client.cid ) ]
-  } );
+  }, isNew );
 }
 
 function failAuthenticate( state, socket, msg ) {

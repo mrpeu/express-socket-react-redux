@@ -3,7 +3,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    flex: 10 1 auto;
 }
 html {height: 100%;overflow: hidden;}
 body {
@@ -49,9 +48,9 @@ button {
   right: 0;
   bottom: 0;
   left: 0;
-  height: 4em;
+  height: 3.5em;
   cursor: alias;
-  background-color: #eee;
+  background-color: #fefefe;
   box-shadow: 0em 0em 10em 24em rgba(221,221,221,0.8);
   border: 1px solid #ddd;
   border-radius: .2em;
@@ -64,26 +63,15 @@ button {
   transform: scaleY(1) scaleX(1);
 }
 /*----------------*/
-#chat {
-  display: none;
-}
-#chat.on {
-  box-shadow: .0em .0em .3em #aaa;
-  height: 100%;
-  display: flex;
-  flex-flow: column nowrap;
-  flex: 1 1 auto;
-  align-self: flex-end;
-}
 #clients {
     background: #eee;
     /* box-shadow: .0em .0em .3em #aaa; */
     padding: 3px;
-    position: static;
-    top: 0;
+    /* position: static; */
+    /* top: 0; */
     display: flex;
     flex-flow: row wrap;
-    flex: 0 1 auto;
+    flex: 0 1 3.5em;
     justify-content: flex-start;
     align-content: stretch;
 }
@@ -95,10 +83,21 @@ button {
     border-top: .6em solid;
     padding: .4em .9em;
     margin: .1em;
-    display: inline-block;
     list-style-type: none;
     align-items: flex-start;
     text-align: center;
+}
+/*----------------*/
+#chat {
+  display: none;
+}
+#chat.on {
+  box-shadow: .0em .0em .3em #aaa;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 1 1 auto;
+  align-self: flex-end;
 }
 #chat form {
     background: #eee;
@@ -134,4 +133,10 @@ button {
 }
 #chatMessages li:nth-child(even) {
     background: #fafafa;
+}
+/*----------------*/
+#content {display: flex;flex-flow: column nowrap;flex: 10 1 auto;}
+#contentDebug {
+  overflow: auto;
+  flex: 1 1 1em;
 }

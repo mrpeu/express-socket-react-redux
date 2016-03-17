@@ -74,7 +74,8 @@ import {
         let elc = document.createElement( 'li' );
         elc.className = 'client';
         elc.title = c.cid;
-        elc.innerHTML = `<span>${c.name}${c.chat ? '&nbsp;<x-small>💬</x-small>':''}</span>`
+        let symbol = !!c.chat ? '💬' : !!c.runner ? '⚙' : '?';
+        elc.innerHTML = `<x-small>${symbol}</x-small>&nbsp;${c.name}`
         elc.style[ 'border-color' ] = c.color;
         el.appendChild( elc );
       } );
@@ -82,11 +83,12 @@ import {
       $.clientList.parentNode.replaceChild( el, $.clientList );
       $.clientList = document.getElementById( 'clients' );
     },
-    updateName: ( me ) => {
-      if ( me ) {
-        $.chatName.innerHTML = `<span>${me.name}${me.chat ? '&nbsp;<x-small>💬</x-small>':''}</span>`;
-        $.chatName.title = me.cid;
-        $.chatName.style[ "border-color" ] = me.color;
+    updateName: ( c ) => {
+      if ( c ) {
+        let symbol = !!c.chat ? '💬' : !!c.runner ? '⚙' : '?';
+        $.chatName.innerHTML = `<span><x-small>${symbol}</x-small>&nbsp;${c.name}</span>`
+        $.chatName.title = c.cid;
+        $.chatName.style[ "border-color" ] = c.color;
       } else {
         $.chatName.htmlContent = 'Not logged in';
         $.chatName.title = '';
@@ -118,8 +120,7 @@ import {
     socket.emit( 'authentication', { client: { ...state.client } } );
 
     socket.on( 'notwelcome', data => {
-      data = { err: null, ...data};
-      console.error( `Not welcome: ${data.err}` );
+      console.error( `Not welcome: ${{ err: null, ...data}.err}` );
     } );
 
     socket.on( 'welcome', data => {
@@ -159,7 +160,7 @@ import {
       setInterval( () => {
         state = cleanState( state );
         state = saveState( state );
-      }, 2000);
+      }, 5000);
 
     } );
 
