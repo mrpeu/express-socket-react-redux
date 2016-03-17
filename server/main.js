@@ -8,7 +8,6 @@ const express = require( 'express' );
 const app = express();
 const http = require( 'http' ).Server( app );
 const io = require( 'socket.io' )( http );
-const ioauth = require( 'socketio-auth' );
 
 process.env[ 'DEBUG' ] = '*'
 
@@ -51,58 +50,68 @@ function saveState( state ) {
   return state;
 }
 
-ioauth( io, { authenticate: ( socket, data, callback ) => {
-console.warn( `Authenticate ${data.username}:${data.password}?` );
+io.on( 'connection', ( socket ) => {
+  // console.log( `Authentication of ${JSON.stringify(Object.keys(socket.client),0,1)} ${socket.conn.remoteAddress}...` );
 
-    data = { username: undefined, password: undefined, ...data };
+  let data = { client: { cid: socket.client.id } };
 
-    authenticateUser( state, socket, data, ( err, state ) => {
-      if( err ) {
-        console.error( `Authentication of ${data.username}:${data.password} failed!` );
-      }
-      return callback( err, state.clients.some( c => c.sid == socket.client.id ) );
-    } );
-  },
+  authenticateUser( state, socket, data, ( err, state ) => {
 
-  postAuthenticate: ( socket, credentials ) => {
+    if( err ) {
+      return failAuthenticate( socket, state, `Authentication of ${JSON.stringify(data)} failed: ${err}` );
+    } else if ( state.clients.some( c => c.sid == data.id ) ) {
+      return failAuthenticate( socket, state, `Authentication of ${JSON.stringify(data)} refused!` );
+    } else {
+      return postAuthenticate( socket, state );
+    }
 
-    state = onClientConnection( state, socket );
-
-    var client = state.clients.find( c => c.sid == socket.client.id );
-
-    socket.on( 'chat message', function( msg ) {
-      state = markClientAlive( state, client );
-
-      if ( msg.data ) {
-        console.log( `> ${client.name} #${client.cid}: ${JSON.stringify( msg.data, null, 1 )}` )
-        state = newMessage( state, msg );
-        socket.emit( 'chat message', msg );
-        socket.broadcast.emit( 'chat message', msg );
-      }
-    } );
-
-    socket.on( 'disconnect', function() {
-      console.log( `> a client disconnected: ${client.name}#${client.cid}` );
-      state = onClientDisconnection( state, socket.client.sid );
-
-      state = broadcastState( state );
-    } );
-
-    console.log( '> a client connected: %s %s', client.name, client.cid, client.sid );
-
-    socket.emit( 'welcome', client.cid );
-
-    state = broadcastState( state );
-
-  }
+  } );
 
 } );
 
-function authenticateUser( state, socket, credentials, callback ){
+function authenticateUser ( state, socket, data, callback ) {
 
-  console.log( `Authentication of ${credentials.username}:${credentials.password}...` );
+  console.log( `Authentication of ${data.client.username}:${data.client.cid}...` );
 
   return callback( null, state );
+}
+
+function failAuthenticate( socket, state, msg ) {
+
+    socket.emit( 'notwelcome', { err: `err: ${msg}` } );
+
+    return state;
+}
+
+function postAuthenticate( socket, state ) {
+
+  state = onClientConnection( state, socket );
+
+  var client = state.clients.find( c => c.sid == socket.client.id );
+
+  socket.on( 'chat message', function( msg ) {
+    state = markClientAlive( state, client );
+
+    if ( msg.data ) {
+      console.log( `> ${client.name} #${client.cid}: ${JSON.stringify( msg.data, null, 1 )}` )
+      state = newMessage( state, msg );
+      socket.emit( 'chat message', msg );
+      socket.broadcast.emit( 'chat message', msg );
+    }
+  } );
+
+  socket.on( 'disconnect', function() {
+    console.log( `> a client disconnected: ${client.name}#${client.cid}` );
+    state = onClientDisconnection( state, socket.client.sid );
+
+    state = broadcastState( state );
+  } );
+
+  console.log( '> a client connected: %s %s', client.name, client.cid, client.sid );
+
+  socket.emit( 'welcome', { client } );
+
+  return state = broadcastState( state );
 }
 
 function onClientConnection( state, socket ) {

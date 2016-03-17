@@ -6,6 +6,10 @@
   </head>
   <body>
 
+    <div id="connection" class="on">
+      <div>Connecting...</div>
+    </div>
+
     <div id="content">
       <i>content</i>
     </div>
@@ -15,19 +19,12 @@
 
       <ul id="messages"></ul>
 
-      <form id="form" action="">
-        <span id="name" title="name"></span>
-        <input id="entry" autocomplete="off" autofocus />
-        <button id="send">Send</button>
+      <form id="chatForm" action="">
+        <span id="chatName" title="name" class="client"></span>
+        <input id="chatEntry" autocomplete="off" autofocus />
+        <button id="chatSend">Send</button>
       </form>
     </div>
-
-
-    <div id="login"><form id="loginForm">
-      <input id="loginUsername" autofocus placeholder="Username"/>
-      <input id="loginPassword" type="password" placeholder="Password"/>
-      <button id="loginSend">Login</button>
-    </form></div>
 
     <script src="js/index.js"></script>
 

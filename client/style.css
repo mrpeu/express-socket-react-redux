@@ -18,7 +18,7 @@ input {
     border: 0;
     border-radius: .1em;
     padding: .5em;
-    margin-right: 1em;
+    margin: 0 .5em;
 }
 button {
     background: #68C;
@@ -29,38 +29,45 @@ button {
     padding: .5em;
 }
 /*----------------*/
-#login {
+#connection {
   position: absolute;
   margin: auto;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
+  height: 50%;
+  pointer-events: none;
+}
+#connection.on {
+}
+#connection div {
+  position: absolute;
+  margin: auto;
+  padding: 1em;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 4em;
   cursor: alias;
   background-color: #eee;
-  width: 50%;
-  height: 50%;
+  box-shadow: 0em 0em 10em 24em rgba(221,221,221,0.8);
   border: 1px solid #ddd;
-  padding: 1em;
   border-radius: .2em;
   transition: 224ms ease-out;
   transition-property: transform;
-  transform: translateY(-200%);
-  display: flex;
-  align-items: center;
+  transform: scaleY(0) scaleX(2);
+  text-align: center;
 }
-#login>#loginForm {
-    display: flex;
-    align-items: center;
-}
-#login.isVisible {
-  transform: translateY(0);
+#connection.on div {
+  transform: scaleY(1) scaleX(1);
 }
 /*----------------*/
 #chat {
   display: none;
 }
-#chat.isVisible {
+#chat.on {
   box-shadow: .0em .0em .3em #aaa;
   height: 100%;
   display: flex;
@@ -103,12 +110,6 @@ button {
     flex-flow: row nowrap;
 }
 #chat form #name {
-    flex: 1 0 auto;
-    padding: .0em .9em;
-    margin: 0 .5em;
-    border-radius: .1em;
-    border-top: .6em solid;
-    text-align: center;
 }
 #chat form #entry {
     flex: 2 1 80%;

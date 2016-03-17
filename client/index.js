@@ -5,48 +5,62 @@ import {
 
 ( function() {
 
-  var meId = 0;
-  var state = {
-    clients: []
-  };
-
   var ping = null;
 
   var socket = io();
+  socket.on( 'connect', onConnection );
 
   window.onbeforeunload = () => {
     socket.close();
   };
 
+  var state = loadState( {
+    client: { cid: null },
+    clients: []
+  } );
+
+  function loadState( defaultState ) {
+    return localStorage.state ? JSON.parse(localStorage.state) : defaultState;
+  };
+
+  function saveState( state ) {
+    localStorage.state = JSON.stringify(state);
+    return state;
+  };
+
+  function cleanState( state ) {
+    return state;
+  }
+
 
   var $ = {
-    login: document.getElementById( 'login' ),
-    loginForm: document.getElementById( 'loginForm' ),
-    loginUsername: document.getElementById( 'loginUsername' ),
-    loginPassword: document.getElementById( 'loginPassword' ),
-    loginSend: document.getElementById( 'loginSend' ),
+    connection: document.getElementById( 'connection' ),
 
     clientList: document.getElementById( 'clients' ),
 
+    content: document.getElementById( 'content' ),
+
     chat: document.getElementById( 'chat' ),
-    form: document.getElementById( 'form' ),
-    ul: document.getElementById( 'messages' ),
-    entry: document.getElementById( 'entry' ),
-    name: document.getElementById( 'name' ),
+    chatForm: document.getElementById( 'chatForm' ),
+    chatMessages: document.getElementById( 'chatMessages' ),
+    chatEntry: document.getElementById( 'chatEntry' ),
+    chatName: document.getElementById( 'chatName' ),
 
     updateDOM: ( state ) => {
-      let me = getClient( meId );
+      let me = getClient( state.client.cid );
 
       $.updateClientList( state.clients );
 
       if( me ){
         $.updateName( me );
-        $.login.classList[ 'remove' ]( 'isVisible' );
-        $.chat.classList[ 'add' ]( 'isVisible' );
+        $.connection.classList[ 'remove' ]( 'on' );
+        $.content.classList[ 'add' ]( 'on' );
+        $.chat.classList[ 'add' ]( 'on' );
       } else {
         $.updateName( null );
-        $.login.classList[ 'add' ]( 'isVisible' );
-        $.chat.classList[ 'remove' ]( 'isVisible' );
+        $.connection.classList[ 'add' ]( 'on' );
+        $.content.classList[ 'remove' ]( 'on' );
+        $.chat.classList[ 'remove' ]( 'on' );
       }
 
       return state;
@@ -68,13 +82,13 @@ import {
     },
     updateName: ( me ) => {
       if ( me ) {
-        $.name.textContent = me.name;
-        $.name.title = me.cid;
-        $.name.style[ "border-color" ] = me.color;
+        $.chatName.textContent = me.name;
+        $.chatName.title = me.cid;
+        $.chatName.style[ "border-color" ] = me.color;
       } else {
-        $.name.textContent = 'Not logged in';
-        $.name.title = '';
-        delete $.name.style[ "border-color" ];
+        $.chatName.textContent = 'Not logged in';
+        $.chatName.title = '';
+        delete $.chatName.style[ "border-color" ];
       }
     },
 
@@ -83,10 +97,10 @@ import {
       let li = document.createElement( 'li' );
       li.className = 'chat-line';
       li.innerHTML = '<b style="color:' + sender.color + ';">' +
-        ( msg.from == meId ? 'me' : sender.name ) +
+        ( msg.from == state.client.cid ? 'me' : sender.name ) +
         '</b>: ' +
         msg.data;
-      $.ul.appendChild( li );
+      $.chatMessages.appendChild( li );
     }
   };
 
@@ -97,85 +111,77 @@ import {
   };
 
 
+  function onConnection(){
 
-  socket.on( 'welcome', cid => {
-    if ( meId ) {
-      console.warn( 'Welcome already arrived! ' + meId );
-      return;
-    }
+    console.warn(...arguments);
 
-    meId = cid;
-    console.log( `welcome: ${cid}` );
+    socket.on( 'notwelcome', data => {
+      data = { err: null, ...data};
+      console.error( `Not welcome: ${data.err}` );
+    } );
 
-    // setInterval( () => {
-    //   let now = Date.now();
-    //   for ( var i = 0; i < $.clientList.childNodes.length; ++i ) {
-    //     let li = $.clientList.childNodes[ i ];
-    //     li.textContent = 't-' + (30-( now - getClient( li.title ).ts ) / 1000).toFixed(2) + 's';
-    //   }
-    // }, 33 );
+    socket.on( 'welcome', data => {
+      // if ( state.client.cid ) {
+      //   console.warn( `Welcome for ${state.client.cid} already arrived!` );
+      //   return;
+      // }
 
-    ping = setInterval( () => {
-      socket.emit( 'chat message', {
-        from: meId
+      data = { client: { cid: null }, err: null, ...data};
+
+      console.log( `Welcome: ${data.client.cid}` );
+
+      state.client.cid = data.client.cid;
+
+      // rudimentary "I-am-alive" ping
+      ping = setInterval( () => {
+        socket.emit( 'chat message', { from: state.client.cid } );
+      }, 10000 );
+
+      state = $.updateDOM( state );
+
+      socket.on( 'state.clients', clients => {
+        state.clients = clients;
+        console.log( 'new state.clients %s', JSON.stringify( clients.map( c => c.name ) ) )
+
+        state = $.updateDOM( state );
+
+        if ( state.clients.findIndex( c => c.cid == state.client.cid ) < 0 ) {
+          // deconnected
+          clearInterval( ping );
+          state.client.cid = null;
+        }
       } );
-    }, 10000 );
 
-    state = $.updateDOM( state );
-  } );
+      socket.on( 'chat message', ( msg ) => {
+        $.addMessage( msg );
+      } );
 
-  socket.on( 'state.clients', clients => {
-    state.clients = clients;
-    console.log( 'new state.clients %s', JSON.stringify( clients.map( c => c.name ) ) )
+      setInterval( () => {
+        state = cleanState( state );
+        state = saveState( state );
+      }, 10000);
 
-    state = $.updateDOM( state );
+    } );
 
-    if ( state.clients.findIndex( c => c.cid == meId ) < 0 ) {
-      // deconnected
-      clearInterval( ping );
-    }
-  } );
-
-  socket.on( 'chat message', ( msg ) => {
-    $.addMessage( msg );
-  } );
-
-  let authenticate = () => {
-    socket.on('authenticated', () => {
-      // use the socket as usual
-      console.warn( 'authentication successful!' );
-    });
-
-    socket.on('unauthorized', function(err){
-      console.log("There was an error with the authentication:", err.message); 
-    });
-
-    socket.emit('authentication', { username: $.loginUsername.value, password: $.loginPassword.value });
-  };
+  }
 
 
 
-  $.form.addEventListener( 'submit', e => {
+  $.chatForm.addEventListener( 'submit', e => {
     e.preventDefault();
-    if ( $.entry.value ) {
-      if ( !meId ) {
+    if ( $.chatEntry.value ) {
+      if ( !state.client.cid ) {
         console.warn( 'Cannot post message while not logged' );
         return;
       }
 
       socket.emit( 'chat message', {
-        from: meId,
-        data: $.entry.value
+        from: state.client.cid,
+        data: $.chatEntry.value
       } );
-      $.entry.value = '';
-      $.entry.focus();
+      $.chatEntry.value = '';
+      $.chatEntry.focus();
     }
-    return false;
-  } );
-
-  $.loginForm.addEventListener( 'submit' , e => {
-    e.preventDefault();
-    authenticate();
     return false;
   } );
 
