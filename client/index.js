@@ -113,7 +113,7 @@ import {
 
   function onConnection(){
 
-    console.warn(...arguments);
+    socket.emit( 'authentication', state.client );
 
     socket.on( 'notwelcome', data => {
       data = { err: null, ...data};

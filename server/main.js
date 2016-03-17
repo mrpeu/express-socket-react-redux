@@ -51,43 +51,73 @@ function saveState( state ) {
 }
 
 io.on( 'connection', ( socket ) => {
-  // console.log( `Authentication of ${JSON.stringify(Object.keys(socket.client),0,1)} ${socket.conn.remoteAddress}...` );
+  socket.on( 'authentication', data => {
 
-  let data = { client: { cid: socket.client.id } };
+      if( !data.cid ) data.cid = socket.client.id;
 
-  authenticateUser( state, socket, data, ( err, state ) => {
+// console.warn( chalk.blue(`-----------: ${JSON.stringify(data)}`) );
+      authenticateUser( state, socket, data, ( err, _state ) => {
+        state = _state;
 
-    if( err ) {
-      return failAuthenticate( socket, state, `Authentication of ${JSON.stringify(data)} failed: ${err}` );
-    } else if ( state.clients.some( c => c.sid == data.id ) ) {
-      return failAuthenticate( socket, state, `Authentication of ${JSON.stringify(data)} refused!` );
-    } else {
-      return postAuthenticate( socket, state );
-    }
+        if( err ) {
+          return failAuthenticate( state, socket, `Authentication of ${JSON.stringify(data)} failed: ${err}` );
+        } else if ( state.clients.some( c => c.sid == data.id ) ) {
+          return failAuthenticate( state, socket, `Authentication of ${JSON.stringify(data)} refused!` );
+        } else {
+          return postAuthenticate( state, socket );
+        }
+
+      } );
 
   } );
-
 } );
 
 function authenticateUser ( state, socket, data, callback ) {
 
-  console.log( `Authentication of ${data.client.username}:${data.client.cid}...` );
+  let client = state.clients.find( c => c.cid === data.cid );
+if(client) console.warn( chalk.magenta(`    STILL ACTIVE: ${client.name} #${client.cid}`) );
 
-  return callback( null, state );
+  // check if already in state.clientsOld
+  if ( !client ) {
+    client = state.clientsOld.find( c => c.cid === data.cid );
+if(client) console.warn( chalk.magenta(`    RECENT: ${client.name} #${client.cid}`) );
+  }
+
+  if ( !client ) {
+    client = {
+      sid: data.cid, // session id
+      cid: data.cid, // client id
+      name: NAMES[ ~~( ( NAMES.length - 1 ) * Math.random() ) ],
+      color: COLORS[ ~~( ( COLORS.length - 1 ) * Math.random() ) ]
+    };
+if(client) console.warn( chalk.magenta(`    NEW: ${client.name} #${client.cid}`) );
+  }
+
+  client = { ...client,
+    sid: socket.client.id,
+    ts: Date.now(),
+    te: Date.now() + USER_TIMEOUT
+  };
+
+  // console.log( `Authentication of ${JSON.stringify(client)}...` );
+
+  return callback( null, {
+    ...state,
+    clients: [ client, ...state.clients.filter( c => c.cid != data.cid ) ],
+    clientsOld: [ ...state.clientsOld.filter( c => c.cid != data.cid ) ]
+  } );
 }
 
-function failAuthenticate( socket, state, msg ) {
+function failAuthenticate( state, socket, msg ) {
 
     socket.emit( 'notwelcome', { err: `err: ${msg}` } );
 
     return state;
 }
 
-function postAuthenticate( socket, state ) {
+function postAuthenticate( state, socket ) {
 
-  state = onClientConnection( state, socket );
-
-  var client = state.clients.find( c => c.sid == socket.client.id );
+  let client = state.clients.find( c => c.sid == socket.client.id );
 
   socket.on( 'chat message', function( msg ) {
     state = markClientAlive( state, client );
@@ -101,46 +131,24 @@ function postAuthenticate( socket, state ) {
   } );
 
   socket.on( 'disconnect', function() {
-    console.log( `> a client disconnected: ${client.name}#${client.cid}` );
-    state = onClientDisconnection( state, socket.client.sid );
+    console.log( `< a client disconnected: ${client.name} #${client.cid} #${client.sid}` );
+    state = onClientDisconnection( state, client );
 
     state = broadcastState( state );
   } );
 
-  console.log( '> a client connected: %s %s', client.name, client.cid, client.sid );
+  console.log( `> a client connected: ${client.name} #${client.cid} #${client.sid}` );
 
   socket.emit( 'welcome', { client } );
 
   return state = broadcastState( state );
 }
 
-function onClientConnection( state, socket ) {
-
-  let client = state.clients.find( c => c.sid === socket.client.id );
-
-  // todo: check if already in state.oldClients
-
-  if ( !client ) {
-    client = {
-      sid: socket.client.id, // session id
-      cid: socket.client.id, // client id
-      name: NAMES[ ~~( ( NAMES.length - 1 ) * Math.random() ) ],
-      color: COLORS[ ~~( ( COLORS.length - 1 ) * Math.random() ) ],
-      ts: Date.now(),
-      te: Date.now() + USER_TIMEOUT
-    };
-  }
-
+function onClientDisconnection( state, client ) {
   return {
     ...state,
-    clients: [ client, ...state.clients ]
-  };
-}
-
-function onClientDisconnection( state, sid ) {
-  return {
-    ...state,
-    clients: state.clients.filter( c => c.sid !== sid )
+    clients: state.clients.filter( c => c.sid !== client.sid ),
+    clientsOld: [ client, ...state.clientsOld ]
   };
 }
 
@@ -216,6 +224,7 @@ http.listen( 3000, () => {
   loadState( (err, data) => {
 
     state = data;
+    console.log( 'State loaded:', JSON.stringify(state) );
 
     console.log( 'listening on *:3000' );
 

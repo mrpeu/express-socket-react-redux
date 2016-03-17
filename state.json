@@ -1,5 +1,22 @@
 {
-  "clients": [],
+  "clients": [
+    {
+      "sid": "R-jLhEZhY6erUj7_AAAE",
+      "cid": "HxRKstY_-ZL8HR6KAAAB",
+      "name": "Arisu",
+      "color": "#2b2b2b",
+      "ts": 1458203145865,
+      "te": 1458203205865
+    },
+    {
+      "sid": "96-Iizjn-H7RRoQtAAAA",
+      "cid": "BYYAPc9wz6_8Y1R_AAAA",
+      "name": "Henry",
+      "color": "#2a5fe3",
+      "ts": 1458203142549,
+      "te": 1458203202549
+    }
+  ],
   "clientsOld": [],
   "messages": [
     {
