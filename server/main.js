@@ -51,23 +51,26 @@ function saveState( state ) {
 }
 
 io.on( 'connection', ( socket ) => {
+// console.warn(chalk.green(JSON.stringify(socket.request.connection.remoteAddress)));
+// console.warn( chalk.green(`SOCKET: ${JSON.stringify(Object.keys(socket.client.conn.request))} ${JSON.stringify('data')}`) );
+
   socket.on( 'authentication', data => {
 
-      if( !data.cid ) data.cid = socket.client.id;
+    if( !data.cid ) data.cid = socket.client.id;
 
 // console.warn( chalk.blue(`-----------: ${JSON.stringify(data)}`) );
-      authenticateUser( state, socket, data, ( err, _state ) => {
-        state = _state;
+    authenticateUser( state, socket, data, ( err, _state ) => {
+      state = _state;
 
-        if( err ) {
-          return failAuthenticate( state, socket, `Authentication of ${JSON.stringify(data)} failed: ${err}` );
-        } else if ( state.clients.some( c => c.sid == data.id ) ) {
-          return failAuthenticate( state, socket, `Authentication of ${JSON.stringify(data)} refused!` );
-        } else {
-          return postAuthenticate( state, socket );
-        }
+      if( err ) {
+        return failAuthenticate( state, socket, `Authentication of ${JSON.stringify(data)} failed: ${err}` );
+      } else if ( state.clients.some( c => c.sid == data.id ) ) {
+        return failAuthenticate( state, socket, `Authentication of ${JSON.stringify(data)} refused!` );
+      } else {
+        return postAuthenticate( state, socket );
+      }
 
-      } );
+    } );
 
   } );
 } );
@@ -75,36 +78,42 @@ io.on( 'connection', ( socket ) => {
 function authenticateUser ( state, socket, data, callback ) {
 
   let client = state.clients.find( c => c.cid === data.cid );
-if(client) console.warn( chalk.magenta(`    STILL ACTIVE: ${client.name} #${client.cid}`) );
+
+  if(client) console.warn( chalk.magenta(`  STILL ACTIVE: ${client.name} #${client.cid}`) );
 
   // check if already in state.clientsOld
   if ( !client ) {
     client = state.clientsOld.find( c => c.cid === data.cid );
-if(client) console.warn( chalk.magenta(`    RECENT: ${client.name} #${client.cid}`) );
+    if(client) console.warn( chalk.magenta(`  RECENT: ${client.name} #${client.cid}`) );
   }
+
 
   if ( !client ) {
     client = {
-      sid: data.cid, // session id
+      sid: data.sid, // session id
       cid: data.cid, // client id
       name: NAMES[ ~~( ( NAMES.length - 1 ) * Math.random() ) ],
-      color: COLORS[ ~~( ( COLORS.length - 1 ) * Math.random() ) ]
+      color: COLORS[ ~~( ( COLORS.length - 1 ) * Math.random() ) ],
+      chat: false,
+      ...data
     };
-if(client) console.warn( chalk.magenta(`    NEW: ${client.name} #${client.cid}`) );
+    if(client) console.warn( chalk.magenta(`  NEW: ${client.name} #${client.cid}`) );
   }
+
 
   client = { ...client,
     sid: socket.client.id,
+    address: socket.handshake.address,
     ts: Date.now(),
     te: Date.now() + USER_TIMEOUT
   };
 
-  // console.log( `Authentication of ${JSON.stringify(client)}...` );
+  console.log( `Authentication of ${JSON.stringify(client)}...` );
 
   return callback( null, {
     ...state,
-    clients: [ client, ...state.clients.filter( c => c.cid != data.cid ) ],
-    clientsOld: [ ...state.clientsOld.filter( c => c.cid != data.cid ) ]
+    clients: [ client, ...state.clients.filter( c => c.cid != client.cid ) ],
+    clientsOld: [ ...state.clientsOld.filter( c => c.cid != client.cid ) ]
   } );
 }
 
@@ -119,25 +128,29 @@ function postAuthenticate( state, socket ) {
 
   let client = state.clients.find( c => c.sid == socket.client.id );
 
-  socket.on( 'chat message', function( msg ) {
+  socket.on( 'chat-message', function( msg, callback ) {
     state = markClientAlive( state, client );
 
-    if ( msg.data ) {
-      console.log( `> ${client.name} #${client.cid}: ${JSON.stringify( msg.data, null, 1 )}` )
-      state = newMessage( state, msg );
-      socket.emit( 'chat message', msg );
-      socket.broadcast.emit( 'chat message', msg );
-    }
+    if ( !msg.data ) return;
+
+    console.log( `> ${client.name} #${client.cid}: ${JSON.stringify( msg.data, null, 1 )}` )
+    state = newMessage( state, msg );
+
+    callback();
+    // socket.emit( 'chat-message', msg );
+    socket.broadcast.emit( 'chat-message', msg );
   } );
 
   socket.on( 'disconnect', function() {
     console.log( `< a client disconnected: ${client.name} #${client.cid} #${client.sid}` );
+    // console.log( `< a client disconnected: ${JSON.stringify(client,0,1)}` );
     state = onClientDisconnection( state, client );
 
     state = broadcastState( state );
   } );
 
-  console.log( `> a client connected: ${client.name} #${client.cid} #${client.sid}` );
+  // console.log( `> a client connected: ${client.name} #${client.cid} #${client.sid}` );
+  console.log( `> a client connected: ${JSON.stringify(client,0,1)}` );
 
   socket.emit( 'welcome', { client } );
 

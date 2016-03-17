@@ -15,7 +15,7 @@ import {
   };
 
   var state = loadState( {
-    client: { cid: null },
+    client: { cid: null, chat: true },
     clients: []
   } );
 
@@ -63,6 +63,8 @@ import {
         $.chat.classList[ 'remove' ]( 'on' );
       }
 
+      document.getElementById('contentDebug').innerHTML = `<pre>${JSON.stringify(state,0,1)}</pre>`;
+
       return state;
     },
     updateClientList: ( clients ) => {
@@ -72,7 +74,7 @@ import {
         let elc = document.createElement( 'li' );
         elc.className = 'client';
         elc.title = c.cid;
-        elc.textContent = c.name;
+        elc.innerHTML = `<span>${c.name}${c.chat ? '&nbsp;<x-small>💬</x-small>':''}</span>`
         elc.style[ 'border-color' ] = c.color;
         el.appendChild( elc );
       } );
@@ -82,11 +84,11 @@ import {
     },
     updateName: ( me ) => {
       if ( me ) {
-        $.chatName.textContent = me.name;
+        $.chatName.innerHTML = `<span>${me.name}${me.chat ? '&nbsp;<x-small>💬</x-small>':''}</span>`;
         $.chatName.title = me.cid;
         $.chatName.style[ "border-color" ] = me.color;
       } else {
-        $.chatName.textContent = 'Not logged in';
+        $.chatName.htmlContent = 'Not logged in';
         $.chatName.title = '';
         delete $.chatName.style[ "border-color" ];
       }
@@ -113,7 +115,7 @@ import {
 
   function onConnection(){
 
-    socket.emit( 'authentication', state.client );
+    socket.emit( 'authentication', { client: { ...state.client } } );
 
     socket.on( 'notwelcome', data => {
       data = { err: null, ...data};
@@ -126,15 +128,13 @@ import {
       //   return;
       // }
 
-      data = { client: { cid: null }, err: null, ...data};
+      state = saveState( {...state, client: data.client } );
 
-      console.log( `Welcome: ${data.client.cid}` );
-
-      state.client.cid = data.client.cid;
+      console.log( `Welcome: ${state.client.cid}` );
 
       // rudimentary "I-am-alive" ping
       ping = setInterval( () => {
-        socket.emit( 'chat message', { from: state.client.cid } );
+        socket.emit( 'chat-message', { from: state.client.cid } );
       }, 10000 );
 
       state = $.updateDOM( state );
@@ -145,21 +145,21 @@ import {
 
         state = $.updateDOM( state );
 
-        if ( state.clients.findIndex( c => c.cid == state.client.cid ) < 0 ) {
-          // deconnected
+        if ( !state.clients.some( c => c.cid == state.client.cid ) ) {
+          console.error( `Not in the client list anymore! ${state.client.cid} C ${state.clients.map(c=>c.cid).join(', ')}` );
           clearInterval( ping );
-          state.client.cid = null;
+          // state.client.cid = null;
         }
       } );
 
-      socket.on( 'chat message', ( msg ) => {
+      socket.on( 'chat-message', ( msg ) => {
         $.addMessage( msg );
       } );
 
       setInterval( () => {
         state = cleanState( state );
         state = saveState( state );
-      }, 10000);
+      }, 2000);
 
     } );
 
@@ -169,15 +169,21 @@ import {
 
   $.chatForm.addEventListener( 'submit', e => {
     e.preventDefault();
-    if ( $.chatEntry.value ) {
+    let data = $.chatEntry.value;
+    let t = Date.now();
+    if ( data ) {
       if ( !state.client.cid ) {
         console.warn( 'Cannot post message while not logged' );
         return;
       }
 
-      socket.emit( 'chat message', {
-        from: state.client.cid,
-        data: $.chatEntry.value
+      socket.emit( 'chat-message', { data, t, from: state.client.cid }, err => {
+        if( err ){
+          $.addMessage( { from: state.client.cid,
+            data:'<span style="color:red">Failed to send:</span> ' + data } );
+        } else {
+          $.addMessage( { from: state.client.cid, data } );
+        }
       } );
       $.chatEntry.value = '';
       $.chatEntry.focus();

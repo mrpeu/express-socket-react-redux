@@ -120,7 +120,7 @@ button {
     flex: 1 1 10%;
 }
 
-#messages {
+#chatMessages {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -128,10 +128,10 @@ button {
     flex: 1 0 auto;
     width: 100%;
 }
-#messages li {
+#chatMessages li {
     padding: 5px 10px;
     border-bottom: 1px solid #fafafa;
 }
-#messages li:nth-child(even) {
+#chatMessages li:nth-child(even) {
     background: #fafafa;
 }
