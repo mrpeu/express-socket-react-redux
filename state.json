@@ -1,30 +1,5 @@
 {
-  "clients": [
-    {
-      "sid": "dLlDZNKsT20HkVISAAAW",
-      "cid": "dLlDZNKsT20HkVISAAAW",
-      "name": "Ella",
-      "color": "#aaa",
-      "ts": 1458132086649,
-      "te": 1458132146649
-    },
-    {
-      "sid": "tZNI-l37ZHws_v0AAAAV",
-      "cid": "tZNI-l37ZHws_v0AAAAV",
-      "name": "Amaterasu",
-      "color": "#d94835",
-      "ts": 1458132081860,
-      "te": 1458132141860
-    },
-    {
-      "sid": "uiyxb5RRTFiRt5mOAAAP",
-      "cid": "uiyxb5RRTFiRt5mOAAAP",
-      "name": "Desmond",
-      "color": "#e44",
-      "ts": 1458132086120,
-      "te": 1458132146120
-    }
-  ],
+  "clients": [],
   "clientsOld": [],
   "messages": [
     {

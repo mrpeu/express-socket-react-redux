@@ -5,7 +5,7 @@
     box-sizing: border-box;
     flex: 10 1 auto;
 }
-html { height: 100% }
+html {height: 100%;overflow: hidden;}
 body {
     font-size: small;
     font-family: Segoe UI, Arial;
@@ -14,6 +14,21 @@ body {
     display: flex;
     flex-flow: row nowrap;
 }
+input {
+    border: 0;
+    border-radius: .1em;
+    padding: .5em;
+    margin-right: 1em;
+}
+button {
+    background: #68C;
+    color: #fff;
+    font-weight: bold;
+    border-radius: .1em;
+    border: 1px solid #57B;
+    padding: .5em;
+}
+/*----------------*/
 #login {
   position: absolute;
   margin: auto;
@@ -21,21 +36,27 @@ body {
   right: 0;
   bottom: 0;
   left: 0;
-
   cursor: alias;
   background-color: #eee;
   width: 50%;
   height: 50%;
-  border: 1px solid red;
-  border-radius: .1em;
-
-  transition: 2000ms cubic-bezier(0, -0.55, 0.265, 1.55);
-  transition-property: transformX;
-  transform: translateX(-200%);
+  border: 1px solid #ddd;
+  padding: 1em;
+  border-radius: .2em;
+  transition: 224ms ease-out;
+  transition-property: transform;
+  transform: translateY(-200%);
+  display: flex;
+  align-items: center;
+}
+#login>#loginForm {
+    display: flex;
+    align-items: center;
 }
 #login.isVisible {
-  transform: translateX(0);
+  transform: translateY(0);
 }
+/*----------------*/
 #chat {
   display: none;
 }
@@ -83,7 +104,7 @@ body {
 }
 #chat form #name {
     flex: 1 0 auto;
-    padding: .5em .9em;
+    padding: .0em .9em;
     margin: 0 .5em;
     border-radius: .1em;
     border-top: .6em solid;
@@ -91,21 +112,11 @@ body {
 }
 #chat form #entry {
     flex: 2 1 80%;
-    border: 0;
-    border-radius: .1em;
-    padding: 10px;
     width: 90%;
     margin-right: .5%;
 }
 #chat form #send {
     flex: 1 1 10%;
-    background: #68C;
-    color: #fff;
-    font-weight: bold;
-    border: none;
-    padding: 10px;
-    border-radius: .1em;
-    border: 1px solid #57B;
 }
 
 #messages {

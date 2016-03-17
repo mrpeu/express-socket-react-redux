@@ -22,7 +22,7 @@ import {
   var $ = {
     login: document.getElementById( 'login' ),
     loginForm: document.getElementById( 'loginForm' ),
-    loginUserName: document.getElementById( 'loginUserName' ),
+    loginUsername: document.getElementById( 'loginUsername' ),
     loginPassword: document.getElementById( 'loginPassword' ),
     loginSend: document.getElementById( 'loginSend' ),
 
@@ -141,10 +141,16 @@ import {
   } );
 
   let authenticate = () => {
-    socket.emit('authentication', { username: $.loginUsername.value, password: $.loginPassword.value });
-    socket.on('authenticated', function() {
+    socket.on('authenticated', () => {
       // use the socket as usual
+      console.warn( 'authentication successful!' );
     });
+
+    socket.on('unauthorized', function(err){
+      console.log("There was an error with the authentication:", err.message); 
+    });
+
+    socket.emit('authentication', { username: $.loginUsername.value, password: $.loginPassword.value });
   };
 
 
@@ -168,8 +174,11 @@ import {
   } );
 
   $.loginForm.addEventListener( 'submit' , e => {
+    e.preventDefault();
     authenticate();
+    return false;
   } );
 
+  setTimeout( () => { state = $.updateDOM(state); }, 100 );
 
 }() )
