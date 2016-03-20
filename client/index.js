@@ -1,6 +1,6 @@
-import { io } from 'socket.io-client';
-import { React, PropTypes } from 'react';
-import { ReactDOM } from 'react-dom';
+import io from 'socket.io-client';
+import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import { Provider, connect } from 'react-redux';
 
@@ -53,7 +53,6 @@ import { Provider, connect } from 'react-redux';
 
   // Map Redux actions to component props
   const mapDispatchToProps = (dispatch) => {
-    console.log('mapDispatchToProps');
     return {
       onIncreaseClick: () => dispatch(Action.increase),
     };
@@ -112,7 +111,7 @@ import { Provider, connect } from 'react-redux';
     chatForm: document.getElementById('chatForm'),
     chatMessages: document.getElementById('chatMessages'),
     chatEntry: document.getElementById('chatEntry'),
-    chatName: document.getElementById('chatName'),
+    Username: document.getElementById('Username'),
 
     updateDOM: (state) => {
       const me = getClient(state, state.client.cid);
@@ -162,13 +161,13 @@ import { Provider, connect } from 'react-redux';
         if (!!c.chat) symbol += '💬';
         if (!!c.runner) symbol += '⚙';
 
-        $.chatName.innerHTML = `<span><x-small>${symbol}</x-small>&nbsp;${c.name}</span>`;
-        $.chatName.title = c.cid;
-        $.chatName.style['border-color'] = c.color;
+        $.Username.innerHTML = `<span><x-small>${symbol}</x-small>&nbsp;${c.name}</span>`;
+        $.Username.title = c.cid;
+        $.Username.style['border-color'] = c.color;
       } else {
-        $.chatName.htmlContent = 'Not logged in';
-        $.chatName.title = '';
-        delete $.chatName.style['border-color'];
+        $.Username.htmlContent = 'Not logged in';
+        $.Username.title = '';
+        delete $.Username.style['border-color'];
       }
     },
 
@@ -203,9 +202,11 @@ import { Provider, connect } from 'react-redux';
       console.log(`Welcome: ${state.client.cid}`);
 
       // rudimentary "I-am-alive" ping
+      if(!ping)
       ping = setInterval(() => {
+        console.log(`socket.emit('chat-message', { from: ${state.client.cid} });`);
         socket.emit('chat-message', { from: state.client.cid });
-      }, 10000);
+      }, 5000);
 
       state = $.updateDOM(state);
 
@@ -216,8 +217,8 @@ import { Provider, connect } from 'react-redux';
         state = $.updateDOM(state);
 
         if (!state.clients.some(c => c.cid === state.client.cid)) {
-          console.error(`Not in the client list anymore!
-            ${state.client.cid}  C  ${state.clients.map(c => c.cid).join(', ')}`
+          console.error( `Not in the client list anymore!` +
+            `${state.client.cid}  C  ${state.clients.map(c => c.cid).join(', ')}`
           );
           clearInterval(ping);
           // state.client.cid = null;

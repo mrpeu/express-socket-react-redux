@@ -8,6 +8,7 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const _ = require('lodash');
 
 process.env.DEBUG = '';
 
@@ -44,7 +45,9 @@ const loadState = (cb) => {
       state = JSON.parse(data);
     }
 
-    return cb(err, state);
+    return cb(err, {
+      'clients': [], 'clientsOld': [], 'messages': [], ...state
+    });
   });
 };
 
@@ -59,8 +62,8 @@ const saveState = (state) => {
 const broadcastState = (state) => {
   console.log(`Broadcast state.clients: [${
     state.clients.reduce((s, c) =>
-      `${s}${style.bgColor.ansi.hex(c.color)}_${style.bgColor.close}${c.name}
-      (${((c.te - Date.now()) / 1000).toFixed(2)}s), `
+      `${s}${style.bgColor.ansi.hex(c.color)}_${style.bgColor.close}${c.name}`+
+      `(${(((c.ts+USER_TIMEOUT) - Date.now()) / 1000).toFixed(2)}s), `
     , '').replace(/, $/, '')
   }]`);
   io.of('').emit('state.clients', state.clients);
@@ -110,18 +113,23 @@ function onClientDisconnection(state, client) {
   };
 }
 
-const markClientAlive = (state, client) => ({
-  ...state,
-  clients: state.clients.map(c =>
-    (c.cid !== client.cid)
-    ? c
-    : {
-      ...c,
-      ts: Date.now(),
-      te: Date.now() + USER_TIMEOUT
-    }
-  )
-});
+const markClientAlive = (state, client) => {
+  console.log( chalk.blue(`${client.name} time to live: ${(client.ts + USER_TIMEOUT - Date.now()) / 1000}s`) );
+  let nState = {
+    ...state,
+    clients: state.clients.map(c =>
+      (c.cid === client.cid)
+      ? {
+        ...c,
+        ts: Date.now()
+      }
+      : c
+    )
+  };
+  console.log( chalk.blue(`${nState.clients[0].name} time to live: ${(nState.clients[0].ts + USER_TIMEOUT - Date.now()) / 1000}s`) );
+
+  return nState;
+};
 
 const newMessage = (state, msg) => ({
   ...state,
@@ -159,8 +167,7 @@ const authenticateClient = (state, socket, dataClient, callback) => {
     if (client) console.warn(chalk.magenta(`  NEW: ${client.name} #${client.cid}`));
   }
 
-
-  client = { ...client,
+  client = { ...(_.pick(client,'cid,name,color,address,chat,runner'.split(','))),
     sid: socket.client.id,
     address: socket.handshake.address,
     ts: Date.now(),
@@ -183,6 +190,7 @@ const postAuthenticate = (state, socket) => {
   const client = state.clients.find(c => c.sid === socket.client.id);
 
   socket.on('chat-message', (msg, callback) => {
+
     state = markClientAlive(state, client);
 
     if (!msg.data) return;
@@ -221,15 +229,14 @@ io.on('connection', (socket) => {
 
   socket.on('authentication', data => {
 // console.warn(chalk.blue(`-----------: ${JSON.stringify(data)}`));
-    authenticateClient(state, socket, data.client, (err, _state, isNew) => {
-      state = _state;
+    state = authenticateClient(state, socket, data.client, (err, state, isNew) => {
 
       if (err)
-        failAuthenticate(state, socket, `Authentication of ${JSON.stringify(data)} failed: ${err}`);
+        return failAuthenticate(state, socket, `Authentication of ${JSON.stringify(data)} failed: ${err}`);
       else if (state.clients.some(c => c.sid === data.client.cid))
-        failAuthenticate(state, socket, `Authentication of ${JSON.stringify(data)} refused!`);
-      else
-        if (isNew) postAuthenticate(state, socket);
+        return failAuthenticate(state, socket, `Authentication of ${JSON.stringify(data)} refused!`);
+      else // if (isNew)
+        return postAuthenticate(state, socket);
     });
   });
 });
