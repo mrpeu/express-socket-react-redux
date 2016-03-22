@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import { Provider, connect } from 'react-redux';
 
-( ( ) => {
+( () => {
   let ping = null;
   let state = null;
   let socket;
@@ -15,8 +15,8 @@ import { Provider, connect } from 'react-redux';
   // React component
   const AppContent = ( { value, onIncreaseClick } ) =>
     <div>
-      <span>{value}</span>
-      <button onClick={onIncreaseClick}>Increase</button>
+      <span>{ value }</span>
+      <button onClick = { onIncreaseClick } >Increase</button>
     </div>
   ;
 
@@ -53,7 +53,7 @@ import { Provider, connect } from 'react-redux';
 
   // Map Redux actions to component props
   const mapDispatchToProps = ( dispatch ) => ( {
-    onIncreaseClick: ( ) => dispatch( Action.increase )
+    onIncreaseClick: () => dispatch( Action.increase )
   } );
 
   // Connected Component:
@@ -62,26 +62,22 @@ import { Provider, connect } from 'react-redux';
     mapDispatchToProps
   )( AppContent );
 
-  ReactDOM.render(
-    <Provider store={store}>
-      <App />
-    </Provider>,
+  ReactDOM.render( < Provider store = { store } >
+    < App / >
+    < /Provider>,
     document.getElementById( 'main' )
   );
 
   // ------------------------------------
   // ====================================
 
-
-  window.onbeforeunload = ( ) => {
-    socket.close( );
+  window.onbeforeunload = () => {
+    socket.close();
   };
 
-  const loadState = ( ) => localStorage.state
-  ? JSON.parse( localStorage.state )
-  : {
+  const loadState = () => localStorage.state ? JSON.parse( localStorage.state ) : {
     client: { cid: null, chat: true },
-    clients: [ ],
+    clients: [],
   };
 
   const saveState = ( state ) => {
@@ -91,9 +87,8 @@ import { Provider, connect } from 'react-redux';
 
   const cleanState = ( state ) => state;
 
-
   const getClient = ( state, id ) => {
-    const client = state.clients.find( c => c.cid === id );
+    const client = state.clients.active.find( c => c.cid === id );
     // if( !client ) throw ":o"
     return client;
   };
@@ -176,13 +171,12 @@ import { Provider, connect } from 'react-redux';
       li.innerHTML = `<b style="color:${sender.color};">
         ${( msg.from === state.client.cid ? 'me' : sender.name )}
         </b>:
-        ${msg.data}`
-      ;
+        ${msg.data}`;
       $.chatMessages.appendChild( li );
     },
   };
 
-  const onConnection = ( ) => {
+  const onConnection = () => {
     socket.emit( 'authentication', { client: { ...state.client } } );
 
     socket.on( 'notwelcome', data => {
@@ -201,16 +195,19 @@ import { Provider, connect } from 'react-redux';
 
       // rudimentary "I-am-alive" ping
       if ( ping ) clearInterval( ping );
-      ping = setInterval( ( ) => {
+      ping = setInterval( () => {
         console.log( `socket.emit( 'chat-message', { from: ${state.client.cid} } );` );
         socket.emit( 'chat-message', { from: state.client.cid } );
-      }, 10000 );
+      }, 5000 );
 
-      state = $.updateDOM( state );
+      socket.on( 'state', serverState => {
+        state = { ...state, serverState };
 
-      socket.on( 'state.clients', clients => {
-        state.clients = clients;
-        console.log( 'new state.clients %s', JSON.stringify( clients.map( c => c.name ) ) );
+        console.warn( JSON.stringify( serverState ) );
+
+        console.log( 'new state.clients %s',
+          JSON.stringify( state.clients.active.map( c => c.name ) )
+        );
 
         state = $.updateDOM( state );
 
@@ -223,22 +220,23 @@ import { Provider, connect } from 'react-redux';
         }
       } );
 
+      state = $.updateDOM( state );
+
       socket.on( 'chat-message', ( msg ) => {
         $.addMessage( msg );
       } );
 
-      setInterval( ( ) => {
+      setInterval( () => {
         state = cleanState( state );
         state = saveState( state );
       }, 5000 );
     } );
   };
 
-
   $.chatForm.addEventListener( 'submit', e => {
-    e.preventDefault( );
+    e.preventDefault();
     const data = $.chatEntry.value;
-    const t = Date.now( );
+    const t = Date.now();
     if ( data ) {
       if ( !state.client.cid ) {
         console.warn( 'Cannot post message while not logged' );
@@ -247,23 +245,24 @@ import { Provider, connect } from 'react-redux';
 
       socket.emit( 'chat-message', { data, t, from: state.client.cid }, err => {
         if ( err ) {
-          $.addMessage( { from: state.client.cid,
-            data: `<span style="color:red">Failed to send:</span> ${data}` } );
+          $.addMessage( {
+            from: state.client.cid,
+            data: `<span style="color:red">Failed to send:</span> ${data}`
+          } );
         } else {
           $.addMessage( { from: state.client.cid, data } );
         }
       } );
       $.chatEntry.value = '';
-      $.chatEntry.focus( );
+      $.chatEntry.focus();
     }
   } );
 
+  socket = io();
 
-  socket = io( );
-
-  state = loadState( );
+  state = loadState();
 
   socket.on( 'connect', onConnection );
 
-  setTimeout( ( ) => { state = $.updateDOM( state ); }, 100 );
-} )( );
+  setTimeout( () => { state = $.updateDOM( state ); }, 100 );
+} )();

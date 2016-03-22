@@ -1,6 +1,7 @@
 const alltypes = [
   'authenticateClient',
   'connectClient',
+  'disconnectClient',
   'refuseClient',
   'markClientAlive',
   'receiveMessage',
@@ -8,39 +9,41 @@ const alltypes = [
   'cleanState',
 ];
 
-export const Types = (_alltypes => {
+export const Types = ( _alltypes => {
   const _types = {};
-  _alltypes.forEach(t => {
-    _types[t] = t;
-  });
+  _alltypes.forEach( t => {
+    _types[ t ] = t;
+  } );
   return _types;
-})(alltypes);
+} )( alltypes );
 
 
-export function authenticateClient(socket, client) {
-  return { type: Types.authenticateClient, socket, client };
+/* clients */
+export function connectClient( socket, client ) {
+  return { type: Types.connectClient, socket, client };
 }
 
-export function connectClient(socket, client, isNew) {
-  return { type: Types.connectClient, socket, client, isNew };
-}
-
-export function refuseClient(socket, client) {
+export function refuseClient( socket, client ) {
   return { type: Types.refuseClient, socket, client };
 }
 
-export function markClientAlive(client) {
+export function markClientAlive( client ) {
   return { type: Types.markClientAlive, client };
 }
-
-export function receiveMessage(...args) {
-  return { type: Types.receiveMessage, ...args };
+export function disconnectClient( socket, client ) {
+  return { type: Types.disconnectClient, socket, client };
 }
 
-export function addMessage(...args) {
-  return { type: Types.addMessage, ...args };
+/* messages */
+export function receiveMessage( socket, client, msg, cb ) {
+  return { type: Types.receiveMessage, socket, client, msg, cb };
 }
 
-export function cleanState(state) {
-  return { type: Types.cleanState, state };
+export function addMessage( from, msg ) {
+  return { type: Types.addMessage, from, msg };
+}
+
+
+export function cleanState() {
+  return { type: Types.cleanState };
 }

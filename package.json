@@ -77,6 +77,7 @@
       "space-in-parens": [2, "always"],
       "array-bracket-spacing": [2, "always"],
       "computed-property-spacing": [2, "always"],
+      "no-else-return": 0,
       "no-param-reassign": 0,
       "no-unused-vars": 0
     },
