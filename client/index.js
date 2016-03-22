@@ -52,11 +52,9 @@ import { Provider, connect } from 'react-redux';
   }
 
   // Map Redux actions to component props
-  const mapDispatchToProps = (dispatch) => {
-    return {
-      onIncreaseClick: () => dispatch(Action.increase),
-    };
-  };
+  const mapDispatchToProps = (dispatch) => ({
+    onIncreaseClick: () => dispatch(Action.increase)
+  });
 
   // Connected Component:
   const App = connect(
@@ -202,11 +200,11 @@ import { Provider, connect } from 'react-redux';
       console.log(`Welcome: ${state.client.cid}`);
 
       // rudimentary "I-am-alive" ping
-      if(!ping)
+      if (ping) clearInterval(ping);
       ping = setInterval(() => {
         console.log(`socket.emit('chat-message', { from: ${state.client.cid} });`);
         socket.emit('chat-message', { from: state.client.cid });
-      }, 5000);
+      }, 10000);
 
       state = $.updateDOM(state);
 
@@ -217,7 +215,7 @@ import { Provider, connect } from 'react-redux';
         state = $.updateDOM(state);
 
         if (!state.clients.some(c => c.cid === state.client.cid)) {
-          console.error( `Not in the client list anymore!` +
+          console.error('Not in the client list anymore!' +
             `${state.client.cid}  C  ${state.clients.map(c => c.cid).join(', ')}`
           );
           clearInterval(ping);
