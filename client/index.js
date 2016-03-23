@@ -198,7 +198,7 @@ import { Provider, connect } from 'react-redux';
       ping = setInterval( () => {
         console.log( `socket.emit( 'chat-message', { cid: ${state.client.cid} } );` );
         console.log();
-        socket.emit( 'chat-message', { cid: state.client.cid } );
+        socket.emit( 'chat-message', { cid: state.client.cid }, () => {} );
       }, 30000 );
 
       socket.on( 'state', serverState => {

@@ -5,31 +5,22 @@
       {
         "name": "Lincoln",
         "color": "#84454a",
-        "cid": "ZE8lQwq_4aLay_STAAAA",
+        "cid": "v1ClPNQBOdxdWHx8AAAD",
         "chat": true,
-        "ts": 1458724566999,
-        "address": "::ffff:127.0.0.1",
-        "sid": "ZE8lQwq_4aLay_STAAAA"
+        "ts": 1458749454547,
+        "address": "::1",
+        "sid": "v1ClPNQBOdxdWHx8AAAD"
       }
     ],
     "old": [
       {
         "name": "Lincoln",
         "color": "#84454a",
-        "cid": "1XWPJ8EGsiN9F7RHAAAD",
+        "cid": "ZxPP3pzqvnk1qRfLAAAB",
         "chat": true,
-        "ts": 1458722411174,
+        "ts": 1458726765198,
         "address": "::1",
-        "sid": "1XWPJ8EGsiN9F7RHAAAD"
-      },
-      {
-        "name": "Lincoln",
-        "color": "#84454a",
-        "cid": "sZ0UFq2Z0q8co08EAAAF",
-        "chat": true,
-        "ts": 1458723096228,
-        "address": "::1",
-        "sid": "sZ0UFq2Z0q8co08EAAAF"
+        "sid": "ZxPP3pzqvnk1qRfLAAAB"
       }
     ]
   },
@@ -37,12 +28,14 @@
     {
       "data": "Abracadabra...",
       "t": 1458722359876,
-      "cid": "1XWPJ8EGsiN9F7RHAAAD"
+      "cid": "1XWPJ8EGsiN9F7RHAAAD",
+      "name": "Lincoln"
     },
     {
       "data": "BOUM!",
       "t": 1458722361559,
-      "cid": "xPWbRnr3OzM8BwnrAAAC"
+      "cid": "xPWbRnr3OzM8BwnrAAAC",
+      "name": "Ava"
     }
   ],
   "last": ""

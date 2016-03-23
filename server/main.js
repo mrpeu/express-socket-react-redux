@@ -121,6 +121,8 @@ function validateMessage( stateMessages, socket, client, msg, cbConfirm ) {
     socket.broadcast.emit( 'chat-message', msg );
 
     return true;
+  } else {
+    cbConfirm( { err: 'Message refused' } );
   }
 
   return false;
@@ -131,6 +133,10 @@ function addMessage( stateMessages, client, msg ) {
     ...stateMessages,
     msg
   ];
+}
+
+function refuseMessage( stateMessages, client, msg ) {
+  return stateMessages;
 }
 
 
@@ -326,6 +332,8 @@ store = createStore( combineReducers( {
 // console.warn( chalk.yellow( `${JSON.stringify( action, 0, 1 )}` ) );
         if ( validateMessage( stateMessages, action.socket, action.client, action.msg, action.cb ) )
           return addMessage( stateMessages, action.client, action.msg );
+        else
+          return refuseMessage( stateMessages, action.client, action.msg );
 
       default:
         return stateMessages;
