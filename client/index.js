@@ -75,10 +75,10 @@ import { Provider, connect } from 'react-redux';
     socket.close();
   };
 
-  const loadState = () => localStorage.state ? JSON.parse( localStorage.state ) : {
-    client: { cid: null, chat: true },
-    clients: [],
-  };
+  const loadState = () => ( localStorage.state
+    ? JSON.parse( localStorage.state )
+    : { client: {}, clients: [] }
+  );
 
   const saveState = ( state ) => {
     localStorage.state = JSON.stringify( state );
@@ -88,7 +88,7 @@ import { Provider, connect } from 'react-redux';
   const cleanState = ( state ) => state;
 
   const getClient = ( state, id ) => {
-    const client = state.clients.active.find( c => c.cid === id );
+    const client = state.clients.find( c => c.cid === id );
     // if( !client ) throw ":o"
     return client;
   };
@@ -189,7 +189,7 @@ import { Provider, connect } from 'react-redux';
       //   return;
       // }
 
-      state = saveState( { ...state, client: data.client } );
+      state = saveState( { ...state, ...data } );
 
       console.log( `Welcome: ${state.client.cid}` );
 
@@ -197,6 +197,7 @@ import { Provider, connect } from 'react-redux';
       if ( ping ) clearInterval( ping );
       ping = setInterval( () => {
         console.log( `socket.emit( 'chat-message', { from: ${state.client.cid} } );` );
+        console.log(  );
         socket.emit( 'chat-message', { from: state.client.cid } );
       }, 5000 );
 
@@ -205,15 +206,16 @@ import { Provider, connect } from 'react-redux';
 
         console.warn( JSON.stringify( serverState ) );
 
-        console.log( 'new state.clients %s',
-          JSON.stringify( state.clients.active.map( c => c.name ) )
+        console.log( 'new state.clients(%d) %s',
+          state.clients.length,
+          JSON.stringify( state.clients.map( c => c.name ) )
         );
 
         state = $.updateDOM( state );
 
         if ( !state.clients.some( c => c.cid === state.client.cid ) ) {
-          console.error( 'Not in the client list anymore!' +
-            `${state.client.cid}  C  ${state.clients.map( c => c.cid ).join( ', ' )}`
+          console.error( 'Not in the client list! ' +
+            `${state.client.cid}  C  ${state.clients.map( c => c.cid ).join( ', ' )};`
           );
           clearInterval( ping );
           // state.client.cid = null;
