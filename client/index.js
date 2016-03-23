@@ -165,11 +165,11 @@ import { Provider, connect } from 'react-redux';
     },
 
     addMessage: ( msg ) => {
-      const sender = getClient( state, msg.from );
+      const sender = getClient( state, msg.cid );
       const li = document.createElement( 'li' );
       li.className = 'chat-line';
       li.innerHTML = `<b style="color:${sender.color};">
-        ${( msg.from === state.client.cid ? 'me' : sender.name )}
+        ${( msg.cid === state.client.cid ? 'me' : sender.name )}
         </b>:
         ${msg.data}`;
       $.chatMessages.appendChild( li );
@@ -196,20 +196,20 @@ import { Provider, connect } from 'react-redux';
       // rudimentary "I-am-alive" ping
       if ( ping ) clearInterval( ping );
       ping = setInterval( () => {
-        console.log( `socket.emit( 'chat-message', { from: ${state.client.cid} } );` );
-        console.log(  );
-        socket.emit( 'chat-message', { from: state.client.cid } );
-      }, 5000 );
+        console.log( `socket.emit( 'chat-message', { cid: ${state.client.cid} } );` );
+        console.log();
+        socket.emit( 'chat-message', { cid: state.client.cid } );
+      }, 30000 );
 
       socket.on( 'state', serverState => {
-        state = { ...state, serverState };
+        state = { ...state, ...serverState };
 
-        console.warn( JSON.stringify( serverState ) );
+        // console.warn( JSON.stringify( serverState ) );
 
-        console.log( 'new state.clients(%d) %s',
-          state.clients.length,
-          JSON.stringify( state.clients.map( c => c.name ) )
-        );
+        // console.warn( 'new state.clients(%d) %s',
+        //   state.clients.length,
+        //   JSON.stringify( state.clients.map( c => c.name ) )
+        // );
 
         state = $.updateDOM( state );
 
@@ -245,14 +245,14 @@ import { Provider, connect } from 'react-redux';
         return;
       }
 
-      socket.emit( 'chat-message', { data, t, from: state.client.cid }, err => {
+      socket.emit( 'chat-message', { data, t, cid: state.client.cid }, err => {
         if ( err ) {
           $.addMessage( {
-            from: state.client.cid,
+            cid: state.client.cid,
             data: `<span style="color:red">Failed to send:</span> ${data}`
           } );
         } else {
-          $.addMessage( { from: state.client.cid, data } );
+          $.addMessage( { cid: state.client.cid, data } );
         }
       } );
       $.chatEntry.value = '';

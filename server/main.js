@@ -48,37 +48,33 @@ function loadState() {
   return { ...initialState, ...state };
 }
 
-const saveState = _.throttle( ( state ) => {
-  // fs.writeFile( 'state.json', JSON.stringify( state, null, 2 ),
-  //   ( err ) => {
-  //     if ( err )
-  //       console.error( `saveState: ${err}` );
-  //   }
-  // );
-  // console.warn( 'saveState: Disabled.' );
-}, 10000);
+const broadcastState = ( s ) => {
+  const state = s || store.getState();
+  // console.log( chalk.blue( `Broadcast state: [ ${
+  //   state.clients.active.reduce( ( s, c ) =>
+  //     `${s}${style.bgColor.ansi.hex( c.color )}_${style.bgColor.close}${c.name}` +
+  //     `( ${( ( ( c.ts + USER_TIMEOUT ) - Date.now() ) / 1000 ).toFixed( 2 )}s ), `
+  //   , '' ).replace( /, $/, '' )
+  // } ]` ) );
+  io.of( '' ).emit( 'state', {
+    messages: state.messages,
+    clients: state.clients.active
+  } );
 
-const broadcastState =
-  // _.throttle(
-    () => {
-      const state = store.getState();
-      // console.log( chalk.blue( `Broadcast state: [ ${
-      //   state.clients.active.reduce( ( s, c ) =>
-      //     `${s}${style.bgColor.ansi.hex( c.color )}_${style.bgColor.close}${c.name}` +
-      //     `( ${( ( ( c.ts + USER_TIMEOUT ) - Date.now() ) / 1000 ).toFixed( 2 )}s ), `
-      //   , '' ).replace( /, $/, '' )
-      // } ]` ) );
-      io.of( '' ).emit( 'state', {
-        messages: state.messages,
-        clients: state.clients.active
-      } );
+  console.warn( `${JSON.stringify( state, 0, 2 )}` );
 
-      console.warn( `${JSON.stringify( state, 0, 1 )}` );
+  return state;
+};
 
-      return state;
+const saveState = ( state ) => {
+  fs.writeFile( 'state.json', JSON.stringify( state, null, 2 ),
+    ( err ) => {
+      if ( err )
+        console.error( `saveState: ${err}` );
     }
-  // , 10000)
-;
+  );
+  return state;
+};
 
 function cleanState( stateClients ) {
   const now = Date.now();
@@ -89,7 +85,7 @@ function cleanState( stateClients ) {
   stateClients.clients.active.forEach( c => {
     if ( ( now - c.ts ) > USER_TIMEOUT ) {
       goneClients.push( c );
-      console.log( `Client ${c.name} is no longer active.` );
+      console.log( `  Client ${c.name} is no longer active.` );
     } else {
       clients.push( c );
     }
@@ -116,34 +112,37 @@ function cleanState( stateClients ) {
 
 
 // Message management
-function receiveMessage( stateMessages, socket, client, msg, cbConfirm ) {
+function validateMessage( stateMessages, socket, client, msg, cbConfirm ) {
   // console.log( `> ${client.name} #${client.cid}: ${JSON.stringify( msg.data, null, 1 )}` );
-  if ( !msg.data ) return stateMessages;
+  if ( msg.data ) {
+    // confirm to the emitter the mesage has been treated
+    cbConfirm();
+    // socket.emit( 'chat-message', msg );
+    socket.broadcast.emit( 'chat-message', msg );
 
+    return true;
+  }
 
-  // confirm to the emitter the mesage has been treated
-  cbConfirm();
-  // socket.emit( 'chat-message', msg );
-  socket.broadcast.emit( 'chat-message', msg );
+  return false;
+}
 
+function addMessage( stateMessages, client, msg ) {
   return [
     ...stateMessages,
     msg
   ];
 }
 
-const addMessage = () => arguments;
-
 
 // Client management
-const onClientDisconnection = ( state, client ) => {
+function onClientDisconnection( state, client ) {
   delete socketsByClientId[ client.sid ];
   return {
     ...state,
     clients: state.clients.filter( c => c.sid !== client.sid ),
     clientsOld: [ client, ...state.clientsOld ]
   };
-};
+}
 
 function markClientAlive( stateClients, client ) {
   console.log( chalk.blue( `  ${client.name} time to live:` +
@@ -194,7 +193,7 @@ function connectClient( stateClients, socket, client ) {
 
   console.log( `  Client ${client.ts ? 're' : ''}connected: ` +
     `${client.name} #${client.cid} #${client.sid}` );
-  // console.log( `Client connected: ${JSON.stringify( client, 0, 1 )}` );
+  // console.warn( `Client connected: ${JSON.stringify( client, 0, 1 )}` );
 
   if ( !socketsByClientId[ client.sid ] ) {
     socketsByClientId[ client.sid ] = socket;
@@ -205,7 +204,6 @@ function connectClient( stateClients, socket, client ) {
 
     socket.on( 'disconnect', () => {
       console.log( `  Client disconnected: ${client.name} #${client.cid} #${client.sid}` );
-      // console.log( `< a client disconnected: ${JSON.stringify( client,0,1 )}` );
       store.dispatch( Actions.disconnectClient( socket, client ) );
     } );
   }
@@ -220,15 +218,20 @@ function connectClient( stateClients, socket, client ) {
     cid: socket.client.id // client id
   };
 
-  socket.emit( 'welcome', { client, clients: stateClients.active } );
+  const newClientsActive = [
+    ...stateClients.active.filter( c => c.cid !== client.cid ),
+    client
+  ];
 
-  // console.log( `<< connectClient end ${JSON.stringify( client )}` );
+  socket.emit( 'welcome', {
+    client,
+    clients: newClientsActive
+  } );
+
+  // console.warn( `<< connectClient end ${JSON.stringify( client )}` );
 
   return {
-    active: [
-      ...stateClients.active.map( c => c.cid !== client.cid ),
-      client
-    ],
+    active: newClientsActive,
     old: [
       ...stateClients.old.map( c => c.cid !== client.cid )
     ]
@@ -258,15 +261,37 @@ const authenticateClient = ( stateClients, socket, client ) => {
 
 // Store:
 store = createStore( combineReducers( {
-  first: ( stateRoot='', action ) => {
-    console.log( chalk.green( `*clients${action.type}*` ) );
+  first: ( stateRoot = '', action ) => {
+    console.log( chalk.green( `*${action.type}*` ) );
     return stateRoot;
   },
   clients: ( stateClients = initialState.clients, action ) => {
-    if ( action.client ){
+    // integrity tests
+    function integrityTest( clients ) {
+      // console.warn(chalk.yellow(JSON.stringify(clients.active)));
+      if ( clients.active.constructor !== Array ) {
+        throw new Error( 'clients.active should be an Array ' +
+          `"${JSON.stringify( clients.active )}"` );
+      }
+      if ( clients.active.length > 0 ) {
+        const ks = 'cid,sid,name,color,ts'.split( ',' );
+        clients.active.every( c => {
+          const oks = Object.keys( c );
+          return ks.every( k => {
+            if ( oks.indexOf( k ) < 0 ) {
+              throw new Error( `clients integrity fail! ${chalk.red( JSON.stringify( c, 0, 1 ) )}` +
+                ` does not contain key "${k}"` );
+            }
+            return true;
+          } );
+        } );
+      }
+    }
+
+    if ( action.client ) {
       // console.warn('a',stateClients.active.map(c=>c.ts/1000).join());
       stateClients = markClientAlive( stateClients, action.client );
-      integrityTest(stateClients);
+      integrityTest( stateClients );
     }
 
     switch ( action.type ) {
@@ -274,14 +299,15 @@ store = createStore( combineReducers( {
       case Actions.Types.connectClient:
         if ( authenticateClient( stateClients, action.socket, action.client ) ) {
           stateClients = connectClient( stateClients, action.socket, action.client );
-          integrityTest(stateClients);
+          // console.warn( chalk.blue( `${JSON.stringify( stateClients )}` ) );
+          integrityTest( stateClients );
           return stateClients;
         }
         return refuseClient( stateClients, action.socket, action.client );
 
       case Actions.Types.disconnectClient:
         stateClients = disconnectClient( stateClients, action.socket, action.client );
-        integrityTest(stateClients);
+        integrityTest( stateClients );
         return stateClients;
 
       case Actions.Types.cleanState:
@@ -291,26 +317,6 @@ store = createStore( combineReducers( {
         // console.warn( `  Unknown action type '${action.type}'`);
         return stateClients;
     }
-
-    // integrity tests
-    function integrityTest(stateClients) {
-      // console.warn(chalk.yellow(JSON.stringify(stateClients.active)));
-      if ( stateClients.active.constructor !== Array )
-        throw new Error( `stateClients.active should be an Array "${JSON.stringify(stateClients.active)}"` );
-
-      if ( stateClients.active.length > 0 ){
-        const ks = 'cid,sid,name,color,ts'.split(',');
-        stateClients.active.every( c => {
-          const oks = Object.keys(c);
-          return ks.every( k => {
-            if( oks.indexOf(k) < 0 ){
-              throw new Error( `stateClients integrity fail! ${chalk.red( JSON.stringify( c, 0, 1 ) )}` +
-               ` does not contain key "${k}"` )
-            }
-          } );
-        } );
-      }
-    }
   },
   messages: ( stateMessages = initialState.messages, action ) => {
     switch ( action.type ) {
@@ -318,15 +324,15 @@ store = createStore( combineReducers( {
       case Actions.Types.receiveMessage:
   // console.warn( chalk.yellow( `${Object.keys( action ).join(', ')}` ) );
 // console.warn( chalk.yellow( `${JSON.stringify( action, 0, 1 )}` ) );
-        return receiveMessage( stateMessages, action.socket, action.client, action.msg, action.cb );
+        if ( validateMessage( stateMessages, action.socket, action.client, action.msg, action.cb ) )
+          return addMessage( stateMessages, action.client, action.msg );
 
       default:
         return stateMessages;
     }
   },
-  last: ( stateRoot='', action ) => {
-    console.log( chalk.green( `*/clients${action.type}*` ) );
-    if(store.getState) broadcastState();
+  last: ( stateRoot = '', action ) => {
+    console.log( chalk.green( `*/${action.type}*` ) );
     return stateRoot;
   }
 } ), loadState() );
@@ -342,11 +348,11 @@ io.on( 'connection', ( socket ) => {
   } );
 } );
 
-store.subscribe( () => {
+store.subscribe( _.throttle( () => {
   const state = store.getState();
 //   console.log( chalk.blue( `saveState: ${JSON.stringify( state, 0, 1 )}` ) );
-  saveState( state );
-} );
+  broadcastState( saveState( cleanState( state ) ) );
+}, 10000 ) );
 
 app.get( '/', ( req, res ) => {
   res.sendFile( path.resolve( 'client/index.html' ) );
@@ -357,9 +363,4 @@ app.use( '/js', express.static( path.resolve( 'build/client' ) ) );
 // Start server
 http.listen( 3000, () => {
   console.log( 'listening on *:3000' );
-
-  setInterval( () => {
-    broadcastState();
-    // store.dispatch( Actions.cleanState() );
-  }, 10000 );
 } );
