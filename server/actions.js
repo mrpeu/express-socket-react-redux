@@ -1,22 +1,13 @@
-const alltypes = [
-  'authenticateClient',
-  'connectClient',
-  'disconnectClient',
-  'refuseClient',
-  'markClientAlive',
-  'receiveMessage',
-  'addMessage',
-  'cleanState',
-];
-
-export const Types = ( _alltypes => {
-  const _types = {};
-  _alltypes.forEach( t => {
-    _types[ t ] = t;
-  } );
-  return _types;
-} )( alltypes );
-
+export const Types = {
+  authenticateClient: 'authenticateClient',
+  connectClient: 'connectClient',
+  disconnectClient: 'disconnectClient',
+  refuseClient: 'refuseClient',
+  markClientAlive: 'markClientAlive',
+  receiveMessage: 'receiveMessage',
+  addMessage: 'addMessage',
+  cleanState: 'cleanState',
+};
 
 /* clients */
 export function connectClient( socket, client ) {

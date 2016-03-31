@@ -16,13 +16,6 @@ const http = _http.Server( app );
 const io = _io( http );
 let sockets = [];
 
-const initialState = {
-  clients: {
-    active: [],
-    old: []
-  },
-  messages: []
-};
 let store = {};
 
 const USER_TIMEOUT = 60 * 1000;
@@ -45,7 +38,14 @@ function loadState() {
   } catch ( err ) {
     console.error( chalk.red( `loadState error: ${err}` ) );
   }
-  return { ...initialState, ...state };
+  return {
+    clients: {
+      active: [],
+      old: []
+    },
+    messages: [],
+    ...state
+  };
 }
 
 const broadcastState = ( s ) => {
@@ -62,10 +62,10 @@ const broadcastState = ( s ) => {
   } );
 
   // console.warn( `${JSON.stringify( state, 0, 2 )}` );
-  console.warn(
-    `Broadcast ${Object.keys( state.clients ).length} clients and ` +
-    `${state.messages.length} messages.`
-  );
+  // console.warn(
+  //   `Broadcast ${Object.keys( state.clients ).length} clients and ` +
+  //   `${state.messages.length} messages.`
+  // );
 
   return state;
 };
@@ -155,11 +155,11 @@ function onClientDisconnection( state, client ) {
 }
 
 function markClientAlive( stateClients, client ) {
-  console.log( chalk.blue( `  ${client.name} time to live:` +
-    ` ${( client.ts + USER_TIMEOUT - Date.now() ) / 1000}s`
-  ) );
+  // console.log( chalk.blue( `  ${client.name} time to live:` +
+  //   ` ${( client.ts + USER_TIMEOUT - Date.now() ) / 1000}s`
+  // ) );
   client.ts = Date.now();
-// console.warn(chalk.red(client.ts+' > '+Date.now()));
+  // console.warn(chalk.red(client.ts+' > '+Date.now()));
   // const nState = {
   return {
     active: stateClients.active.map( c => {
@@ -275,7 +275,7 @@ const authenticateClient = ( stateClients, socket, client ) => {
 
 // Store:
 store = createStore( combineReducers( {
-  clients: ( stateClients = initialState.clients, action ) => {
+  clients: ( stateClients = [], action ) => {
     if ( action.client ) {
       // console.warn('a',stateClients.active.map(c=>c.ts/1000).join());
       stateClients = markClientAlive( stateClients, action.client );
@@ -301,7 +301,7 @@ store = createStore( combineReducers( {
         return stateClients;
     }
   },
-  messages: ( stateMessages = initialState.messages, action ) => {
+  messages: ( stateMessages = [], action ) => {
     switch ( action.type ) {
 
       case Actions.Types.receiveMessage:

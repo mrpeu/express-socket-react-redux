@@ -6,26 +6,18 @@
         "color": "#aaa",
         "cid": "xPWbRnr3OzM8BwnrAAAC",
         "chat": true,
-        "sid": "BAuXNR1w_CIn2HByAAAA",
+        "sid": "qRYVz5glm16KF8_FAAAB",
         "address": "::1",
-        "ts": 1459430548225,
+        "ts": 1459435378465,
         "te": 1458222229501
       },
       {
         "name": "mTestRunner",
-        "color": "#d94835",
+        "color": "#dcd7d2",
         "cid": "#z934izhq34ljie",
         "runner": true,
-        "ts": 1459430538352,
-        "sid": "VfyzoB-8OKTBLSGCAAAB"
-      },
-      {
-        "name": "Ava",
-        "color": "#4e4",
-        "cid": "4EHU3C33lf321_ivAAAF",
-        "chat": true,
-        "ts": 1459430540720,
-        "sid": "2ifUijQzc60PsoR7AAAD"
+        "ts": 1459435388528,
+        "sid": "2OsDO9oCmkdXY1zRAAAC"
       }
     ],
     "old": []
