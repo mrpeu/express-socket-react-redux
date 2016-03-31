@@ -77,7 +77,7 @@ import { Provider, connect } from 'react-redux';
 
   const loadState = () => ( localStorage.state
     ? JSON.parse( localStorage.state )
-    : { client: {}, clients: [] }
+    : { client: { chat: true }, clients: [], messages: [] }
   );
 
   const saveState = ( state ) => {
@@ -123,6 +123,8 @@ import { Provider, connect } from 'react-redux';
         $.chat.classList.remove( 'on' );
       }
 
+      state.messages.forEach( $.addMessage );
+
       // document.getElementById( 'contentDebug' ).innerHTML =
       //   `<pre>${JSON.stringify( state,0,1 )}</pre>`;
 
@@ -136,11 +138,14 @@ import { Provider, connect } from 'react-redux';
         elc.className = 'client';
         elc.title = c.cid;
 
-        let symbol = '';
-        if ( !!c.chat ) symbol += '💬';
-        if ( !!c.runner ) symbol += '⚙';
+        let icon = '';
+        if ( !!c.chat ) icon += '💬';
+        if ( !!c.runner ) icon += '⚙';
 
-        elc.innerHTML = `<x-small>${symbol || '?'}</x-small>&nbsp;${c.name}`;
+        elc.innerHTML =
+          `<div class="icon">${icon}</div>` +
+          `<div class="name">${c.name}</div></span>`
+        ;
         elc.style[ 'border-color' ] = c.color;
         el.appendChild( elc );
       } );
@@ -150,11 +155,14 @@ import { Provider, connect } from 'react-redux';
     },
     updateName: ( c ) => {
       if ( c ) {
-        let symbol = '';
-        if ( !!c.chat ) symbol += '💬';
-        if ( !!c.runner ) symbol += '⚙';
+        let icon = '';
+        if ( !!c.chat ) icon += '💬';
+        if ( !!c.runner ) icon += '⚙';
 
-        $.Username.innerHTML = `<span><x-small>${symbol}</x-small>&nbsp;${c.name}</span>`;
+        $.Username.innerHTML =
+          `<div class="icon">${icon}</div>` +
+          `<div class="name">${c.name}</div>`
+        ;
         $.Username.title = c.cid;
         $.Username.style[ 'border-color' ] = c.color;
       } else {
@@ -165,14 +173,19 @@ import { Provider, connect } from 'react-redux';
     },
 
     addMessage: ( msg ) => {
-      const sender = getClient( state, msg.cid );
-      const li = document.createElement( 'li' );
-      li.className = 'chat-line';
-      li.innerHTML = `<b style="color:${sender.color};">
-        ${( msg.cid === state.client.cid ? 'me' : sender.name )}
-        </b>:
-        ${msg.data}`;
-      $.chatMessages.appendChild( li );
+      const thisMsgId = `${msg.t}~${msg.cid}`;
+      if ( ![ ...$.chatMessages.querySelectorAll( 'li.chat-line' ) ].some(
+        li => li.id === thisMsgId
+      ) ) {
+        const li = document.createElement( 'li' );
+        li.className = 'chat-line';
+        li.id = thisMsgId;
+        li.innerHTML = `<b style="color:${msg.color || 'inherit'};">
+          ${( msg.cid === state.client.cid ? 'me' : msg.name )}
+          </b>:
+          ${msg.data}`;
+        $.chatMessages.appendChild( li );
+      }
     },
   };
 
@@ -196,8 +209,7 @@ import { Provider, connect } from 'react-redux';
       // rudimentary "I-am-alive" ping
       if ( ping ) clearInterval( ping );
       ping = setInterval( () => {
-        console.log( `socket.emit( 'chat-message', { cid: ${state.client.cid} } );` );
-        console.log();
+        console.log( `socket.emit( 'chat-message', { cid: ${state.client.cid} } );\n` );
         socket.emit( 'chat-message', { cid: state.client.cid }, () => {} );
       }, 30000 );
 
@@ -225,7 +237,11 @@ import { Provider, connect } from 'react-redux';
       state = $.updateDOM( state );
 
       socket.on( 'chat-message', ( msg ) => {
-        $.addMessage( msg );
+        if ( Array.isArray( msg ) ) {
+          msg.forEach( $.addMessage );
+        } else {
+          $.addMessage( msg );
+        }
       } );
 
       setInterval( () => {

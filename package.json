@@ -71,7 +71,7 @@
       "new-cap": 0,
       "curly": [
         2,
-        "multi-or-nest",
+        "multi-line",
         "consistent"
       ],
       "space-in-parens": [2, "always"],

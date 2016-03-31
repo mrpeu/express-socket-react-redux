@@ -14,7 +14,7 @@ process.env.DEBUG = '';
 const app = express();
 const http = _http.Server( app );
 const io = _io( http );
-const socketsByClientId = {};
+let sockets = [];
 
 const initialState = {
   clients: {
@@ -61,7 +61,11 @@ const broadcastState = ( s ) => {
     clients: state.clients.active
   } );
 
-  console.warn( `${JSON.stringify( state, 0, 2 )}` );
+  // console.warn( `${JSON.stringify( state, 0, 2 )}` );
+  console.warn(
+    `Broadcast ${Object.keys( state.clients ).length} clients and ` +
+    `${state.messages.length} messages.`
+  );
 
   return state;
 };
@@ -69,8 +73,7 @@ const broadcastState = ( s ) => {
 const saveState = ( state ) => {
   fs.writeFile( 'state.json', JSON.stringify( state, null, 2 ),
     ( err ) => {
-      if ( err )
-        console.error( `saveState: ${err}` );
+      if ( err ) console.error( `saveState: ${err}` );
     }
   );
   return state;
@@ -85,7 +88,7 @@ function cleanState( stateClients ) {
   stateClients.clients.active.forEach( c => {
     if ( ( now - c.ts ) > USER_TIMEOUT ) {
       goneClients.push( c );
-      console.log( `  Client ${c.name} is no longer active.` );
+      console.log( `Client ${c.name} is no longer active.` );
     } else {
       clients.push( c );
     }
@@ -117,8 +120,6 @@ function validateMessage( stateMessages, socket, client, msg, cbConfirm ) {
   if ( msg.data ) {
     // confirm to the emitter the mesage has been treated
     cbConfirm();
-    // socket.emit( 'chat-message', msg );
-    socket.broadcast.emit( 'chat-message', msg );
 
     return true;
   } else {
@@ -128,21 +129,24 @@ function validateMessage( stateMessages, socket, client, msg, cbConfirm ) {
   return false;
 }
 
-function addMessage( stateMessages, client, msg ) {
+function addMessage( stateMessages, socket, client, msg ) {
+  // socket.emit( 'chat-message', msg );
+  socket.broadcast.emit( 'chat-message', { color: client.color, name: client.name, ...msg } );
+
   return [
     ...stateMessages,
-    msg
+    { color: client.color, name: client.name, ...msg }
   ];
 }
 
-function refuseMessage( stateMessages, client, msg ) {
+function refuseMessage( stateMessages, socket, client, msg ) {
   return stateMessages;
 }
 
 
 // Client management
 function onClientDisconnection( state, client ) {
-  delete socketsByClientId[ client.sid ];
+  sockets = sockets.filter( f => f.client.id === client.sid );
   return {
     ...state,
     clients: state.clients.filter( c => c.sid !== client.sid ),
@@ -197,31 +201,35 @@ function refuseClient( state, socket, client ) {
 function connectClient( stateClients, socket, client ) {
   // console.log( `>> connectClient start ${JSON.stringify( client, 0, 1 )}` );
 
-  console.log( `  Client ${client.ts ? 're' : ''}connected: ` +
-    `${client.name} #${client.cid} #${client.sid}` );
+  // console.log( `  Client ${client.ts ? 're' : ''}connected: ` +
+  //   `${client.name} #${client.cid} #${client.sid}` );
   // console.warn( `Client connected: ${JSON.stringify( client, 0, 1 )}` );
 
-  if ( !socketsByClientId[ client.sid ] ) {
-    socketsByClientId[ client.sid ] = socket;
-    socket.on( 'chat-message', ( msg, cb ) => {
-      // console.warn( `chat-message: ${JSON.stringify(msg)}` );
-      store.dispatch( Actions.receiveMessage( socket, client, msg, cb ) );
-    } );
+  const existingSocket = sockets.findIndex( s => s.client.id === client.sid );
 
-    socket.on( 'disconnect', () => {
-      console.log( `  Client disconnected: ${client.name} #${client.cid} #${client.sid}` );
-      store.dispatch( Actions.disconnectClient( socket, client ) );
-    } );
+  if ( existingSocket ) {
+    sockets[ existingSocket ] = socket;
+  } else {
+    sockets = [ ...sockets, socket ];
   }
+
+  socket.on( 'chat-message', ( msg, cb ) => {
+    // console.warn( `chat-message: ${JSON.stringify(msg)}` );
+    store.dispatch( Actions.receiveMessage( socket, client, msg, cb ) );
+  } );
+
+  socket.on( 'disconnect', () => {
+    console.log( `  Client disconnected: ${client.name} #${client.cid} #${client.sid}` );
+    store.dispatch( Actions.disconnectClient( socket, client ) );
+  } );
 
   client = {
     name: NAMES[ ~~( ( NAMES.length - 1 ) * Math.random() ) ],
     color: COLORS[ ~~( ( COLORS.length - 1 ) * Math.random() ) ],
+    cid: socket.client.id, // client id
     ...client,
     ts: Date.now(),
-    address: socket.handshake.address,
-    sid: socket.client.id, // session id
-    cid: socket.client.id // client id
+    sid: socket.client.id // session id
   };
 
   const newClientsActive = [
@@ -267,54 +275,23 @@ const authenticateClient = ( stateClients, socket, client ) => {
 
 // Store:
 store = createStore( combineReducers( {
-  first: ( stateRoot = '', action ) => {
-    console.log( chalk.green( `*${action.type}*` ) );
-    return stateRoot;
-  },
   clients: ( stateClients = initialState.clients, action ) => {
-    // integrity tests
-    function integrityTest( clients ) {
-      // console.warn(chalk.yellow(JSON.stringify(clients.active)));
-      if ( clients.active.constructor !== Array ) {
-        throw new Error( 'clients.active should be an Array ' +
-          `"${JSON.stringify( clients.active )}"` );
-      }
-      if ( clients.active.length > 0 ) {
-        const ks = 'cid,sid,name,color,ts'.split( ',' );
-        clients.active.every( c => {
-          const oks = Object.keys( c );
-          return ks.every( k => {
-            if ( oks.indexOf( k ) < 0 ) {
-              throw new Error( `clients integrity fail! ${chalk.red( JSON.stringify( c, 0, 1 ) )}` +
-                ` does not contain key "${k}"` );
-            }
-            return true;
-          } );
-        } );
-      }
-    }
-
     if ( action.client ) {
       // console.warn('a',stateClients.active.map(c=>c.ts/1000).join());
       stateClients = markClientAlive( stateClients, action.client );
-      integrityTest( stateClients );
     }
 
     switch ( action.type ) {
 
       case Actions.Types.connectClient:
         if ( authenticateClient( stateClients, action.socket, action.client ) ) {
-          stateClients = connectClient( stateClients, action.socket, action.client );
-          // console.warn( chalk.blue( `${JSON.stringify( stateClients )}` ) );
-          integrityTest( stateClients );
-          return stateClients;
+          return connectClient( stateClients, action.socket, action.client );
+        } else {
+          return refuseClient( stateClients, action.socket, action.client );
         }
-        return refuseClient( stateClients, action.socket, action.client );
 
       case Actions.Types.disconnectClient:
-        stateClients = disconnectClient( stateClients, action.socket, action.client );
-        integrityTest( stateClients );
-        return stateClients;
+        return disconnectClient( stateClients, action.socket, action.client );
 
       case Actions.Types.cleanState:
         return stateClients;
@@ -328,20 +305,18 @@ store = createStore( combineReducers( {
     switch ( action.type ) {
 
       case Actions.Types.receiveMessage:
-  // console.warn( chalk.yellow( `${Object.keys( action ).join(', ')}` ) );
-// console.warn( chalk.yellow( `${JSON.stringify( action, 0, 1 )}` ) );
-        if ( validateMessage( stateMessages, action.socket, action.client, action.msg, action.cb ) )
-          return addMessage( stateMessages, action.client, action.msg );
-        else
-          return refuseMessage( stateMessages, action.client, action.msg );
-
+        // console.warn( chalk.yellow( `${Object.keys( action ).join(', ')}` ) );
+        // console.warn( chalk.yellow( `${JSON.stringify( action, 0, 1 )}` ) );
+        if ( validateMessage( stateMessages,
+              action.socket, action.client, action.msg, action.cb )
+            ) {
+          return addMessage( stateMessages, action.socket, action.client, action.msg );
+        } else {
+          return refuseMessage( stateMessages, action.socket, action.client, action.msg );
+        }
       default:
         return stateMessages;
     }
-  },
-  last: ( stateRoot = '', action ) => {
-    console.log( chalk.green( `*/${action.type}*` ) );
-    return stateRoot;
   }
 } ), loadState() );
 
@@ -360,7 +335,7 @@ store.subscribe( _.throttle( () => {
   const state = store.getState();
 //   console.log( chalk.blue( `saveState: ${JSON.stringify( state, 0, 1 )}` ) );
   broadcastState( saveState( cleanState( state ) ) );
-}, 10000 ) );
+}, 5000 ) );
 
 app.get( '/', ( req, res ) => {
   res.sendFile( path.resolve( 'client/index.html' ) );

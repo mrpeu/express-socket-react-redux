@@ -1,42 +1,49 @@
 {
-  "first": "",
   "clients": {
     "active": [
       {
-        "name": "Lincoln",
-        "color": "#84454a",
-        "cid": "v1ClPNQBOdxdWHx8AAAD",
+        "name": "Ava",
+        "color": "#aaa",
+        "cid": "xPWbRnr3OzM8BwnrAAAC",
         "chat": true,
-        "ts": 1458749454547,
+        "sid": "BAuXNR1w_CIn2HByAAAA",
         "address": "::1",
-        "sid": "v1ClPNQBOdxdWHx8AAAD"
+        "ts": 1459430548225,
+        "te": 1458222229501
+      },
+      {
+        "name": "mTestRunner",
+        "color": "#d94835",
+        "cid": "#z934izhq34ljie",
+        "runner": true,
+        "ts": 1459430538352,
+        "sid": "VfyzoB-8OKTBLSGCAAAB"
+      },
+      {
+        "name": "Ava",
+        "color": "#4e4",
+        "cid": "4EHU3C33lf321_ivAAAF",
+        "chat": true,
+        "ts": 1459430540720,
+        "sid": "2ifUijQzc60PsoR7AAAD"
       }
     ],
-    "old": [
-      {
-        "name": "Lincoln",
-        "color": "#84454a",
-        "cid": "ZxPP3pzqvnk1qRfLAAAB",
-        "chat": true,
-        "ts": 1458726765198,
-        "address": "::1",
-        "sid": "ZxPP3pzqvnk1qRfLAAAB"
-      }
-    ]
+    "old": []
   },
   "messages": [
     {
-      "data": "Abracadabra...",
-      "t": 1458722359876,
-      "cid": "1XWPJ8EGsiN9F7RHAAAD",
-      "name": "Lincoln"
+      "color": "#4e4",
+      "name": "Ava",
+      "data": "I'm green Ava",
+      "t": 1459427442471,
+      "cid": "4EHU3C33lf321_ivAAAF"
     },
     {
-      "data": "BOUM!",
-      "t": 1458722361559,
-      "cid": "xPWbRnr3OzM8BwnrAAAC",
-      "name": "Ava"
+      "color": "#aaa",
+      "name": "Ava",
+      "data": "I'm gray Ava",
+      "t": 1459427463638,
+      "cid": "xPWbRnr3OzM8BwnrAAAC"
     }
-  ],
-  "last": ""
+  ]
 }
