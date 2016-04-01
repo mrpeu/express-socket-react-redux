@@ -41,7 +41,7 @@ import * as Actions from './actions.js';
         $.chat.classList.remove( 'on' );
       }
 
-      state.messages.forEach( $.addMessage );
+      $.updateMessages( state.messages );
 
       // document.getElementById( 'contentDebug' ).innerHTML =
       //   `<pre>${JSON.stringify( state,0,1 )}</pre>`;
@@ -71,28 +71,36 @@ import * as Actions from './actions.js';
       $.clientList.parentNode.replaceChild( el, $.clientList );
       $.clientList = document.getElementById( 'clients' );
     },
-    updateName: ( c ) => {
-      if ( c ) {
+    updateName: client => {
+      if ( client ) {
         let icon = '';
-        if ( !!c.chat ) icon += '💬';
-        if ( !!c.runner ) icon += '⚙';
+        if ( !!client.chat ) icon += '💬';
+        if ( !!client.runner ) icon += '⚙';
 
         $.Username.innerHTML =
           `<div class="icon">${icon}</div>` +
-          `<div class="name">${c.name}</div>`
+          `<div class="name">${client.name}</div>`
         ;
-        $.Username.title = c.cid;
-        $.Username.style[ 'border-color' ] = c.color;
+        $.Username.title = client.cid;
+        $.Username.style[ 'border-color' ] = client.color;
       } else {
         $.Username.htmlContent = 'Not logged in';
         $.Username.title = '';
         delete $.Username.style[ 'border-color' ];
       }
     },
+    updateMessages: messages => {
+      const nodesArray = [ ...$.chatMessages.querySelectorAll( 'li.chat-line' ) ];
+      nodesArray
+        .filter( n => !messages.some( m => `${m.t}~${m.cid}` === n.id ) )
+        .forEach( n => { n.parentNode.removeChild( n ); console.log( '#' ); } )
+      ;
+      messages.forEach( m => { $.addMessage( m, nodesArray ); } );
+    },
 
-    addMessage: ( msg ) => {
+    addMessage: ( msg, nodesArray = [ ...$.chatMessages.querySelectorAll( 'li.chat-line' ) ] ) => {
       const thisMsgId = `${msg.t}~${msg.cid}`;
-      if ( ![ ...$.chatMessages.querySelectorAll( 'li.chat-line' ) ].some(
+      if ( !nodesArray.some(
         li => li.id === thisMsgId
       ) ) {
         const li = document.createElement( 'li' );
@@ -171,7 +179,11 @@ import * as Actions from './actions.js';
   }
 
   function receiveState( state, action ) {
-    state = { ...state, ...action.serverState };
+    state = {
+      ...state,
+      ...action.serverState,
+      messages: action.serverState.messages.slice( -4 )
+    };
 
     // console.warn( JSON.stringify( serverState ) );
 
@@ -189,16 +201,6 @@ import * as Actions from './actions.js';
     }
 
     return state;
-  }
-
-  function receiveMessage( messages, action ) {
-    if ( Array.isArray( action.msg ) ) {
-      action.msg.forEach( $.addMessage );
-      return [ ...messages, ...action.msg ];
-    } else {
-      $.addMessage( action.msg );
-      return [ ...messages, action.msg ];
-    }
   }
 
 
@@ -221,8 +223,9 @@ import * as Actions from './actions.js';
     socket.emit( 'chat-message', msg, response => {
       if ( response.err ) {
         $.addMessage( {
-          cid: me.cid,
-          data: `<span>Failed to send: "${action.msg}".</span>` +
+          ...response,
+          name: 'Error',
+          data: `"${action.msg}"` +
             `<span style="color:red">${response.err}</span>`
         } );
       } else {
@@ -280,8 +283,7 @@ import * as Actions from './actions.js';
   }
   function reducerMessages( messages = [], action ) {
     switch ( action.type ) {
-      case Actions.Types.receiveMessage:
-        return messages;
+
       case Actions.Types.sendMessage:
         return sendMessage( messages, action );
 

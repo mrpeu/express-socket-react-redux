@@ -15,8 +15,8 @@ const app = express();
 const http = _http.Server( app );
 const io = _io( http );
 let sockets = [];
-
 let store = {};
+let _publishState = false;
 
 const USER_TIMEOUT = 60 * 1000;
 
@@ -48,7 +48,8 @@ function loadState() {
   };
 }
 
-const broadcastState = ( state ) => {
+const broadcastState = () => {
+  const state = store.getState();
   // console.log( chalk.blue( `Broadcast state: [ ${
   //   state.clients.active.reduce( ( s, c ) =>
   //     `${s}${style.bgColor.ansi.hex( c.color )}_${style.bgColor.close}${c.name}` +
@@ -60,6 +61,10 @@ const broadcastState = ( state ) => {
     messages: state.messages,
     clients: state.clients.active
   } );
+
+  _publishState = false;
+  
+  console.log( chalk.blue( 'brodcast' ) );
 
   // console.warn( `${JSON.stringify( state )}` );
   // console.warn(
@@ -123,7 +128,7 @@ function validateMessage( stateMessages, socket, client, req, cbConfirm ) {
     cbConfirm( req );
     return true;
   } else {
-    cbConfirm( { err: 'Message refused' } );
+    cbConfirm( { color: client.color, name: client.name, err: 'Message refused' } );
     return false;
   }
 }
@@ -131,6 +136,8 @@ function validateMessage( stateMessages, socket, client, req, cbConfirm ) {
 function addMessage( stateMessages, socket, client, data ) {
   // socket.emit( 'chat-message', data );
   socket.broadcast.emit( 'chat-message', { color: client.color, name: client.name, ...data } );
+
+  _publishState = true;
 
   return [
     ...stateMessages,
@@ -146,6 +153,9 @@ function refuseMessage( stateMessages, socket, client, data ) {
 // Client management
 function onClientDisconnection( state, client ) {
   sockets = sockets.filter( f => f.client.id === client.sid );
+
+  _publishState = true;
+
   return {
     ...state,
     clients: state.clients.filter( c => c.sid !== client.sid ),
@@ -181,6 +191,9 @@ function markClientAlive( stateClients, client ) {
   // return nState;
 }
 function disconnectClient( state, socket, client ) {
+
+  _publishState = true;
+
   return {
     active: state.active.filter( c => c.cid !== client.cid ),
     old: state.old.filter( c => c.cid !== client.cid )
@@ -241,6 +254,8 @@ function connectClient( stateClients, socket, client ) {
   socket.emit( 'welcome', { client } );
 
   // console.warn( `<< connectClient end ${JSON.stringify( client )}` );
+
+  _publishState = true;
 
   return {
     active: newClientsActive,
@@ -337,11 +352,11 @@ io.on( 'connection', ( socket ) => {
 store.subscribe(
   _.throttle(
     () => {
-      const state = store.getState();
-    //   console.log( chalk.blue( `saveState: ${JSON.stringify( state, 0, 1 )}` ) );
-      broadcastState( saveState( cleanState( state ) ) );
+      if ( _publishState ) {
+        broadcastState( saveState( cleanState( store.getState() ) ) );
+      }
     }
-  , 1000 )
+  , 200 )
 );
 
 app.get( '/', ( req, res ) => {

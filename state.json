@@ -3,59 +3,59 @@
     "active": [
       {
         "name": "mTestRunner",
-        "color": "#049451",
+        "color": "#b3b3b3",
         "cid": "#z934izhq34ljie",
         "runner": true,
-        "ts": 1459502030276,
-        "sid": "zbVruLvgKgjO72sbAAAD"
+        "ts": 1459509322163,
+        "sid": "HOFWdSugrRQSo9pxAAAC"
       },
       {
-        "name": "Clémentine",
-        "color": "#84454a",
-        "cid": "OYi7d5wLQ84lwxF5AAAH",
+        "name": "Lincoln",
+        "color": "#e44",
+        "cid": "2NACPsvRAEnym1gbAAAO",
         "chat": true,
-        "ts": 1459502021021,
-        "sid": "OYi7d5wLQ84lwxF5AAAH"
+        "ts": 1459509309471,
+        "sid": "2NACPsvRAEnym1gbAAAO"
       },
       {
-        "name": "Ella",
-        "color": "#aaa",
-        "cid": "8UFFtaNjnah8JblGAAAI",
+        "name": "Iseul",
+        "color": "#44e",
+        "cid": "u4pqMMNp4NnptZpNAAAQ",
         "chat": true,
-        "ts": 1459502026494,
-        "sid": "8UFFtaNjnah8JblGAAAI"
+        "ts": 1459509317231,
+        "sid": "u4pqMMNp4NnptZpNAAAQ"
       }
     ],
     "old": []
   },
   "messages": [
     {
-      "color": "#84454a",
+      "color": "#049451",
+      "name": "Ava",
+      "data": "ssshhh",
+      "t": 1459509286300,
+      "cid": "v0deYTcl5dI-L9a9AAAH"
+    },
+    {
+      "color": "#049451",
+      "name": "Ava",
+      "data": "shh",
+      "t": 1459509289627,
+      "cid": "v0deYTcl5dI-L9a9AAAH"
+    },
+    {
+      "color": "#e44",
       "name": "Lincoln",
-      "data": "hjk",
-      "t": 1459501735357,
-      "cid": "j1_ik3y6v6ox8_WIAAAE"
-    },
-    {
-      "color": "#049451",
-      "name": "Ella",
-      "data": "ello",
-      "t": 1459501753761,
-      "cid": "hP_PYJIFBARtxim9AAAF"
-    },
-    {
-      "color": "#aaa",
-      "name": "Henry",
-      "data": "hallo",
-      "t": 1459501805037,
-      "cid": "RUq6GZ9xzx8hCJjZAAAG"
-    },
-    {
-      "color": "#049451",
-      "name": "Ella",
       "data": "oh!",
-      "t": 1459501809169,
-      "cid": "hP_PYJIFBARtxim9AAAF"
+      "t": 1459509296731,
+      "cid": "2NACPsvRAEnym1gbAAAO"
+    },
+    {
+      "color": "#24364b",
+      "name": "Henry",
+      "data": ":o",
+      "t": 1459509305876,
+      "cid": "RkKvWY9HtIhQyLXgAAAP"
     }
   ]
 }
