@@ -1,7 +1,7 @@
 import io from 'socket.io-client';
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import { combineReducers, createStore } from 'redux';
+import { createStore } from 'redux';
 import { Provider, connect } from 'react-redux';
 import * as Actions from './actions.js';
 
@@ -24,8 +24,8 @@ import * as Actions from './actions.js';
     chatEntry: document.getElementById( 'chatEntry' ),
     Username: document.getElementById( 'Username' ),
 
-    updateDOM: ( state, me ) => {
-      // const me = getClient( state, state.client.cid );
+    updateDOM: ( state ) => {
+      const me = state.client;
 
       $.updateClientList( state.clients );
 
@@ -98,8 +98,9 @@ import * as Actions from './actions.js';
         const li = document.createElement( 'li' );
         li.className = 'chat-line';
         li.id = thisMsgId;
+        li.title = new Date( msg.t );
         li.innerHTML = `<b style="color:${msg.color || 'inherit'};">
-          ${( msg.cid === msg.name )}
+          ${msg.name}
           </b>:
           ${msg.data}`;
         $.chatMessages.appendChild( li );
@@ -110,10 +111,10 @@ import * as Actions from './actions.js';
 
   /* store.app */
 
-  const loadState = () => ( localStorage.state
-    ? JSON.parse( localStorage.state )
-    : { client: { chat: true }, clients: [], messages: [] }
-  );
+  const loadState = () => ( {
+    ...( localStorage.state ? JSON.parse( localStorage.state ) : {} ),
+    ...{ count: 0, client: { chat: true }, clients: [], messages: [] }
+  } );
 
   const saveState = ( state ) => {
     localStorage.state = JSON.stringify( state );
@@ -125,160 +126,187 @@ import * as Actions from './actions.js';
 
   /* store.client */
 
-  function onConnection( state, action ) {
-    socket.emit( 'authentication', { client: state.client } );
+  function onConnection( client, action ) {
+    action.socket.emit( 'authentication', { client } );
 
-    socket.on( 'notwelcome', data => {
-      store.dispatch( Actions.Types.notwelcome, data );
+    action.socket.on( 'notwelcome', data => {
+      store.dispatch( Actions.notwelcome( data ) );
     } );
 
-    socket.on( 'welcome', data => {
-      store.dispatch( Actions.Types.welcome, data );
+    action.socket.on( 'welcome', data => {
+      store.dispatch( Actions.welcome( data ) );
     } );
+
+    return client;
   }
 
   function authenticationFailed( state, action ) {
-    console.error( `Not welcome: ${{ err: null, ...state }.err}` );
+    console.error( `Not welcome: ${{ err: null, ...action }.err}` );
     return state;
   }
 
-  function authenticationSucceed( state, action ) {
-    // if ( state.client.cid ) {
-    //   console.warn( `Welcome for ${state.client.cid} already arrived!` );
-    //   return;
-    // }
+  function authenticationSucceed( client, action ) {
+    const newClient = action.data.client;
 
-    console.log( `Welcome: ${state.client.cid}` );
+    if ( action.data.err ||
+      !newClient || !newClient.name || !newClient.cid || !newClient.color ) {
+      console.error( `Authentication failed to succeed! ${JSON.stringify( action, 0, 1 )}` );
+      return client;
+    }
+
+    console.log( `Welcome: %c${newClient.name} #${newClient.cid}`, `color:${newClient.color}` );
 
     // rudimentary "I-am-alive" ping
     if ( ping ) clearInterval( ping );
     ping = setInterval( () => {
-      console.log( `socket.emit( 'chat-message', { cid: ${state.client.cid} } );\n` );
-      socket.emit( 'chat-message', { cid: state.client.cid }, () => {} );
+      console.log( `socket.emit( 'chat-message', { cid: ${newClient.cid} } );\n` );
+      socket.emit( 'chat-message', { cid: newClient.cid }, () => {} );
     }, 30000 );
 
-    socket.on( 'state', serverState => {
-      state = { ...state, ...serverState };
+    socket.on( 'state', serverState => { store.dispatch( Actions.receiveState( serverState ) ); } );
 
-      // console.warn( JSON.stringify( serverState ) );
+    socket.on( 'chat-message', ( msg ) => { store.dispatch( Actions.receiveMessage( msg ) ); } );
 
-      // console.warn( 'new state.clients(%d) %s',
-      //   state.clients.length,
-      //   JSON.stringify( state.clients.map( c => c.name ) )
-      // );
-
-      $.updateDOM( state );
-
-      if ( !state.clients.some( c => c.cid === state.client.cid ) ) {
-        console.error( 'Not in the client list! ' +
-          `${state.client.cid}  C  ${state.clients.map( c => c.cid ).join( ', ' )};`
-        );
-        clearInterval( ping );
-        // state.client.cid = null;
-      }
-    } );
-
-    state = $.updateDOM( state );
-
-    socket.on( 'chat-message', ( msg ) => {
-      if ( Array.isArray( msg ) ) {
-        msg.forEach( $.addMessage );
-      } else {
-        $.addMessage( msg );
-      }
-    } );
+    return newClient;
   }
 
+  function receiveState( state, action ) {
+    state = { ...state, ...action.serverState };
 
-  /* store.messages */
-  function emitMessage( state, action ) {
-    const me = state.client;
+    // console.warn( JSON.stringify( serverState ) );
 
-    if ( !me.cid ) {
-      console.warn( 'Cannot post message while not logged in' );
-      return state;
+    // console.warn( 'new state.clients(%d) %s',
+    //   state.clients.length,
+    //   JSON.stringify( state.clients.map( c => c.name ) )
+    // );
+
+    if ( !state.clients.some( c => c.cid === state.client.cid ) ) {
+      console.error( 'Not in the client list! ' +
+        `${state.client.cid}  C  ${state.clients.map( c => c.cid ).join( ', ' )};`
+      );
+      clearInterval( ping );
+      // state.client.cid = null;
     }
-
-    socket.emit( 'chat-message', { msg: action.msg, t: Date.now(), cid: me.cid }, err => {
-      if ( err ) {
-        $.addMessage( {
-          cid: me.cid,
-          data: `<span style="color:red">Failed to send:</span> ${action.msg}`
-        } );
-      } else {
-        $.addMessage( { cid: me.cid, msg: action.msg } );
-      }
-    } );
-
-    $.chatEntry.value = '';
-    $.chatEntry.focus();
 
     return state;
   }
 
+  function receiveMessage( messages, action ) {
+    if ( Array.isArray( action.msg ) ) {
+      action.msg.forEach( $.addMessage );
+      return [ ...messages, ...action.msg ];
+    } else {
+      $.addMessage( action.msg );
+      return [ ...messages, action.msg ];
+    }
+  }
+
+
+  /* store.messages */
+  function sendMessage( clients, action ) {
+    const me = action.client;
+    if ( !me.cid ) {
+      console.warn( 'Cannot post message while not logged in' );
+      return clients;
+    }
+
+    const msg = {
+      data: action.msg,
+      t: Date.now(),
+      cid: me.cid,
+      name: me.name,
+      color: me.color
+    };
+
+    socket.emit( 'chat-message', msg, response => {
+      if ( response.err ) {
+        $.addMessage( {
+          cid: me.cid,
+          data: `<span>Failed to send: "${action.msg}".</span>` +
+            `<span style="color:red">${response.err}</span>`
+        } );
+      } else {
+        $.addMessage( response );
+        $.chatEntry.value = '';
+      }
+    } );
+    $.chatEntry.focus();
+
+    return clients;
+  }
+
 
   /* reducers */
-  function reducerClient( state = {}, action ) {
-    switch ( action.type ) {
-      case Actions.Types.authenticateSocketOnConnection:
-        return onConnection( state, action );
-      case Actions.Types.welcome:
-        return authenticationSucceed( state, action );
-      case Actions.Types.notwelcome:
-        return authenticationFailed( state, action );
+  function reducerRoot( rootState = loadState(), action ) {
+    action.client = rootState.client;
 
-      default:
-        return state;
-    }
-  }
-  function reducerClients( state = [], action ) {
-    switch ( action.type ) {
-      case Actions.Types.update:
-        return state;
-
-      default:
-        return state;
-    }
-  }
-  function reducerMessages( state = [], action ) {
-    switch ( action.type ) {
-      case Actions.Types.receiveMessage:
-        return state;
-      case Actions.Types.sendMessage:
-        return emitMessage( state, action );
-
-      default:
-        return state;
-    }
-  }
-
-  const appReducers = combineReducers( {
-    client: reducerClient,
-    clients: reducerClients,
-    messages: reducerMessages,
-  } );
-  const rootReducer = function rootReducer( state = loadState(), action ) {
     switch ( action.type ) {
       case Actions.Types.dummyIncreaseCount:
-        state = { count: state.count + 1 };
-        break;
-      case Actions.Types.cleanState:
-        state = cleanState( state );
-        break;
-      default:
-        break;
-    }
+        return ( function dummyReducer( app ) {
+          return { ...app, count: app.count + 1 };
+        }() );
 
-    return appReducers( state, action );
-  };
+      case Actions.Types.receiveState:
+        return receiveState( rootState, action );
+
+      case Actions.Types.cleanState:
+        return cleanState( rootState );
+
+      default:
+        return rootState;
+    }
+  }
+  function reducerClient( client = {}, action ) {
+    switch ( action.type ) {
+      case Actions.Types.authenticateSocketOnConnection:
+        return onConnection( client, action );
+      case Actions.Types.welcome:
+        return authenticationSucceed( client, action );
+      case Actions.Types.notwelcome:
+        return authenticationFailed( client, action );
+
+      default:
+        return client;
+    }
+  }
+  function reducerClients( clients = [], action ) {
+    switch ( action.type ) {
+      case Actions.Types.update:
+        return clients;
+
+      default:
+        return clients;
+    }
+  }
+  function reducerMessages( messages = [], action ) {
+    switch ( action.type ) {
+      case Actions.Types.receiveMessage:
+        return messages;
+      case Actions.Types.sendMessage:
+        return sendMessage( messages, action );
+
+      default:
+        return messages;
+    }
+  }
+
+  function mainReducer( _state = loadState(), action ) {
+    _state = reducerRoot( _state, action );
+    return {
+      ..._state,
+      ...{ client: reducerClient( _state.client, action ) },
+      ...{ clients: reducerClients( _state.clients, action ) },
+      ...{ messages: reducerMessages( _state.messages, action ) }
+    };
+  }
 
   // Store:
-  store = createStore( rootReducer );
+  store = createStore( mainReducer );
 
   store.subscribe( // _.throttle(
     () => {
-      saveState( store.getState() );
-      store.dispatch( Actions.cleanState );
+      $.updateDOM( store.getState() );
+  //     store.dispatch( Actions.cleanState() );
     }// , 5000 )
   );
 
@@ -302,13 +330,13 @@ import * as Actions from './actions.js';
   // Map Redux state to component props
   function mapStateToProps( state ) {
     return {
-      value: state.app.count,
+      value: state.count,
     };
   }
 
   // Map Redux actions to component props
   const mapDispatchToProps = ( dispatch ) => ( {
-    onIncreaseClick: () => dispatch( Actions.Types.app )
+    onIncreaseClick: () => dispatch( Actions.dummyIncreaseCount() )
   } );
 
   // Connected Component:
@@ -340,15 +368,15 @@ import * as Actions from './actions.js';
 
   $.chatForm.addEventListener( 'submit', e => {
     e.preventDefault();
-    const data = $.chatEntry.value;
-    if ( data ) {
-      store.dispatch( Actions.Types.sendMessage, data );
+    const msg = $.chatEntry.value;
+    if ( msg ) {
+      store.dispatch( Actions.sendMessage( msg ) );
     }
   } );
 
   socket = io();
 
   socket.on( 'connect', () => {
-    store.dispatch( Actions.Types.authenticateSocketOnConnection );
+    store.dispatch( Actions.authenticateSocketOnConnection( socket ) );
   } );
 } )();

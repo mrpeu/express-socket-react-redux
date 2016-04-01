@@ -26,12 +26,12 @@ export function disconnectClient( socket, client ) {
 }
 
 /* messages */
-export function receiveMessage( socket, client, msg, cb ) {
-  return { type: Types.receiveMessage, socket, client, msg, cb };
+export function receiveMessage( socket, client, data, cb ) {
+  return { type: Types.receiveMessage, socket, client, data, cb };
 }
 
-export function addMessage( from, msg ) {
-  return { type: Types.addMessage, from, msg };
+export function addMessage( from, data ) {
+  return { type: Types.addMessage, from, data };
 }
 
 

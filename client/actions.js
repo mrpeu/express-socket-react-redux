@@ -1,5 +1,6 @@
 export const Types = {
   dummyIncreaseCount: 'dummyIncreaseCount',
+  receiveState: 'receiveState',
   cleanState: 'cleanState',
 
   authenticateSocketOnConnection: 'authenticateSocketOnConnection',
@@ -15,20 +16,23 @@ export const Types = {
 export function dummyIncreaseCount() {
   return { type: Types.dummyIncreaseCount };
 }
+export function receiveState( serverState ) {
+  return { type: Types.receiveState, serverState };
+}
 export function cleanState() {
   return { type: Types.cleanState };
 }
 
 /* client */
-export function authenticateSocketOnConnection( client ) {
-  return { type: Types.authenticateSocketOnConnection, client };
+export function authenticateSocketOnConnection( socket ) {
+  return { type: Types.authenticateSocketOnConnection, socket };
 }
-export function notwelcome( msg ) {
-  return { type: Types.notwelcome, msg };
+export function notwelcome( data ) {
+  return { type: Types.notwelcome, data };
 }
 
-export function welcome( msg ) {
-  return { type: Types.welcome, msg };
+export function welcome( data ) {
+  return { type: Types.welcome, data };
 }
 
 /* clients */
