@@ -1,16 +1,17 @@
-'use strict';
-let path = require('path');
-let webpack = require('webpack');
+
+const path = require( 'path' );
+const webpack = require( 'webpack' );
+const LiveReloadPlugin = require( 'webpack-livereload-plugin' );
 
 module.exports = [ {
   name: 'client',
   target: 'web',
-  entry: ['./client/index.js'],
+  entry: [ './client/index.js' ],
   output: {
     path: './build/client/',
     filename: 'index.js'
   },
-  devtool: 'eval', //prod: 'source-map',
+  devtool: 'eval', // prod: 'source-map',
   module: {
     loaders: [
       {
@@ -19,5 +20,11 @@ module.exports = [ {
         loader: 'babel'
       }
     ]
-  }
+  },
+  plugins: [
+    new LiveReloadPlugin( {
+      port: 35729, // default: 35729
+      appendScriptTag: true
+    } )
+  ]
 } ];

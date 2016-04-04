@@ -63,8 +63,8 @@ const broadcastState = () => {
   } );
 
   _publishState = false;
-  
-  console.log( chalk.blue( 'brodcast' ) );
+
+  console.log( chalk.gray( 'broadcast' ) );
 
   // console.warn( `${JSON.stringify( state )}` );
   // console.warn(
@@ -190,8 +190,8 @@ function markClientAlive( stateClients, client ) {
 
   // return nState;
 }
-function disconnectClient( state, socket, client ) {
 
+function disconnectClient( state, socket, client ) {
   _publishState = true;
 
   return {

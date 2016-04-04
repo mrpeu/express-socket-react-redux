@@ -3,27 +3,19 @@
     "active": [
       {
         "name": "mTestRunner",
-        "color": "#b3b3b3",
+        "color": "#c38f3d",
         "cid": "#z934izhq34ljie",
         "runner": true,
-        "ts": 1459509322163,
-        "sid": "HOFWdSugrRQSo9pxAAAC"
+        "ts": 1459766091428,
+        "sid": "KStZlUsLWNDleSLTAAAA"
       },
       {
-        "name": "Lincoln",
-        "color": "#e44",
-        "cid": "2NACPsvRAEnym1gbAAAO",
+        "name": "Akira",
+        "color": "#7a7a7a",
+        "cid": "fj79qi3MGf5xbC88AAAE",
         "chat": true,
-        "ts": 1459509309471,
-        "sid": "2NACPsvRAEnym1gbAAAO"
-      },
-      {
-        "name": "Iseul",
-        "color": "#44e",
-        "cid": "u4pqMMNp4NnptZpNAAAQ",
-        "chat": true,
-        "ts": 1459509317231,
-        "sid": "u4pqMMNp4NnptZpNAAAQ"
+        "ts": 1459766098923,
+        "sid": "fj79qi3MGf5xbC88AAAE"
       }
     ],
     "old": []
