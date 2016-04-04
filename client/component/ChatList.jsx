@@ -2,20 +2,26 @@
 import React, { Component, PropTypes } from 'react';
 import { Provider, connect } from 'react-redux';
 import * as Actions from './../actions.js';
-import ClientCardMini from './ClientCardMini.jsx';
+import ChatMessage from './ChatMessage.jsx';
 
-const ClientList = ( { clients } ) =>
-  <ul className="client-list" style={{ borderBottom: '1px #ddd solid' }}>
-    { clients.map( c =>
-      <li key={c.cid}>
-        <ClientCardMini name={c.name} role={c.role} color={c.color} />
+const ChatList = ( { messages } ) =>
+  <ul className="chat-list" style={{ borderBottom: '1px #ddd solid' }}>
+    { messages.map( m =>
+      <li key={`${m.t}#${m.cid}`}>
+        <ChatMessage
+          name = {m.name}
+          role = {m.role}
+          color = {m.color}
+          t = { m.t }
+          data = { m.data }
+        />
       </li>
     ) }
   </ul>
 ;
 
-ClientList.propTypes = {
-  clients: PropTypes.array.isRequired
+ChatList.propTypes = {
+  messages: PropTypes.array.isRequired
 };
 
 // Map Redux state to component props
@@ -31,4 +37,4 @@ const mapDispatchToProps = ( dispatch ) => ( {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)( ClientList );
+)( ChatList );

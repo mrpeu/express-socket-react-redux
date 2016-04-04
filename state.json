@@ -1,16 +1,16 @@
 {
   "clients": {
-    "active": [],
-    "old": [
+    "active": [
       {
-        "name": "mRemoteTestRunner",
-        "color": "#ad8989",
-        "cid": "#z934izhq34ljie",
-        "role": "runner",
-        "ts": 1459772873456,
-        "sid": "tBauSdIO-Oq2aqqtAAAI"
+        "name": "Amaterasu",
+        "color": "#049451",
+        "cid": "ao4YSsFUFQ8nY3lVAAAI",
+        "role": "chat",
+        "ts": 1459805891887,
+        "sid": "9Lfydr18XmSG-IFaAAAJ"
       }
-    ]
+    ],
+    "old": []
   },
   "messages": [
     {

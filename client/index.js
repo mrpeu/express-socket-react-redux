@@ -5,10 +5,11 @@ import { createStore } from 'redux';
 import { Provider, connect } from 'react-redux';
 import * as Actions from './actions.js';
 import App from './component/App.jsx';
+import _throttle from 'lodash/throttle';
 
 ( () => {
   let ping = null;
-  let socket;
+  const socket = io();
   let store = {};
 
   /* DOM */
@@ -98,9 +99,8 @@ import App from './component/App.jsx';
     ...{ count: 0, client: { role: 'chat' }, clients: [], messages: [] }
   } );
 
-  const saveState = ( state ) => {
-    localStorage.state = JSON.stringify( state );
-    return state;
+  const saveState = () => {
+    localStorage.state = JSON.stringify( store.getState() );
   };
 
   const cleanState = ( state ) => state;
@@ -279,11 +279,11 @@ import App from './component/App.jsx';
   // Store:
   store = createStore( mainReducer );
 
-  store.subscribe( // _.throttle(
+  store.subscribe( _throttle(
     () => {
       $.updateDOM( store.getState() );
-  //     store.dispatch( Actions.cleanState() );
-    }// , 5000 )
+      saveState();
+    }, 1000 )
   );
 
 
@@ -319,8 +319,6 @@ import App from './component/App.jsx';
       store.dispatch( Actions.sendMessage( msg ) );
     }
   } );
-
-  socket = io();
 
   socket.on( 'connect', () => {
     store.dispatch( Actions.authenticateSocketOnConnection( socket ) );
