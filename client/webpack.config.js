@@ -6,7 +6,7 @@ const LiveReloadPlugin = require( 'webpack-livereload-plugin' );
 module.exports = [ {
   name: 'client',
   target: 'web',
-  entry: [ './client/index.js' ],
+  entry: [ './client/index.js', './client/style.css' ],
   output: {
     path: './build/client/',
     filename: 'index.js'
@@ -15,9 +15,14 @@ module.exports = [ {
   module: {
     loaders: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: 'babel'
+      },
+      {
+        test: /\.css$/,
+        exclude: /node_modules/,
+        loader: 'raw'
       }
     ]
   },

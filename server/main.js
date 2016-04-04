@@ -201,7 +201,7 @@ function disconnectClient( state, socket, client ) {
 }
 
 // After authentication fail
-function refuseClient( state, socket, client ) {
+function refuseClient( state, socket, client, authResponse ) {
   socket.emit(
     'notwelcome',
     { err: 'connection refused!' }
@@ -210,11 +210,19 @@ function refuseClient( state, socket, client ) {
 }
 
 // After authentication success
-function connectClient( stateClients, socket, client ) {
+function connectClient( stateClients, socket, client, authResponse ) {
   // console.log( `>> connectClient start ${JSON.stringify( client, 0, 1 )}` );
 
   // console.log( `  Client ${client.ts ? 're' : ''}connected: ` +
   //   `${client.name} #${client.cid} #${client.sid}` );
+
+  if ( authResponse !== true ) {
+    console.warn(
+      chalk.magenta(
+        `  ${authResponse}: ${client.name} #${client.cid}`
+      )
+    );
+  }
 
   const existingSocket = sockets.findIndex( s => s.client.id === client.sid );
 
@@ -267,7 +275,7 @@ function connectClient( stateClients, socket, client ) {
 
 const authenticateClient = ( stateClients, socket, client ) => {
   if ( !client ) {
-    console.log( '  Authentication of "undefined" failed.' );
+    console.log( `  Authentication of ${client} failed.` );
     return false;
   }
 
@@ -275,13 +283,13 @@ const authenticateClient = ( stateClients, socket, client ) => {
 
   // check if already in state.clients
   if ( stateClients.active.some( c => c.cid === client.cid ) ) {
-    console.warn( chalk.magenta( `  ACTIVE: ${client.name} #${client.cid}` ) );
+    // console.warn( chalk.magenta( `  ACTIVE: ${client.name} #${client.cid}` ) );
     return 'ACTIVE';
   }
 
   // check if already in state.clientsOld
   if ( stateClients.old.some( c => c.cid === client.cid ) ) {
-    console.warn( chalk.magenta( `  OLD: ${client.name} #${client.cid}` ) );
+    // console.warn( chalk.magenta( `  OLD: ${client.name} #${client.cid}` ) );
     return 'OLD';
   }
 
@@ -301,12 +309,14 @@ store = createStore( combineReducers( {
 
     switch ( action.type ) {
 
-      case Actions.Types.connectClient:
-        if ( authenticateClient( stateClients, action.socket, action.client ) !== false ) {
-          return connectClient( stateClients, action.socket, action.client );
+      case Actions.Types.connectClient: {
+        const authResponse = authenticateClient( stateClients, action.socket, action.client );
+        if ( authResponse !== false ) {
+          return connectClient( stateClients, action.socket, action.client, authResponse );
         } else {
-          return refuseClient( stateClients, action.socket, action.client );
+          return refuseClient( stateClients, action.socket, action.client, authResponse );
         }
+      }
 
       case Actions.Types.disconnectClient:
         return disconnectClient( stateClients, action.socket, action.client );

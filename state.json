@@ -1,24 +1,16 @@
 {
   "clients": {
-    "active": [
+    "active": [],
+    "old": [
       {
-        "name": "mTestRunner",
-        "color": "#c38f3d",
+        "name": "mRemoteTestRunner",
+        "color": "#ad8989",
         "cid": "#z934izhq34ljie",
-        "runner": true,
-        "ts": 1459766091428,
-        "sid": "KStZlUsLWNDleSLTAAAA"
-      },
-      {
-        "name": "Akira",
-        "color": "#7a7a7a",
-        "cid": "fj79qi3MGf5xbC88AAAE",
-        "chat": true,
-        "ts": 1459766098923,
-        "sid": "fj79qi3MGf5xbC88AAAE"
+        "role": "runner",
+        "ts": 1459772873456,
+        "sid": "tBauSdIO-Oq2aqqtAAAI"
       }
-    ],
-    "old": []
+    ]
   },
   "messages": [
     {

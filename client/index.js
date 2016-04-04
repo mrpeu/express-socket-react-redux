@@ -1,9 +1,10 @@
 import io from 'socket.io-client';
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import { Provider, connect } from 'react-redux';
 import * as Actions from './actions.js';
+import App from './component/App.jsx';
 
 ( () => {
   let ping = null;
@@ -14,11 +15,9 @@ import * as Actions from './actions.js';
   const $ = {
     connection: document.getElementById( 'connection' ),
 
-    clientList: document.getElementById( 'clients' ),
-
     content: document.getElementById( 'content' ),
 
-    chat: document.getElementById( 'chat' ),
+    chat: document.querySelector( '.chat' ),
     chatForm: document.getElementById( 'chatForm' ),
     chatMessages: document.getElementById( 'chatMessages' ),
     chatEntry: document.getElementById( 'chatEntry' ),
@@ -26,8 +25,6 @@ import * as Actions from './actions.js';
 
     updateDOM: ( state ) => {
       const me = state.client;
-
-      $.updateClientList( state.clients );
 
       if ( me ) {
         $.updateName( me );
@@ -47,29 +44,6 @@ import * as Actions from './actions.js';
       //   `<pre>${JSON.stringify( state,0,1 )}</pre>`;
 
       return state;
-    },
-    updateClientList: ( clients ) => {
-      const el = document.createElement( 'ul' );
-      el.id = 'clients';
-      clients.forEach( c => {
-        const elc = document.createElement( 'li' );
-        elc.className = 'client';
-        elc.title = c.cid;
-
-        let icon = '';
-        if ( !!c.chat ) icon += '💬';
-        if ( !!c.runner ) icon += '⚙';
-
-        elc.innerHTML =
-          `<div class="icon">${icon}</div>` +
-          `<div class="name">${c.name}</div></span>`
-        ;
-        elc.style[ 'border-color' ] = c.color;
-        el.appendChild( elc );
-      } );
-      //       console.log( $.clientList.parentNode )
-      $.clientList.parentNode.replaceChild( el, $.clientList );
-      $.clientList = document.getElementById( 'clients' );
     },
     updateName: client => {
       if ( client ) {
@@ -121,7 +95,7 @@ import * as Actions from './actions.js';
 
   const loadState = () => ( {
     ...( localStorage.state ? JSON.parse( localStorage.state ) : {} ),
-    ...{ count: 0, client: { chat: true }, clients: [], messages: [] }
+    ...{ count: 0, client: { role: 'chat' }, clients: [], messages: [] }
   } );
 
   const saveState = ( state ) => {
@@ -167,7 +141,7 @@ import * as Actions from './actions.js';
     // rudimentary "I-am-alive" ping
     if ( ping ) clearInterval( ping );
     ping = setInterval( () => {
-      console.log( `socket.emit( 'chat-message', { cid: ${newClient.cid} } );\n` );
+      // console.log( `socket.emit( 'chat-message', { cid: ${newClient.cid} } );\n` );
       socket.emit( 'chat-message', { cid: newClient.cid }, () => {} );
     }, 30000 );
 
@@ -317,36 +291,6 @@ import * as Actions from './actions.js';
   // ------------------------------------
 
   // React component
-  const AppContent = ( { value, onIncreaseClick } ) =>
-    <div>
-      <span>{ value }</span>
-      <button onClick = { onIncreaseClick } >Increase</button>
-    </div>
-  ;
-
-  AppContent.propTypes = {
-    value: PropTypes.number.isRequired,
-    onIncreaseClick: PropTypes.func.isRequired,
-  };
-
-  // Map Redux state to component props
-  function mapStateToProps( state ) {
-    return {
-      value: state.count,
-    };
-  }
-
-  // Map Redux actions to component props
-  const mapDispatchToProps = ( dispatch ) => ( {
-    onIncreaseClick: () => dispatch( Actions.dummyIncreaseCount() )
-  } );
-
-  // Connected Component:
-  const App = connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )( AppContent );
-
   ReactDOM.render(
     <Provider store = { store }>
       <App />
