@@ -43,12 +43,14 @@ function loadState() {
       active: [],
       old: []
     },
-    messages: [],
+    chat: {
+      messages: []
+    },
     ...state
   };
 }
 
-const broadcastState = () => {
+function broadcastState() {
   const state = store.getState();
   // console.log( chalk.blue( `Broadcast state: [ ${
   //   state.clients.active.reduce( ( s, c ) =>
@@ -58,7 +60,7 @@ const broadcastState = () => {
   // } ]` ) );
 
   io.of( '' ).emit( 'state', {
-    messages: state.messages,
+    chat: state.chat,
     clients: state.clients.active
   } );
 
@@ -69,20 +71,20 @@ const broadcastState = () => {
   // console.warn( `${JSON.stringify( state )}` );
   // console.warn(
   //   `Broadcast ${Object.keys( state.clients ).length} clients and ` +
-  //   `${state.messages.length} messages.`
+  //   `${state.chat.messages.length} messages.`
   // );
 
   return state;
-};
+}
 
-const saveState = ( state ) => {
+function saveState( state ) {
   fs.writeFile( 'state.json', JSON.stringify( state, null, 2 ),
     ( err ) => {
       if ( err ) console.error( `saveState: ${err}` );
     }
   );
   return state;
-};
+}
 
 function cleanState( state ) {
   const now = Date.now();
@@ -111,7 +113,7 @@ function cleanState( state ) {
 
   return {
     ...state,
-    messages: state.messages.slice( -4 ),
+    chat: { ...state.chat, messages: state.chat.messages.slice( -4 ) },
     clients: {
       active: clients,
       old: clientsOld
@@ -121,7 +123,7 @@ function cleanState( state ) {
 
 
 // Message management
-function validateMessage( stateMessages, socket, client, req, cbConfirm ) {
+function validateMessage( stateChat, socket, client, req, cbConfirm ) {
   // console.log( `> ${client.name} #${client.cid}: ${JSON.stringify( req, null, 1 )}` );
   if ( req.data && req.data !== 'fuck' ) {
     // confirm to the emitter the mesage has been treated
@@ -133,20 +135,23 @@ function validateMessage( stateMessages, socket, client, req, cbConfirm ) {
   }
 }
 
-function addMessage( stateMessages, socket, client, data ) {
+function addMessage( stateChat, socket, client, data ) {
   // socket.emit( 'chat-message', data );
   socket.broadcast.emit( 'chat-message', { color: client.color, name: client.name, ...data } );
 
   _publishState = true;
 
-  return [
-    ...stateMessages,
-    { color: client.color, name: client.name, ...data }
-  ];
+  return {
+    ...stateChat,
+    messages: [
+      ...stateChat.messages,
+      { color: client.color, name: client.name, ...data }
+    ]
+  };
 }
 
-function refuseMessage( stateMessages, socket, client, data ) {
-  return stateMessages;
+function refuseMessage( stateChat, socket, client, data ) {
+  return stateChat;
 }
 
 
@@ -273,7 +278,7 @@ function connectClient( stateClients, socket, client, authResponse ) {
   };
 }
 
-const authenticateClient = ( stateClients, socket, client ) => {
+function authenticateClient( stateClients, socket, client ) {
   if ( !client ) {
     console.log( `  Authentication of ${client} failed.` );
     return false;
@@ -297,7 +302,7 @@ const authenticateClient = ( stateClients, socket, client ) => {
   // return false;
 
   return true;
-};
+}
 
 // Store:
 store = createStore( combineReducers( {
@@ -329,21 +334,21 @@ store = createStore( combineReducers( {
         return stateClients;
     }
   },
-  messages: ( stateMessages = [], action ) => {
+  chat: ( stateChat = {}, action ) => {
     switch ( action.type ) {
 
       case Actions.Types.receiveMessage:
         // console.warn( chalk.yellow( `${Object.keys( action ).join(', ')}` ) );
         // console.warn( chalk.yellow( `${JSON.stringify( action, 0, 1 )}` ) );
-        if ( validateMessage( stateMessages,
+        if ( validateMessage( stateChat,
               action.socket, action.client, action.data, action.cb )
             ) {
-          return addMessage( stateMessages, action.socket, action.client, action.data );
+          return addMessage( stateChat, action.socket, action.client, action.data );
         } else {
-          return refuseMessage( stateMessages, action.socket, action.client, action.data );
+          return refuseMessage( stateChat, action.socket, action.client, action.data );
         }
       default:
-        return stateMessages;
+        return stateChat;
     }
   }
 } ), loadState() );

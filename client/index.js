@@ -18,85 +18,25 @@ import _throttle from 'lodash/throttle';
 
     content: document.getElementById( 'content' ),
 
-    chat: document.querySelector( '.chat' ),
-    chatForm: document.getElementById( 'chatForm' ),
-    chatMessages: document.getElementById( 'chatMessages' ),
-    chatEntry: document.getElementById( 'chatEntry' ),
-    Username: document.getElementById( 'Username' ),
-
     updateDOM: ( state ) => {
       const me = state.client;
 
       if ( me ) {
-        $.updateName( me );
         $.connection.classList.remove( 'on' );
-        $.content.classList.add( 'on' );
-        $.chat.classList.add( 'on' );
       } else {
-        $.updateName( null );
         $.connection.classList.add( 'on' );
-        $.content.classList.remove( 'on' );
-        $.chat.classList.remove( 'on' );
       }
-
-      $.updateMessages( state.messages );
-
-      // document.getElementById( 'contentDebug' ).innerHTML =
-      //   `<pre>${JSON.stringify( state,0,1 )}</pre>`;
 
       return state;
-    },
-    updateName: client => {
-      if ( client ) {
-        let icon = '';
-        if ( !!client.chat ) icon += '💬';
-        if ( !!client.runner ) icon += '⚙';
-
-        $.Username.innerHTML =
-          `<div class="icon">${icon}</div>` +
-          `<div class="name">${client.name}</div>`
-        ;
-        $.Username.title = client.cid;
-        $.Username.style[ 'border-color' ] = client.color;
-      } else {
-        $.Username.htmlContent = 'Not logged in';
-        $.Username.title = '';
-        delete $.Username.style[ 'border-color' ];
-      }
-    },
-    updateMessages: messages => {
-      const nodesArray = [ ...$.chatMessages.querySelectorAll( 'li.chat-line' ) ];
-      nodesArray
-        .filter( n => !messages.some( m => `${m.t}~${m.cid}` === n.id ) )
-        .forEach( n => { n.parentNode.removeChild( n ); console.log( '#' ); } )
-      ;
-      messages.forEach( m => { $.addMessage( m, nodesArray ); } );
-    },
-
-    addMessage: ( msg, nodesArray = [ ...$.chatMessages.querySelectorAll( 'li.chat-line' ) ] ) => {
-      const thisMsgId = `${msg.t}~${msg.cid}`;
-      if ( !nodesArray.some(
-        li => li.id === thisMsgId
-      ) ) {
-        const li = document.createElement( 'li' );
-        li.className = 'chat-line';
-        li.id = thisMsgId;
-        li.title = new Date( msg.t );
-        li.innerHTML = `<b style="color:${msg.color || 'inherit'};">
-          ${msg.name}
-          </b>:
-          ${msg.data}`;
-        $.chatMessages.appendChild( li );
-      }
-    },
+    }
   };
 
 
   /* store.app */
 
   const loadState = () => ( {
-    ...( localStorage.state ? JSON.parse( localStorage.state ) : {} ),
-    ...{ count: 0, client: { role: 'chat' }, clients: [], messages: [] }
+    ...{ count: 0, client: { role: 'chat' }, clients: [], chat: { on: false, messages: [] } },
+    ...( localStorage.state ? JSON.parse( localStorage.state ) : {} )
   } );
 
   const saveState = () => {
@@ -156,7 +96,7 @@ import _throttle from 'lodash/throttle';
     state = {
       ...state,
       ...action.serverState,
-      messages: action.serverState.messages.slice( -4 )
+      chat: { ...action.serverState.chat, messages: action.serverState.chat.messages.slice( -4 ) },
     };
 
     // console.warn( JSON.stringify( serverState ) );
@@ -178,12 +118,12 @@ import _throttle from 'lodash/throttle';
   }
 
 
-  /* store.messages */
-  function sendMessage( clients, action ) {
+  /* store.chat */
+  function sendMessage( chat, action ) {
     const me = action.client;
     if ( !me.cid ) {
       console.warn( 'Cannot post message while not logged in' );
-      return clients;
+      return chat;
     }
 
     const msg = {
@@ -209,7 +149,11 @@ import _throttle from 'lodash/throttle';
     } );
     $.chatEntry.focus();
 
-    return clients;
+    return chat;
+  }
+
+  function toggleChat( chat ) {
+    return { ...chat, on: !chat.on };
   }
 
 
@@ -221,7 +165,7 @@ import _throttle from 'lodash/throttle';
       case Actions.Types.dummyIncreaseCount:
         return ( function dummyReducer( app ) {
           return { ...app, count: app.count + 1 };
-        }() );
+        }( rootState ) );
 
       case Actions.Types.receiveState:
         return receiveState( rootState, action );
@@ -255,24 +199,33 @@ import _throttle from 'lodash/throttle';
         return clients;
     }
   }
-  function reducerMessages( messages = [], action ) {
+  function reducerChat( chat = {}, action ) {
     switch ( action.type ) {
 
       case Actions.Types.sendMessage:
-        return sendMessage( messages, action );
+        return { ...chat, messages: sendMessage( chat.messages, action ) };
+
+      case Actions.Types.toggleChat:
+        return toggleChat( chat, action );
 
       default:
-        return messages;
+        return chat;
     }
   }
 
   function mainReducer( _state = loadState(), action ) {
+    if ( action.type !== undefined && Actions.Types[ action.type ] === undefined ) {
+      if ( action.type !== '@@redux/INIT' ) {
+        console.warn( `Not implemented Actions.Types "${action.type}"` );
+      }
+    }
+
     _state = reducerRoot( _state, action );
     return {
       ..._state,
       ...{ client: reducerClient( _state.client, action ) },
       ...{ clients: reducerClients( _state.clients, action ) },
-      ...{ messages: reducerMessages( _state.messages, action ) }
+      ...{ chat: reducerChat( _state.chat, action ) }
     };
   }
 
@@ -311,14 +264,6 @@ import _throttle from 'lodash/throttle';
     // if( !client ) throw ":o"
     return client;
   };
-
-  $.chatForm.addEventListener( 'submit', e => {
-    e.preventDefault();
-    const msg = $.chatEntry.value;
-    if ( msg ) {
-      store.dispatch( Actions.sendMessage( msg ) );
-    }
-  } );
 
   socket.on( 'connect', () => {
     store.dispatch( Actions.authenticateSocketOnConnection( socket ) );

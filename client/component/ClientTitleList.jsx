@@ -2,16 +2,18 @@
 import React, { Component, PropTypes } from 'react';
 import { Provider, connect } from 'react-redux';
 import * as Actions from './../actions.js';
-import ClientCardMini from './ClientCardMini.jsx';
+import ClientTitle from './ClientTitle.jsx';
 
 const ClientList = ( { clients } ) =>
-  <ul className="client-list" style={{ borderBottom: '1px #ddd solid' }}>
-    { clients.map( c =>
-      <li key={c.cid}>
-        <ClientCardMini name={c.name} role={c.role} color={c.color} />
-      </li>
-    ) }
-  </ul>
+  <div>
+    <ul className="client-title-list" style={{ borderBottom: '1px #ddd solid' }}>
+      { clients.map( c =>
+        <li key={ c.cid }>
+          <ClientTitle data={ c } />
+        </li>
+      ) }
+    </ul>
+  </div>
 ;
 
 ClientList.propTypes = {
@@ -19,9 +21,11 @@ ClientList.propTypes = {
 };
 
 // Map Redux state to component props
-function mapStateToProps( state ) {
-  return state;
-}
+const mapStateToProps = state => state;
+// const mapStateToProps = ( state ) => {
+//   console.warn( state );
+//   return state;
+// };
 
 // Map Redux actions to component props
 const mapDispatchToProps = ( dispatch ) => ( {

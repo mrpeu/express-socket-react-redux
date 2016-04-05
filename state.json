@@ -1,45 +1,39 @@
 {
   "clients": {
-    "active": [
-      {
-        "name": "Amaterasu",
-        "color": "#049451",
-        "cid": "ao4YSsFUFQ8nY3lVAAAI",
-        "role": "chat",
-        "ts": 1459805891887,
-        "sid": "9Lfydr18XmSG-IFaAAAJ"
-      }
-    ],
+    "active": [],
     "old": []
   },
-  "messages": [
-    {
-      "color": "#049451",
-      "name": "Ava",
-      "data": "ssshhh",
-      "t": 1459509286300,
-      "cid": "v0deYTcl5dI-L9a9AAAH"
-    },
-    {
-      "color": "#049451",
-      "name": "Ava",
-      "data": "shh",
-      "t": 1459509289627,
-      "cid": "v0deYTcl5dI-L9a9AAAH"
-    },
-    {
-      "color": "#e44",
-      "name": "Lincoln",
-      "data": "oh!",
-      "t": 1459509296731,
-      "cid": "2NACPsvRAEnym1gbAAAO"
-    },
-    {
-      "color": "#24364b",
-      "name": "Henry",
-      "data": ":o",
-      "t": 1459509305876,
-      "cid": "RkKvWY9HtIhQyLXgAAAP"
-    }
-  ]
+  "chat": {
+    "messages": [
+      {
+        "color": "#049451",
+        "name": "Ava",
+        "data": "shh",
+        "t": 1459509289627,
+        "cid": "v0deYTcl5dI-L9a9AAAH"
+      },
+      {
+        "color": "#e44",
+        "name": "Lincoln",
+        "data": "oh!",
+        "role": "chat",
+        "t": 1459509296731,
+        "cid": "2NACPsvRAEnym1gbAAAO"
+      },
+      {
+        "color": "#24364b",
+        "name": "Henry",
+        "data": ":o",
+        "t": 1459509305876,
+        "cid": "RkKvWY9HtIhQyLXgAAAP"
+      },
+      {
+        "color": "#dcd7d2",
+        "name": "Luna",
+        "data": "sd",
+        "t": 1459837225458,
+        "cid": "GAr3XWokv2hX7r-fAAAX"
+      }
+    ]
+  }
 }

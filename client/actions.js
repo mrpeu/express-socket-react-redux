@@ -8,7 +8,8 @@ export const Types = {
   notwelcome: 'notwelcome',
 
   receiveMessage: 'receiveMessage',
-  sendMessage: 'sendMessage'
+  sendMessage: 'sendMessage',
+  toggleChat: 'toggleChat'
 };
 
 
@@ -47,4 +48,8 @@ export function receiveMessage( msg ) {
 
 export function sendMessage( msg ) {
   return { type: Types.sendMessage, msg };
+}
+
+export function toggleChat() {
+  return { type: Types.toggleChat };
 }

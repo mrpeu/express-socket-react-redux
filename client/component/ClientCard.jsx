@@ -2,24 +2,25 @@
 import React, { Component, PropTypes } from 'react';
 import { Provider, connect } from 'react-redux';
 import * as Actions from './../actions.js';
+import ClientTitle from './ClientTitle.jsx';
 
-const ClientCardMini = ( { name, role, color } ) =>
-  <div className="client-card-mini" role={ role } style={{ backgroundColor: color }}>
-    <div className="left-pad"></div>
-    <span className="name">{ name }</span>
+const ClientCard = ( { data } ) =>
+  <div className="client-card" role={ data.role }>
+    <ClientTitle data={ data } />
+    <pre>{ JSON.stringify( data, 0, 2 ) }</pre>
   </div>
 ;
 
-ClientCardMini.propTypes = {
-  role: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  color: PropTypes.string.isRequired
+ClientCard.propTypes = {
+  data: PropTypes.object.isRequired
 };
 
 // Map Redux state to component props
-function mapStateToProps( state ) {
-  return state;
-}
+const mapStateToProps = state => state;
+// const mapStateToProps = ( state ) => {
+//   console.warn( state );
+//   return state;
+// };
 
 // Map Redux actions to component props
 const mapDispatchToProps = ( dispatch ) => ( {
@@ -30,4 +31,4 @@ const mapDispatchToProps = ( dispatch ) => ( {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)( ClientCardMini );
+)( ClientCard );

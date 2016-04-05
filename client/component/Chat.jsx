@@ -5,25 +5,26 @@ import * as Actions from './../actions.js';
 import ChatList from './ChatList.jsx';
 import ChatForm from './ChatForm.jsx';
 
-const Chat = ( { client, messages } ) =>
-  <Chat className="chat">
-    <ChatList messages={ messages } />
-    <ChatForm me={ client } />
-  </Chat>
+const Chat = ( { client, chat, onToggleClick } ) =>
+  <div className={ `chat${chat.on ? ' on' : ''}` }>
+    <div className="switch" onClick={ onToggleClick }>💬</div>
+    <ChatList />
+    <ChatForm />
+  </div>
 ;
 
 Chat.propTypes = {
   client: PropTypes.object.isRequired,
-  messages: PropTypes.array.isRequired
+  chat: PropTypes.object.isRequired,
+  onToggleClick: PropTypes.func.isRequired
 };
 
 // Map Redux state to component props
-function mapStateToProps( state ) {
-  return state;
-}
+const mapStateToProps = state => state.chat;
 
 // Map Redux actions to component props
 const mapDispatchToProps = ( dispatch ) => ( {
+  onToggleClick: () => dispatch( Actions.toggleChat() )
 } );
 
 // Connected Component:
