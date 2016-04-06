@@ -8,6 +8,11 @@ const ClientCard = ( { data } ) =>
   <div className="client-card" role={ data.role }>
     <ClientTitle data={ data } />
     <pre>{ JSON.stringify( data, 0, 2 ) }</pre>
+    <div>
+      { data.runs.map( r => (
+          <div key={ r.id }>{ r.id }</div>
+      ) ) }
+    </div>
   </div>
 ;
 

@@ -39,10 +39,7 @@ function loadState() {
     console.error( chalk.red( `loadState error: ${err}` ) );
   }
   return {
-    clients: {
-      active: [],
-      old: []
-    },
+    clients: [],
     chat: {
       messages: []
     },
@@ -52,16 +49,10 @@ function loadState() {
 
 function broadcastState() {
   const state = store.getState();
-  // console.log( chalk.blue( `Broadcast state: [ ${
-  //   state.clients.active.reduce( ( s, c ) =>
-  //     `${s}${style.bgColor.ansi.hex( c.color )}_${style.bgColor.close}${c.name}` +
-  //     `( ${( ( ( c.ts + USER_TIMEOUT ) - Date.now() ) / 1000 ).toFixed( 2 )}s ), `
-  //   , '' ).replace( /, $/, '' )
-  // } ]` ) );
 
   io.of( '' ).emit( 'state', {
     chat: state.chat,
-    clients: state.clients.active
+    clients: state.clients
   } );
 
   _publishState = false;
@@ -89,63 +80,54 @@ function saveState( state ) {
 function cleanState( state ) {
   const now = Date.now();
 
-  const clients = [ ];
-  const goneClients = [ ];
-
-  state.clients.active.forEach( c => {
-    if ( ( now - c.ts ) > USER_TIMEOUT ) {
-      goneClients.push( c );
-      console.log( `Client ${c.name} is no longer active.` );
-    } else {
-      clients.push( c );
-    }
-  } );
-
-  // merge
-  const clientsOld = goneClients.concat( state.clients.old.filter( old =>
-    ( now - old.ts ) > USER_TIMEOUT * 2 &&
-    goneClients.findIndex( gone => old.cid === gone.cid ) < 0
-  ) );
-
-  // // if there has been changes
-  // if ( goneClients.length > 0 )
-  //   newState = broadcastState( newState );
-
   return {
     ...state,
-    chat: { ...state.chat, messages: state.chat.messages.slice( -4 ) },
-    clients: {
-      active: clients,
-      old: clientsOld
-    }
+    chat: {
+      ...state.chat
+    },
+    clients: state.clients.filter( c => {
+      if ( ( now - c.ts ) > USER_TIMEOUT ) {
+        console.log( `Client ${c.name} is no longer active.` );
+        return false;
+      }
+      return true;
+    } )
   };
 }
 
 
 // Message management
 function validateMessage( stateChat, socket, client, req, cbConfirm ) {
-  // console.log( `> ${client.name} #${client.cid}: ${JSON.stringify( req, null, 1 )}` );
   if ( req.data && req.data !== 'fuck' ) {
+    console.log( `> ${client.name} #${client.cid}: ${JSON.stringify( req, null, 1 )}` );
     // confirm to the emitter the mesage has been treated
     cbConfirm( req );
     return true;
   } else {
-    cbConfirm( { color: client.color, name: client.name, err: 'Message refused' } );
+    cbConfirm( { ...req, err: 'Message refused' } );
     return false;
   }
 }
 
 function addMessage( stateChat, socket, client, data ) {
-  // socket.emit( 'chat-message', data );
-  socket.broadcast.emit( 'chat-message', { color: client.color, name: client.name, ...data } );
+  const msg = {
+    color: client.color,
+    name: client.name,
+    role: client.role,
+    cid: client.cid,
+    t: Date.now(),
+    ...data
+  };
+
+  // socket.broadcast.emit( 'chat-message', msg );
 
   _publishState = true;
 
   return {
     ...stateChat,
     messages: [
-      ...stateChat.messages,
-      { color: client.color, name: client.name, ...data }
+      ...stateChat.messages.slice( -5 ),
+      msg
     ]
   };
 }
@@ -173,36 +155,22 @@ function markClientAlive( stateClients, client ) {
   //   ` ${( client.ts + USER_TIMEOUT - Date.now() ) / 1000}s`
   // ) );
   client.ts = Date.now();
-  // console.warn(chalk.red(client.ts+' > '+Date.now()));
-  // const nState = {
-  return {
-    active: stateClients.active.map( c => {
-      if ( c.cid === client.cid ) {
-        return {
-          ...c,
-          ts: Date.now()
-        };
-      }
-      return c;
-    } ),
-    old: stateClients.old
-  };
 
-  // const nClient = nState.clients.find( c => c.cid === client.cid );
-  // console.log( chalk.blue( `${nClient.name} time to live:` +
-  //   ` ${( nClient.ts + USER_TIMEOUT - Date.now() ) / 1000}s`
-  // ) );
-
-  // return nState;
+  return stateClients.map( c => {
+    if ( c.cid === client.cid ) {
+      return {
+        ...c,
+        ts: Date.now()
+      };
+    }
+    return c;
+  } );
 }
 
 function disconnectClient( state, socket, client ) {
   _publishState = true;
 
-  return {
-    active: state.active.filter( c => c.cid !== client.cid ),
-    old: state.old.filter( c => c.cid !== client.cid )
-  };
+  return state.filter( c => c.cid !== client.cid );
 }
 
 // After authentication fail
@@ -229,14 +197,6 @@ function connectClient( stateClients, socket, client, authResponse ) {
     );
   }
 
-  const existingSocket = sockets.findIndex( s => s.client.id === client.sid );
-
-  if ( existingSocket ) {
-    sockets[ existingSocket ] = socket;
-  } else {
-    sockets = [ ...sockets, socket ];
-  }
-
   client = {
     name: NAMES[ ~~( ( NAMES.length - 1 ) * Math.random() ) ],
     color: COLORS[ ~~( ( COLORS.length - 1 ) * Math.random() ) ],
@@ -253,16 +213,15 @@ function connectClient( stateClients, socket, client, authResponse ) {
     store.dispatch( Actions.receiveMessage( socket, client, data, cb ) );
   } );
 
+  socket.on( 'run-status', ( data, cb ) => {
+    // console.warn( `run-status: ${JSON.stringify(data)}` );
+    store.dispatch( Actions.receiveRunStatus( socket, client, data, cb ) );
+  } );
+
   socket.on( 'disconnect', () => {
     console.log( `  Client disconnected: ${client.name} #${client.cid} #${client.sid}` );
     store.dispatch( Actions.disconnectClient( socket, client ) );
   } );
-
-
-  const newClientsActive = [
-    ...stateClients.active.filter( c => c.cid !== client.cid ),
-    client
-  ];
 
   socket.emit( 'welcome', { client } );
 
@@ -270,12 +229,10 @@ function connectClient( stateClients, socket, client, authResponse ) {
 
   _publishState = true;
 
-  return {
-    active: newClientsActive,
-    old: [
-      ...stateClients.old.map( c => c.cid !== client.cid )
-    ]
-  };
+  return [
+    ...stateClients.filter( c => c.cid !== client.cid ),
+    client
+  ];
 }
 
 function authenticateClient( stateClients, socket, client ) {
@@ -287,15 +244,9 @@ function authenticateClient( stateClients, socket, client ) {
   console.log( `  Authentication of ${JSON.stringify( client )}...` );
 
   // check if already in state.clients
-  if ( stateClients.active.some( c => c.cid === client.cid ) ) {
+  if ( stateClients.some( c => c.cid === client.cid ) ) {
     // console.warn( chalk.magenta( `  ACTIVE: ${client.name} #${client.cid}` ) );
     return 'ACTIVE';
-  }
-
-  // check if already in state.clientsOld
-  if ( stateClients.old.some( c => c.cid === client.cid ) ) {
-    // console.warn( chalk.magenta( `  OLD: ${client.name} #${client.cid}` ) );
-    return 'OLD';
   }
 
   // authentication failure:
@@ -304,11 +255,26 @@ function authenticateClient( stateClients, socket, client ) {
   return true;
 }
 
+function updateClientRuns( client, socket, runs ) {
+  socket.broadcast.emit( 'run-status', {
+    ...client.runs,
+    runs
+  } );
+
+  return {
+    ...client,
+    runs: {
+      ...client.runs,
+      runs
+    }
+  };
+}
+
 // Store:
 store = createStore( combineReducers( {
-  clients: ( stateClients = [], action ) => {
+  clients: ( stateClients = {}, action ) => {
     if ( action.client ) {
-      // console.warn('a',stateClients.active.map(c=>c.ts/1000).join());
+      // console.warn('a',stateClients.map(c=>c.ts/1000).join());
       stateClients = markClientAlive( stateClients, action.client );
     }
 
@@ -327,7 +293,14 @@ store = createStore( combineReducers( {
         return disconnectClient( stateClients, action.socket, action.client );
 
       case Actions.Types.cleanState:
+        console.warn( 'Actions.Types.cleanState: Not implemented!' );
         return stateClients;
+
+      case Actions.Types.receiveRunStatus:
+        return [
+          ...stateClients.filter( c => c.cid !== action.client.cid ),
+          updateClientRuns( action.client, action.socket, action.data.runs )
+        ];
 
       default:
         // console.warn( `  Unknown action type '${action.type}'`);
@@ -373,6 +346,7 @@ store.subscribe(
     }
   , 200 )
 );
+
 
 app.get( '/', ( req, res ) => {
   res.sendFile( path.resolve( 'client/index.html' ) );

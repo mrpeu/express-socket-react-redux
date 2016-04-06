@@ -1,15 +1,17 @@
 export const Types = {
   dummyIncreaseCount: 'dummyIncreaseCount',
   receiveState: 'receiveState',
-  cleanState: 'cleanState',
+  // cleanState: 'cleanState',
 
   authenticateSocketOnConnection: 'authenticateSocketOnConnection',
   welcome: 'welcome',
   notwelcome: 'notwelcome',
 
-  receiveMessage: 'receiveMessage',
+  // receiveMessage: 'receiveMessage',
   sendMessage: 'sendMessage',
-  toggleChat: 'toggleChat'
+  toggleChat: 'toggleChat',
+
+  receiveRunStatus: 'receiveRunStatus'
 };
 
 
@@ -20,9 +22,9 @@ export function dummyIncreaseCount() {
 export function receiveState( serverState ) {
   return { type: Types.receiveState, serverState };
 }
-export function cleanState() {
-  return { type: Types.cleanState };
-}
+// export function cleanState() {
+//   return { type: Types.cleanState };
+// }
 
 /* client */
 export function authenticateSocketOnConnection( socket ) {
@@ -40,14 +42,17 @@ export function welcome( data ) {
 export function updateClientList( clients ) {
   return { type: Types.update, clients };
 }
-
-/* messages */
-export function receiveMessage( msg ) {
-  return { type: Types.receiveMessage, msg };
+export function receiveRunStatus( data ) {
+  return { type: Types.receiveRunStatus, data };
 }
 
-export function sendMessage( msg ) {
-  return { type: Types.sendMessage, msg };
+/* messages */
+// export function receiveMessage( msg ) {
+//   return { type: Types.receiveMessage, msg };
+// }
+
+export function sendMessage( data, cb ) {
+  return { type: Types.sendMessage, data, cb };
 }
 
 export function toggleChat() {

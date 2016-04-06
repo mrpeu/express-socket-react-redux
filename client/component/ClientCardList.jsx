@@ -7,7 +7,7 @@ import ClientCard from './ClientCard.jsx';
 const ClientCardList = ( { clients } ) =>
   <div>
     <ul className="client-card-list" style={{ borderBottom: '1px #ddd solid' }}>
-      { clients.map( c =>
+      { clients.filter( c => c.role === 'runner' ).map( c =>
         <li key={c.cid}>
           <ClientCard data={ c } />
         </li>

@@ -6,9 +6,9 @@ import * as Actions from './../actions.js';
 
 const ClientTitle = ( { data } ) =>
   <div className="client-title"
-    role={ data.role } style={{ backgroundColor: data.color }}
+    role={ data.role }
   >
-    <div className="icon-left-pad" role={ data.role }></div>
+    <div className="icon-left-pad" role={ data.role } style={{ backgroundColor: data.color }}></div>
     <span className="name">{ data.name }</span>
   </div>
 ;

@@ -87,32 +87,32 @@ import _throttle from 'lodash/throttle';
 
     socket.on( 'state', serverState => { store.dispatch( Actions.receiveState( serverState ) ); } );
 
-    socket.on( 'chat-message', ( msg ) => { store.dispatch( Actions.receiveMessage( msg ) ); } );
+    socket.on( 'run-status', c => { store.dispatch( Actions.receiveRunStatus( c ) ); } );
 
     return newClient;
   }
+
+  function onReceiveRunStatus( client, action ) {
+    console.warn( 'receivedStatus action:', action.data.runs);
+    return {
+      ...client,
+      runs: {
+        ...client.runs,
+        ...action.runs
+      }
+    };
+  }
+
 
   function receiveState( state, action ) {
     state = {
       ...state,
       ...action.serverState,
-      chat: { ...action.serverState.chat, messages: action.serverState.chat.messages.slice( -4 ) },
+      chat: {
+        ...state.chat,
+        messages: action.serverState.chat.messages
+      },
     };
-
-    // console.warn( JSON.stringify( serverState ) );
-
-    // console.warn( 'new state.clients(%d) %s',
-    //   state.clients.length,
-    //   JSON.stringify( state.clients.map( c => c.name ) )
-    // );
-
-    if ( !state.clients.some( c => c.cid === state.client.cid ) ) {
-      console.error( 'Not in the client list! ' +
-        `${state.client.cid}  C  ${state.clients.map( c => c.cid ).join( ', ' )};`
-      );
-      clearInterval( ping );
-      // state.client.cid = null;
-    }
 
     return state;
   }
@@ -127,27 +127,13 @@ import _throttle from 'lodash/throttle';
     }
 
     const msg = {
-      data: action.msg,
-      t: Date.now(),
-      cid: me.cid,
-      name: me.name,
-      color: me.color
+      data: action.data,
+      t: Date.now()
     };
 
     socket.emit( 'chat-message', msg, response => {
-      if ( response.err ) {
-        $.addMessage( {
-          ...response,
-          name: 'Error',
-          data: `"${action.msg}"` +
-            `<span style="color:red">${response.err}</span>`
-        } );
-      } else {
-        $.addMessage( response );
-        $.chatEntry.value = '';
-      }
+      action.cb( response );
     } );
-    $.chatEntry.focus();
 
     return chat;
   }
@@ -185,6 +171,8 @@ import _throttle from 'lodash/throttle';
         return authenticationSucceed( client, action );
       case Actions.Types.notwelcome:
         return authenticationFailed( client, action );
+      case Actions.Types.receiveRunStatus:
+        return onReceiveRunStatus( client, action );
 
       default:
         return client;

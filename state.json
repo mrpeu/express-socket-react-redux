@@ -1,38 +1,54 @@
 {
-  "clients": {
-    "active": [],
-    "old": []
-  },
+  "clients": [],
   "chat": {
     "messages": [
       {
-        "color": "#049451",
-        "name": "Ava",
-        "data": "shh",
-        "t": 1459509289627,
-        "cid": "v0deYTcl5dI-L9a9AAAH"
+        "color": "#557",
+        "name": "mRemoteTestRunner",
+        "role": "runner",
+        "cid": "#z934izhq34ljie",
+        "t": 1459938167048,
+        "data": "{\"id\":\"a41323c3-64db-4b77-98e4-995aa70001c3\",\"name\":\"runMMWRequest\",\"total\":6,\"value\":3,\"state\":\"Requesting ..\\\\remoteTestRunner\\\\__data\\\\mmwrequest\\\\mpro\\\\ClassPkgs.json...\",\"runs\":{\"0d11dc83-577f-4aa8-9108-fc8315954d1a\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\ClassPkgs.json\",\"id\":\"0d11dc83-577f-4aa8-9108-fc8315954d1a\",\"total\":1,\"value\":1,\"ds\":1459938166745,\"de\":1459938167043}}}"
       },
       {
-        "color": "#e44",
-        "name": "Lincoln",
-        "data": "oh!",
+        "color": "#557",
+        "name": "mRemoteTestRunner",
+        "role": "runner",
+        "cid": "#z934izhq34ljie",
+        "t": 1459938167522,
+        "data": "{\"id\":\"a41323c3-64db-4b77-98e4-995aa70001c3\",\"name\":\"runMMWRequest\",\"total\":6,\"value\":4,\"state\":\"Requesting ..\\\\remoteTestRunner\\\\__data\\\\mmwrequest\\\\mpro\\\\Error_Messages.json...\",\"runs\":{\"0d11dc83-577f-4aa8-9108-fc8315954d1a\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\ClassPkgs.json\",\"id\":\"0d11dc83-577f-4aa8-9108-fc8315954d1a\",\"total\":1,\"value\":1,\"ds\":1459938166745,\"de\":1459938167043},\"67a481fd-9c58-4127-bdb7-ccf945069837\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Error_Messages.json\",\"id\":\"67a481fd-9c58-4127-bdb7-ccf945069837\",\"total\":6,\"value\":6,\"ds\":1459938167086,\"de\":1459938167511}}}"
+      },
+      {
+        "color": "#557",
+        "name": "mRemoteTestRunner",
+        "role": "runner",
+        "cid": "#z934izhq34ljie",
+        "t": 1459938167688,
+        "data": "{\"id\":\"a41323c3-64db-4b77-98e4-995aa70001c3\",\"name\":\"runMMWRequest\",\"total\":6,\"value\":5,\"state\":\"Requesting ..\\\\remoteTestRunner\\\\__data\\\\mmwrequest\\\\mpro\\\\Abhängige Funktionen.json...\",\"runs\":{\"0d11dc83-577f-4aa8-9108-fc8315954d1a\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\ClassPkgs.json\",\"id\":\"0d11dc83-577f-4aa8-9108-fc8315954d1a\",\"total\":1,\"value\":1,\"ds\":1459938166745,\"de\":1459938167043},\"67a481fd-9c58-4127-bdb7-ccf945069837\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Error_Messages.json\",\"id\":\"67a481fd-9c58-4127-bdb7-ccf945069837\",\"total\":6,\"value\":6,\"ds\":1459938167086,\"de\":1459938167511},\"c612024d-6558-42a7-829a-9875529e1592\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Abhängige Funktionen.json\",\"id\":\"c612024d-6558-42a7-829a-9875529e1592\",\"total\":1,\"value\":1,\"ds\":1459938167521,\"de\":1459938167671}}}"
+      },
+      {
+        "color": "#557",
+        "name": "mRemoteTestRunner",
+        "role": "runner",
+        "cid": "#z934izhq34ljie",
+        "t": 1459938167710,
+        "data": "{\"id\":\"a41323c3-64db-4b77-98e4-995aa70001c3\",\"name\":\"runMMWRequest\",\"total\":6,\"value\":6,\"state\":\"Done in 5s.\",\"runs\":{\"0d11dc83-577f-4aa8-9108-fc8315954d1a\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\ClassPkgs.json\",\"id\":\"0d11dc83-577f-4aa8-9108-fc8315954d1a\",\"total\":1,\"value\":1,\"ds\":1459938166745,\"de\":1459938167043},\"67a481fd-9c58-4127-bdb7-ccf945069837\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Error_Messages.json\",\"id\":\"67a481fd-9c58-4127-bdb7-ccf945069837\",\"total\":6,\"value\":6,\"ds\":1459938167086,\"de\":1459938167511},\"c612024d-6558-42a7-829a-9875529e1592\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Abhängige Funktionen.json\",\"id\":\"c612024d-6558-42a7-829a-9875529e1592\",\"total\":1,\"value\":1,\"ds\":1459938167521,\"de\":1459938167671}}}"
+      },
+      {
+        "color": "#557",
+        "name": "mRemoteTestRunner",
+        "role": "runner",
+        "cid": "#z934izhq34ljie",
+        "t": 1459938167719,
+        "data": "{\"id\":\"a41323c3-64db-4b77-98e4-995aa70001c3\",\"name\":\"runMMWRequest\",\"total\":6,\"value\":6,\"state\":\"Done.\",\"runs\":{\"0d11dc83-577f-4aa8-9108-fc8315954d1a\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\ClassPkgs.json\",\"id\":\"0d11dc83-577f-4aa8-9108-fc8315954d1a\",\"total\":1,\"value\":1,\"ds\":1459938166745,\"de\":1459938167043},\"67a481fd-9c58-4127-bdb7-ccf945069837\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Error_Messages.json\",\"id\":\"67a481fd-9c58-4127-bdb7-ccf945069837\",\"total\":6,\"value\":6,\"ds\":1459938167086,\"de\":1459938167511},\"c612024d-6558-42a7-829a-9875529e1592\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Abhängige Funktionen.json\",\"id\":\"c612024d-6558-42a7-829a-9875529e1592\",\"total\":1,\"value\":1,\"ds\":1459938167521,\"de\":1459938167671}}}"
+      },
+      {
+        "color": "#2a5fe3",
+        "name": "Arisu",
         "role": "chat",
-        "t": 1459509296731,
-        "cid": "2NACPsvRAEnym1gbAAAO"
-      },
-      {
-        "color": "#24364b",
-        "name": "Henry",
-        "data": ":o",
-        "t": 1459509305876,
-        "cid": "RkKvWY9HtIhQyLXgAAAP"
-      },
-      {
-        "color": "#dcd7d2",
-        "name": "Luna",
-        "data": "sd",
-        "t": 1459837225458,
-        "cid": "GAr3XWokv2hX7r-fAAAX"
+        "cid": "S0Cl30uFIKrgHK0-AAAD",
+        "t": 1459945012288,
+        "data": "alouhette"
       }
     ]
   }

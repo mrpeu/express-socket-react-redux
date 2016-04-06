@@ -90,7 +90,8 @@
       ],
       "no-else-return": 0,
       "no-param-reassign": 0,
-      "no-unused-vars": 0
+      "no-unused-vars": 0,
+      "no-trailing-spaces": 0
     },
     "env": {
       "browser": true,

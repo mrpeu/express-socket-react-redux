@@ -5,10 +5,10 @@ import * as Actions from './../actions.js';
 import ClientTitle from './ClientTitle.jsx';
 
 const ChatMessage = ( { message } ) =>
-  <div className="chat-message" role={ message.role } title={ new Date( message.t ) }>
+  <div className="chat-message" title={ new Date( message.t ) }>
     <ClientTitle data={{ ...message }} />
-    :&nbsp;
-    <div className="chat-message-data">{ message.data }</div>
+    <span style={{ paddingTop: '.2em', flex: '0 1 auto' }}>:&nbsp;</span>
+    <span className="chat-message-data">{ message.data.toString() }</span>
   </div>
 ;
 

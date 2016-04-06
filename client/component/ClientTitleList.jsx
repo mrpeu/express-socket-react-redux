@@ -4,7 +4,7 @@ import { Provider, connect } from 'react-redux';
 import * as Actions from './../actions.js';
 import ClientTitle from './ClientTitle.jsx';
 
-const ClientList = ( { clients } ) =>
+const ClientTitleList = ( { clients } ) =>
   <div>
     <ul className="client-title-list" style={{ borderBottom: '1px #ddd solid' }}>
       { clients.map( c =>
@@ -16,7 +16,7 @@ const ClientList = ( { clients } ) =>
   </div>
 ;
 
-ClientList.propTypes = {
+ClientTitleList.propTypes = {
   clients: PropTypes.array.isRequired
 };
 
@@ -35,4 +35,4 @@ const mapDispatchToProps = ( dispatch ) => ( {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)( ClientList );
+)( ClientTitleList );

@@ -4,10 +4,15 @@ export const Types = {
   disconnectClient: 'disconnectClient',
   refuseClient: 'refuseClient',
   markClientAlive: 'markClientAlive',
+  receiveRunStatus: 'receiveRunStatus',
+
   receiveMessage: 'receiveMessage',
   addMessage: 'addMessage',
-  cleanState: 'cleanState',
+
+  cleanState: 'cleanState'
 };
+
+const noop = () => {};
 
 /* clients */
 export function connectClient( socket, client ) {
@@ -21,13 +26,20 @@ export function refuseClient( socket, client ) {
 export function markClientAlive( client ) {
   return { type: Types.markClientAlive, client };
 }
+
 export function disconnectClient( socket, client ) {
   return { type: Types.disconnectClient, socket, client };
 }
 
+export function receiveRunStatus( socket, client, data, cb ) {
+  return { type: Types.receiveRunStatus, socket, client, data,
+    cb: cb || noop };
+}
+
 /* messages */
 export function receiveMessage( socket, client, data, cb ) {
-  return { type: Types.receiveMessage, socket, client, data, cb };
+  return { type: Types.receiveMessage, socket, client, data,
+    cb: cb || noop };
 }
 
 export function addMessage( from, data ) {

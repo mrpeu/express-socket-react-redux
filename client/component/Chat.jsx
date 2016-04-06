@@ -8,7 +8,7 @@ import ChatForm from './ChatForm.jsx';
 const Chat = ( { client, chat, onToggleClick } ) =>
   <div className={ `chat${chat.on ? ' on' : ''}` }>
     <div className="switch" onClick={ onToggleClick }>💬</div>
-    <ChatList />
+    <ChatList messages={ chat.messages } />
     <ChatForm />
   </div>
 ;
