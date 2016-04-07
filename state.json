@@ -7,14 +7,6 @@
         "name": "mRemoteTestRunner",
         "role": "runner",
         "cid": "#z934izhq34ljie",
-        "t": 1459938167048,
-        "data": "{\"id\":\"a41323c3-64db-4b77-98e4-995aa70001c3\",\"name\":\"runMMWRequest\",\"total\":6,\"value\":3,\"state\":\"Requesting ..\\\\remoteTestRunner\\\\__data\\\\mmwrequest\\\\mpro\\\\ClassPkgs.json...\",\"runs\":{\"0d11dc83-577f-4aa8-9108-fc8315954d1a\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\ClassPkgs.json\",\"id\":\"0d11dc83-577f-4aa8-9108-fc8315954d1a\",\"total\":1,\"value\":1,\"ds\":1459938166745,\"de\":1459938167043}}}"
-      },
-      {
-        "color": "#557",
-        "name": "mRemoteTestRunner",
-        "role": "runner",
-        "cid": "#z934izhq34ljie",
         "t": 1459938167522,
         "data": "{\"id\":\"a41323c3-64db-4b77-98e4-995aa70001c3\",\"name\":\"runMMWRequest\",\"total\":6,\"value\":4,\"state\":\"Requesting ..\\\\remoteTestRunner\\\\__data\\\\mmwrequest\\\\mpro\\\\Error_Messages.json...\",\"runs\":{\"0d11dc83-577f-4aa8-9108-fc8315954d1a\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\ClassPkgs.json\",\"id\":\"0d11dc83-577f-4aa8-9108-fc8315954d1a\",\"total\":1,\"value\":1,\"ds\":1459938166745,\"de\":1459938167043},\"67a481fd-9c58-4127-bdb7-ccf945069837\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Error_Messages.json\",\"id\":\"67a481fd-9c58-4127-bdb7-ccf945069837\",\"total\":6,\"value\":6,\"ds\":1459938167086,\"de\":1459938167511}}}"
       },
@@ -49,6 +41,14 @@
         "cid": "S0Cl30uFIKrgHK0-AAAD",
         "t": 1459945012288,
         "data": "alouhette"
+      },
+      {
+        "color": "#2a5fe3",
+        "name": "Iseul",
+        "role": "chat",
+        "cid": "Mnn3-XzIPUegoLFHAAAB",
+        "t": 1460033075233,
+        "data": "ghdfgh"
       }
     ]
   }

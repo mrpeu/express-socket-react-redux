@@ -6,7 +6,7 @@ import ClientTitle from './ClientTitle.jsx';
 
 const ChatMessage = ( { message } ) =>
   <div className="chat-message" title={ new Date( message.t ) }>
-    <ClientTitle data={{ ...message }} />
+    <ClientTitle client={{ ...message }} />
     <span style={{ paddingTop: '.2em', flex: '0 1 auto' }}>:&nbsp;</span>
     <span className="chat-message-data">{ message.data.toString() }</span>
   </div>
@@ -17,7 +17,7 @@ ChatMessage.propTypes = {
 };
 
 // Map Redux state to component props
-const mapStateToProps = state => state;
+const mapStateToProps = state => ( {} );
 
 // Map Redux actions to component props
 const mapDispatchToProps = ( dispatch ) => ( {

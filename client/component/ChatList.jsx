@@ -28,11 +28,10 @@ ChatList.propTypes = {
 };
 
 // Map Redux state to component props
-const mapStateToProps = state => state;
+const mapStateToProps = state => ( { messages: state.chat.messages } );
 
 // Map Redux actions to component props
-const mapDispatchToProps = ( dispatch ) => ( {
-} );
+const mapDispatchToProps = ( dispatch ) => ( {} );
 
 // Connected Component:
 export default connect(

@@ -139,6 +139,15 @@ button {
   border-bottom: .1em #ddd solid;
   border-bottom-left-radius: 0;
 }
+
+.run-status {
+  width: 100%;
+  background-color: #ddd;
+  border-left: 0 #57B solid;
+  font-size: 5pt;
+  font-family: monospace;
+}
+
 /*---------------*/
 .chat {
   position: fixed;

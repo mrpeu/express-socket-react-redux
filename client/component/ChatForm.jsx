@@ -19,7 +19,7 @@ ChatForm.propTypes = {
 };
 
 // Map Redux state to component props
-const mapStateToProps = state => state;
+const mapStateToProps = state => ( {} );
 
 // Map Redux actions to component props
 const mapDispatchToProps = ( dispatch ) => ( {

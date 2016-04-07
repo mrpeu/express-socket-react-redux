@@ -6,6 +6,7 @@ import { Provider, connect } from 'react-redux';
 import * as Actions from './actions.js';
 import App from './component/App.jsx';
 import _throttle from 'lodash/throttle';
+import chalk from 'chalk';
 
 ( () => {
   let ping = null;
@@ -85,21 +86,22 @@ import _throttle from 'lodash/throttle';
       socket.emit( 'chat-message', { cid: newClient.cid }, () => {} );
     }, 30000 );
 
-    socket.on( 'state', serverState => { store.dispatch( Actions.receiveState( serverState ) ); } );
+    socket.on( 'app-state', data => {
+      store.dispatch( Actions.receiveState( data ) );
+    } );
 
-    socket.on( 'run-status', c => { store.dispatch( Actions.receiveRunStatus( c ) ); } );
+    socket.on( 'client-status', data => {
+      store.dispatch( Actions.receiveRunStatus( data ) );
+    } );
 
     return newClient;
   }
 
   function onReceiveRunStatus( client, action ) {
-    console.warn( 'receivedStatus action:', action.data.runs);
+    // console.warn( chalk.yellow( 'receivedStatus action:' ), action.status );
     return {
       ...client,
-      runs: {
-        ...client.runs,
-        ...action.runs
-      }
+      status: { ...action.status }
     };
   }
 

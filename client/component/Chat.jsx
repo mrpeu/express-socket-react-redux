@@ -9,7 +9,7 @@ const Chat = ( { client, chat, onToggleClick } ) =>
   <div className={ `chat${chat.on ? ' on' : ''}` }>
     <div className="switch" onClick={ onToggleClick }>💬</div>
     <ChatList messages={ chat.messages } />
-    <ChatForm />
+    <ChatForm client={ client } />
   </div>
 ;
 
@@ -20,7 +20,7 @@ Chat.propTypes = {
 };
 
 // Map Redux state to component props
-const mapStateToProps = state => state.chat;
+const mapStateToProps = state => ( { chat: state.chat } );
 
 // Map Redux actions to component props
 const mapDispatchToProps = ( dispatch ) => ( {

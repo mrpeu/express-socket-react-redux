@@ -9,7 +9,7 @@ const ClientTitleList = ( { clients } ) =>
     <ul className="client-title-list" style={{ borderBottom: '1px #ddd solid' }}>
       { clients.map( c =>
         <li key={ c.cid }>
-          <ClientTitle data={ c } />
+          <ClientTitle client={ c } />
         </li>
       ) }
     </ul>
@@ -21,7 +21,7 @@ ClientTitleList.propTypes = {
 };
 
 // Map Redux state to component props
-const mapStateToProps = state => state;
+const mapStateToProps = state => ( { clients: state.clients } );
 // const mapStateToProps = ( state ) => {
 //   console.warn( state );
 //   return state;

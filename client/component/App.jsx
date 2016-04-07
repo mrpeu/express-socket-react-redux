@@ -9,7 +9,7 @@ import Chat from './Chat.jsx';
 const AppMain = ( { value, onIncreaseClick, client, clients, chat } ) =>
   <div>
     <div id="header">
-      <ClientTitleList clients={ clients } />
+      <ClientTitleList />
     </div>
       {/*
       <div style={{ borderBottom: '1px #ddd solid' }}>
@@ -19,9 +19,9 @@ const AppMain = ( { value, onIncreaseClick, client, clients, chat } ) =>
       </div>
       */}
     <div id="content">
-      <ClientCardList clients={ clients } />
+      <ClientCardList />
     </div>
-    <Chat client={ client } chat={ chat } />
+    <Chat client={ client } />
   </div>
 ;
 
@@ -34,14 +34,16 @@ AppMain.propTypes = {
 };
 
 // Map Redux state to component props
-function mapStateToProps( state ) {
-  return {
-    value: state.count,
-    client: state.client,
-    clients: state.clients,
-    chat: state.chat
-  };
-}
+const mapStateToProps = ( state ) => ( {
+  value: state.count,
+  client: state.client,
+  clients: state.clients,
+  chat: state.chat
+} );
+// const mapStateToProps = ( state ) => {
+//   console.warn( state );
+//   return state;
+// };
 
 // Map Redux actions to component props
 const mapDispatchToProps = ( dispatch ) => ( {

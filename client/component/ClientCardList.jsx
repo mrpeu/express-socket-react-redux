@@ -9,7 +9,7 @@ const ClientCardList = ( { clients } ) =>
     <ul className="client-card-list" style={{ borderBottom: '1px #ddd solid' }}>
       { clients.filter( c => c.role === 'runner' ).map( c =>
         <li key={c.cid}>
-          <ClientCard data={ c } />
+          <ClientCard client={ c } />
         </li>
       ) }
     </ul>
@@ -22,14 +22,9 @@ ClientCardList.propTypes = {
 
 // Map Redux state to component props
 const mapStateToProps = state => state;
-// const mapStateToProps = ( state ) => {
-//   console.warn( state );
-//   return state;
-// };
 
 // Map Redux actions to component props
-const mapDispatchToProps = ( dispatch ) => ( {
-} );
+const mapDispatchToProps = ( dispatch ) => ( {} );
 
 // Connected Component:
 export default connect(

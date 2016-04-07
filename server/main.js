@@ -50,7 +50,7 @@ function loadState() {
 function broadcastState() {
   const state = store.getState();
 
-  io.of( '' ).emit( 'state', {
+  io.of( '' ).emit( 'app-state', {
     chat: state.chat,
     clients: state.clients
   } );
@@ -213,8 +213,8 @@ function connectClient( stateClients, socket, client, authResponse ) {
     store.dispatch( Actions.receiveMessage( socket, client, data, cb ) );
   } );
 
-  socket.on( 'run-status', ( data, cb ) => {
-    // console.warn( `run-status: ${JSON.stringify(data)}` );
+  socket.on( 'client-status', ( data, cb ) => {
+    // console.warn( chalk.yellow( `client-status: ${JSON.stringify( data )}` ));
     store.dispatch( Actions.receiveRunStatus( socket, client, data, cb ) );
   } );
 
@@ -241,7 +241,8 @@ function authenticateClient( stateClients, socket, client ) {
     return false;
   }
 
-  console.log( `  Authentication of ${JSON.stringify( client )}...` );
+  console.log( `  Authentication of ${client.name} #${client.cid}...` );
+  // console.log( `  Authentication of ${JSON.stringify( client )}...` );
 
   // check if already in state.clients
   if ( stateClients.some( c => c.cid === client.cid ) ) {
@@ -255,17 +256,17 @@ function authenticateClient( stateClients, socket, client ) {
   return true;
 }
 
-function updateClientRuns( client, socket, runs ) {
-  socket.broadcast.emit( 'run-status', {
-    ...client.runs,
-    runs
+function updateClientRuns( client, socket, status ) {
+  socket.broadcast.emit( 'client-status', {
+    ...client.status,
+    ...status
   } );
 
   return {
     ...client,
-    runs: {
-      ...client.runs,
-      runs
+    status: {
+      ...client.status,
+      ...status
     }
   };
 }
@@ -299,7 +300,7 @@ store = createStore( combineReducers( {
       case Actions.Types.receiveRunStatus:
         return [
           ...stateClients.filter( c => c.cid !== action.client.cid ),
-          updateClientRuns( action.client, action.socket, action.data.runs )
+          updateClientRuns( action.client, action.socket, action.data )
         ];
 
       default:
