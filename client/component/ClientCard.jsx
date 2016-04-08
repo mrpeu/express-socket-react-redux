@@ -13,10 +13,6 @@ const ClientCard = ( { client } ) =>
     }, 0, 2 ) }</pre>
     { client.status ?
       <div className="status">
-        { /* }<pre>{ JSON.stringify( {
-          ...client.status,
-          runs: client.status.runs ? client.status.runs.length : 0
-        } ) }</pre> */ }
         <div className="run-status">
           {client.status.state}&nbsp;{client.status.total}&nbsp;{client.status.value}
           <div style={ { width: `${100 / client.status.total * client.status.value}%`,
@@ -24,10 +20,10 @@ const ClientCard = ( { client } ) =>
           ></div>
         </div>
         { Array.isArray( client.status.runs ) ? client.status.runs.map( r => (
-            <div key={ r.id } className="run-status"
-              style={ { borderLeftWidth: 100 / r.total * r.value } }
-            >
-              {r.state}&nbsp;{r.total}&nbsp;{r.value}
+            <div key={ r.id } className="run-status">
+              <div className="progress" style={ { width: `${100 / r.total * r.value}%` } }>
+                {r.state}&nbsp;{r.total}&nbsp;{r.value}
+              </div>
             </div>
         ) ) : typeof( client.status.runs ) }
       </div>

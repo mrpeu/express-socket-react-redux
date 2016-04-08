@@ -142,10 +142,13 @@ button {
 
 .run-status {
   width: 100%;
-  background-color: #ddd;
-  border-left: 0 #57B solid;
+  background-color: #5E5D5D;
   font-size: 5pt;
   font-family: monospace;
+  color: #fff;
+}
+.run-status .progress {
+  background-color: #57B;
 }
 
 /*---------------*/
