@@ -3,25 +3,19 @@ import React, { Component, PropTypes } from 'react';
 import { Provider, connect } from 'react-redux';
 import * as Actions from './../actions.js';
 import ClientTitle from './ClientTitle.jsx';
+import RunStatus from './RunStatus.jsx';
 
 const ClientCard = ( { client, clients } ) =>
   <div className="client-card" role={ client.role }>
-    <ClientTitle client={ client } />
-    <pre>{ JSON.stringify( {
-      ...client
-    }, 0, 2 ) }</pre>
-    { client.status ?
-      <div className="status">
-        <div className="run-status">
-          {client.status.state}&nbsp;{client.status.total}&nbsp;{client.status.value}
-          <div style={ { width: `${100 / client.status.total * client.status.value}%`,
-            backgroundColor: '#57B' } }
-          ></div>
-        </div>
-      </div>
-      :
-      null
-    }
+    <ClientTitle client={ client }>
+      { /* TODO */ }
+      <span className="subTitle">
+        {`Running since ${new Date( client.ts ).toLocaleString()}`}
+      </span>
+    </ClientTitle>
+    <div className="content">
+      { client.status ? <RunStatus data={client.status} /> : null }
+    </div>
   </div>
 ;
 

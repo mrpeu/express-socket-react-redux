@@ -13,6 +13,10 @@ body {
     display: flex;
     flex-flow: row nowrap;
 }
+.subTitle {
+  color: #aaa;
+  font-size: x-small
+}
 input {
     border: 0;
     border-radius: .1em;
@@ -129,8 +133,11 @@ button {
 .client-card-list li {
   list-style: none;
 }
+/*.client-card:hover {
+  box-shadow: .0em .0em .5em #aaa;
+}*/
 .client-card {
-  /*box-shadow: .0em .0em .3em #aaa;*/
+  width: 24em;
   margin: .3em;
   border: .1em #ddd solid;
   border-radius: .15em;
@@ -140,15 +147,50 @@ button {
   border-bottom-left-radius: 0;
 }
 
-.run-status {
-  width: 100%;
-  background-color: #5E5D5D;
-  font-size: 5pt;
-  font-family: monospace;
-  color: #fff;
+.client-card .content {
+  padding: .5em;
 }
-.run-status .progress {
+.client-card .content>* {
+  border-bottom: .1em #ddd solid;
+  margin-bottom: .5em;
+}
+.client-card .content>*:last-child {
+  border-bottom: 0;
+}
+
+.run-status {
+  padding: .25em 1em;
+  border-left: .1em #ddd solid;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.client-card>.content>.run-status {
+  padding-left: 0;
+  border-left: 0;
+}
+.client-card>.content>.run-status>.run-status {
+  border-left: 0;
+}
+.run-status .progress-bg {
+  position: relative;
+  background-color: #ddd;
+  height: .25em;
+  text-align: end;
+  color: transparent;
+}
+.progress-bg .progress-bar {
+  position: absolute;
+  height: 100%;
+  transition-property: width;
+  transition: 200ms;
   background-color: #57B;
+}
+.run-status .progress-label {
+  position: absolute;
+  right: 0;
+  top: -.7em;
+  color: #57B;
 }
 
 /*---------------*/

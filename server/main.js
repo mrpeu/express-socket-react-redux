@@ -257,6 +257,8 @@ function authenticateClient( stateClients, socket, client ) {
 }
 
 function updateClientRuns( client, socket, status ) {
+  // console.warn( 'updateClientRuns' );
+
   socket.broadcast.emit( 'client-status', {
     cid: client.cid,
     status: {

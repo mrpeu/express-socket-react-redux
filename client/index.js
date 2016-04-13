@@ -98,7 +98,7 @@ import chalk from 'chalk';
   }
 
   function onReceiveRunStatus( clients, action ) {
-    console.warn( chalk.yellow( 'receivedStatus action:' ), action.status );
+    // console.warn( chalk.yellow( 'receivedStatus action:' ), action.status );
 
     return [
       ...clients.filter( c => c.cid !== action.cid ),
