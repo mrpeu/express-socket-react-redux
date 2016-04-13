@@ -8,9 +8,7 @@ const ClientCardList = ( { clients } ) =>
   <div>
     <ul className="client-card-list" style={{ borderBottom: '1px #ddd solid' }}>
       { clients.filter( c => c.role === 'runner' ).map( c =>
-        <li key={c.cid}>
-          <ClientCard client={ c } />
-        </li>
+          <ClientCard key={c.cid} client={ c } />
       ) }
     </ul>
   </div>

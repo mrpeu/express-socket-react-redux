@@ -91,18 +91,22 @@ import chalk from 'chalk';
     } );
 
     socket.on( 'client-status', data => {
-      store.dispatch( Actions.receiveRunStatus( data ) );
+      store.dispatch( Actions.receiveRunStatus( data.cid, data.status ) );
     } );
 
     return newClient;
   }
 
-  function onReceiveRunStatus( client, action ) {
-    // console.warn( chalk.yellow( 'receivedStatus action:' ), action.status );
-    return {
-      ...client,
-      status: { ...action.status }
-    };
+  function onReceiveRunStatus( clients, action ) {
+    console.warn( chalk.yellow( 'receivedStatus action:' ), action.status );
+
+    return [
+      ...clients.filter( c => c.cid !== action.cid ),
+      {
+        ...clients.find( c => c.cid === action.cid ),
+        status: { ...action.status }
+      }
+    ];
   }
 
 
@@ -173,8 +177,6 @@ import chalk from 'chalk';
         return authenticationSucceed( client, action );
       case Actions.Types.notwelcome:
         return authenticationFailed( client, action );
-      case Actions.Types.receiveRunStatus:
-        return onReceiveRunStatus( client, action );
 
       default:
         return client;
@@ -184,6 +186,8 @@ import chalk from 'chalk';
     switch ( action.type ) {
       case Actions.Types.update:
         return clients;
+      case Actions.Types.receiveRunStatus:
+        return onReceiveRunStatus( clients, action );
 
       default:
         return clients;

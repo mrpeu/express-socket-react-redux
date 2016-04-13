@@ -258,8 +258,11 @@ function authenticateClient( stateClients, socket, client ) {
 
 function updateClientRuns( client, socket, status ) {
   socket.broadcast.emit( 'client-status', {
-    ...client.status,
-    ...status
+    cid: client.cid,
+    status: {
+      ...client.status,
+      ...status
+    }
   } );
 
   return {

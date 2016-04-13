@@ -4,12 +4,11 @@ import { Provider, connect } from 'react-redux';
 import * as Actions from './../actions.js';
 import ClientTitle from './ClientTitle.jsx';
 
-const ClientCard = ( { client } ) =>
+const ClientCard = ( { client, clients } ) =>
   <div className="client-card" role={ client.role }>
     <ClientTitle client={ client } />
     <pre>{ JSON.stringify( {
-      ...client,
-      status: !!client.status
+      ...client
     }, 0, 2 ) }</pre>
     { client.status ?
       <div className="status">
@@ -19,13 +18,6 @@ const ClientCard = ( { client } ) =>
             backgroundColor: '#57B' } }
           ></div>
         </div>
-        { Array.isArray( client.status.runs ) ? client.status.runs.map( r => (
-            <div key={ r.id } className="run-status">
-              <div className="progress" style={ { width: `${100 / r.total * r.value}%` } }>
-                {r.state}&nbsp;{r.total}&nbsp;{r.value}
-              </div>
-            </div>
-        ) ) : typeof( client.status.runs ) }
       </div>
       :
       null
@@ -34,7 +26,8 @@ const ClientCard = ( { client } ) =>
 ;
 
 ClientCard.propTypes = {
-  client: PropTypes.object.isRequired
+  client: PropTypes.object.isRequired,
+  clients: PropTypes.array
 };
 
 // Map Redux state to component props

@@ -42,8 +42,8 @@ export function welcome( data ) {
 export function updateClientList( clients ) {
   return { type: Types.update, clients };
 }
-export function receiveRunStatus( status ) {
-  return { type: Types.receiveRunStatus, status };
+export function receiveRunStatus( cid, status ) {
+  return { type: Types.receiveRunStatus, cid, status };
 }
 
 /* messages */
