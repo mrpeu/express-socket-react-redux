@@ -2,13 +2,13 @@
 import React, { Component, PropTypes } from 'react';
 import { Provider, connect } from 'react-redux';
 import * as Actions from './../actions.js';
-import ChatList from './ChatList.jsx';
+import ChatMessageList from './ChatMessageList.jsx';
 import ChatForm from './ChatForm.jsx';
 
 const Chat = ( { client, chat, onToggleClick } ) =>
   <div className={ `chat${chat.on ? ' on' : ''}` }>
     <div className="switch" onClick={ onToggleClick }>💬</div>
-    <ChatList messages={ chat.messages } />
+    <ChatMessageList messages={ chat.messages } />
     <ChatForm client={ client } />
   </div>
 ;

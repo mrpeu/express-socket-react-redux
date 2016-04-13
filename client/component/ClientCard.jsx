@@ -4,6 +4,7 @@ import { Provider, connect } from 'react-redux';
 import * as Actions from './../actions.js';
 import ClientTitle from './ClientTitle.jsx';
 import RunStatus from './RunStatus.jsx';
+import ClientActionList from './ClientActionList.jsx';
 
 const ClientCard = ( { client, clients } ) =>
   <div className="client-card" role={ client.role }>
@@ -14,6 +15,7 @@ const ClientCard = ( { client, clients } ) =>
       </span>
     </ClientTitle>
     <div className="content">
+      <ClientActionList data={ client.actions } />
       { client.status ? <RunStatus data={client.status} /> : null }
     </div>
   </div>

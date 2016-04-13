@@ -11,7 +11,7 @@ const RunStatus = ( { data } ) =>
     <span style={ { padding: '0 .5em' } }>
       {data.name}
     </span>
-    <span className="subTitle">
+    <span className="subtle">
       {data.state}
     </span>
     <div className="progress-bg">

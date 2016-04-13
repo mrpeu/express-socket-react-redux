@@ -6,7 +6,7 @@ import ClientTitle from './ClientTitle.jsx';
 
 const ClientTitleList = ( { clients } ) =>
   <div>
-    <ul className="client-title-list" style={{ borderBottom: '1px #ddd solid' }}>
+    <ul className="client-title-list">
       { clients.map( c =>
         <li key={ c.cid }>
           <ClientTitle client={ c } />
