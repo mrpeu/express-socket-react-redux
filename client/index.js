@@ -10,7 +10,7 @@ import chalk from 'chalk';
 
 ( () => {
   let ping = null;
-  const socket = io();
+  const socket = io( );
   let store = {};
 
   /* DOM */
