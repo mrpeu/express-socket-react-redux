@@ -7,17 +7,10 @@ import ClientCardList from './ClientCardList.jsx';
 import Chat from './Chat.jsx';
 
 const AppMain = ( { value, onIncreaseClick, client, clients, chat } ) =>
-  <div>
+  <div id="app">
     <div id="header">
       <ClientTitleList />
     </div>
-      {/*
-      <div style={{ borderBottom: '1px #ddd solid' }}>
-        <h3>counter</h3>
-        <span>{ value }</span>
-        <button onClick={ onIncreaseClick } >Increase</button>
-      </div>
-      */}
     <div id="content">
       <ClientCardList />
     </div>

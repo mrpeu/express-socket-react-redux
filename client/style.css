@@ -24,13 +24,18 @@ input {
     margin: 0 .5em;
 }
 button {
-    background: #68C;
-    color: #fff;
+    background: #fff;
+    border: 1px solid #ddd;
+    color: #555;
     font-weight: bold;
     border-radius: .1em;
-    border: 1px solid #57B;
     padding: .5em;
     cursor: pointer;
+}
+button primary {
+    background: #57b;
+    border: 1px solid #555;
+    color: #fff;
 }
 /*----------------*/
 #connection {
@@ -73,9 +78,9 @@ button {
 .client-title-list {
   background-color: #eee;
   padding: .3em;
+  /*flex: 0 1 3.5em;*/
   display: flex;
   flex-flow: row wrap;
-  flex: 0 1 3.5em;
   justify-content: flex-start;
   align-content: stretch;
   border-bottom: 1px #ddd solid;
@@ -83,15 +88,16 @@ button {
 .client-title-list>li {
   list-style-type: none;
   margin-right: .5em;
+  margin-top: .25em;
 }
 .client-title {
-  flex: 0 1 auto;
-  align-self: flex-start;
+  flex: 0 0 auto;
+  /* align-self: flex-start; */
   background-color: #fff;
-  border-radius: .15em;
-  text-align: center;
+  /* border-radius: .15em; */
   display: flex;
-  flex-flow: row nowrap;
+  /* flex-flow: row nowrap; */
+  padding: 0;
 }
 .client-title>* {
   flex: 0 0 auto;
@@ -103,9 +109,8 @@ button {
   min-height: 1.5em;
   margin-right: -1em;
   align-self: stretch;
-  padding-top: .2em;
   border-top-left-radius: .15em;
-  border-bottom-left-radius: .15em;
+  /* border-bottom-left-radius: .15em; */
   color: #fff;
 }
 .icon-left-pad:not([role])::after {
@@ -117,45 +122,52 @@ button {
 .icon-left-pad[role=runner]::after {
   content: "⚙";
 }
-.client-title .name {
-  background-color: transparent;
+.client-title>.content {
   margin-left: 1em;
-  padding: .2em .3em;
+}
+.client-title>.content .name {
+  background-color: transparent;
   flex: 1 0 auto;
   text-align: justify;
 }
 /*----------------*/
 .client-card-list {
+  flex: 1 1 auto;
   padding: 1em;
   display: flex;
   flex-flow: row wrap;
-  justify-content: flex-start;
 }
 .client-card-list li {
-  list-style: none;
+  /* list-style: none; */
+  padding: .5em;
 }
 /*.client-card:hover {
   box-shadow: .0em .0em .5em #aaa;
 }*/
 .client-card {
   width: 24em;
+  height: 26em;
+  overflow: auto;
   margin: .3em;
   border: .1em #ddd solid;
   border-radius: .15em;
+  display: flex;
+  flex-flow: column nowrap;
 }
 .client-card .client-title {
   border-bottom: .1em #ddd solid;
   border-bottom-left-radius: 0;
 }
 
-.client-card .content {
+.client-card>.content {
   padding: .5em;
+  flex: 1 1 auto;
 }
-.client-card .content>* {
+.client-card>.content>* {
   border-bottom: .1em #ddd solid;
   margin-bottom: .5em;
 }
-.client-card .content>*:last-child {
+.client-card>.content>*:last-child {
   border-bottom: 0;
 }
 
@@ -165,6 +177,7 @@ button {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: smaller;
 }
 .client-card>.content>.run-status {
   padding-left: 0;
@@ -286,23 +299,54 @@ li:nth-child(even) .chat-message {
 /*----------------*/
 .action-list {
   word-wrap: break-word;
-}
-
-/*----------------*/
-
-#main {
   width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  position: static;
+  bottom: 0px;
+  border-top: 1px #ddd solid;
+  flex: 0 0 auto;
 }
-
-#header {
+.action {
+  color: #aaa;
+  display: flex;
+  flex-flow: row nowrap;
+}
+.action.btn-group>button {
+  width: auto !important;
+  border: 0;
+}
+.action:hover {
+  color: #555;
+}
+.action>.markdown {
+  display: none;
+}
+.action:hover>.markdown {
+  display: block;
+  color: inherit;
+}
+.action .action-title {
+  flex: 1 0 auto;
+  text-align: start;
+}
+.action .action-info {
   flex: 0 0 auto;
 }
 
+/*----------------*/
+#main, #app {
+  width: 100%;
+  height: 100%;
+}
+#app {
+  display: flex;
+  flex-direction: column;
+}
+#header {
+}
 #content {
-  flex: 1 0 auto;
+  height: 100%;
+  display: flex;
+  flex-flow: row wrap;
 }
 
 /*----------------*/

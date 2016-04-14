@@ -9,15 +9,12 @@ import ClientActionList from './ClientActionList.jsx';
 const ClientCard = ( { client, clients } ) =>
   <div className="client-card" role={ client.role }>
     <ClientTitle client={ client }>
-      { /* TODO */ }
-      <span className="subTitle">
-        {`Running since ${new Date( client.ts ).toLocaleString()}`}
-      </span>
+      {`Running since ${new Date( client.ts ).toLocaleString()}`}
     </ClientTitle>
     <div className="content">
-      <ClientActionList data={ client.actions } />
       { client.status ? <RunStatus data={client.status} /> : null }
     </div>
+    <ClientActionList data={ client.actions } />
   </div>
 ;
 

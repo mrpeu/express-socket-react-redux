@@ -1,12 +1,172 @@
 {
   "clients": [
     {
-      "name": "Alison",
-      "color": "#ad8989",
-      "cid": "OSEnbQ-7hAPNcpycAABm",
+      "name": "testRunner@WKS-TALOS",
+      "color": "#557",
+      "cid": "#a84efdb8-54ac-4b41-8609-cd87230e15cb",
+      "role": "runner",
+      "doc": "mRemoteTestRunner\n---\nBasic app to command execution of NodeJS scripts",
+      "actions": [
+        {
+          "name": "taskRunAndDiff",
+          "script": "C:\\_Projects\\mpro\\git.testing\\library\\remoteTestRunner\\testTask\\taskRunAndDiff.js",
+          "doc": "This will run a set of *mmwrequests*\nand then compare the responses with a reference set.\n"
+        },
+        {
+          "name": "taskDifftool",
+          "script": "C:\\_Projects\\mpro\\git.testing\\library\\remoteTestRunner\\testTask\\taskDifftool.js"
+        },
+        {
+          "name": "taskDummy",
+          "script": "C:\\_Projects\\mpro\\git.testing\\library\\remoteTestRunner\\testTask\\taskDummy.js"
+        }
+      ],
+      "ts": 1460643199037,
+      "sid": "WSHJ1MkOJHDv7qFkAADJ",
+      "status": {
+        "name": "runAndDiff",
+        "ts": 1460643189516,
+        "total": 2,
+        "value": 2,
+        "runs": [
+          {
+            "id": "5faeae3c-baf3-410a-afa3-66e5da794da2",
+            "name": "runMMWRequest",
+            "total": 3,
+            "value": 5,
+            "ts": 1460643189967,
+            "state": "Done.",
+            "runs": [
+              {
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Laborwerte.json",
+                "id": "f9aaa757-de94-4959-b8a5-cfa47065c616",
+                "total": 30,
+                "value": 30,
+                "ds": 1460643198210,
+                "de": 1460643198665
+              }
+            ],
+            "te": 1460643198684
+          },
+          {
+            "id": "267353d7-d34f-41a6-a97e-ce79aaf6e1f5",
+            "name": "diffTool",
+            "state": "Done.",
+            "total": 2,
+            "value": 2,
+            "ts": 1460643198695,
+            "runs": [
+              {
+                "id": "2ce00605-6826-4322-a744-57f3b4fff4d0",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Enexion_Bo_Vohburg_Gas.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460643198995,
+                "te": 1460643199013
+              },
+              {
+                "id": "a6898f6d-aed5-463b-aa82-61e5e54989dc",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Laborwerte.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460643199014,
+                "te": 1460643199030
+              }
+            ],
+            "te": 1460643199031
+          }
+        ],
+        "te": 1460643199036,
+        "id": "ad18d7aa-6d75-4eb4-af6f-25ed464f3f9f"
+      }
+    },
+    {
+      "name": "mRemoteTestRunner@SRV-GANDALF1",
+      "color": "#557",
+      "cid": "#75b12434-5fdf-449e-84e8-3c1ca0eccc00",
+      "role": "runner",
+      "doc": "mRemoteTestRunner\n---\nBasic app to command execution of NodeJS scripts",
+      "actions": [
+        {
+          "name": "taskDifftool",
+          "script": "\\\\wks-talos\\C$\\_Projects\\mpro\\git.testing\\library\\remoteTestRunner\\testTask\\taskDifftool.js"
+        },
+        {
+          "name": "taskDummy",
+          "script": "\\\\wks-talos\\C$\\_Projects\\mpro\\git.testing\\library\\remoteTestRunner\\testTask\\taskDummy.js"
+        },
+        {
+          "name": "taskRunAndDiff",
+          "script": "\\\\wks-talos\\C$\\_Projects\\mpro\\git.testing\\library\\remoteTestRunner\\testTask\\taskRunAndDiff.js",
+          "doc": "taskRunAndDiff\n===\nThis will run a set of mmwrequests\nand then compare the responses with a reference set.\n"
+        }
+      ],
+      "ts": 1460643212863,
+      "sid": "l9pkd8kSMeerpXWNAAAm",
+      "status": {
+        "name": "runAndDiff",
+        "ts": 1460643196108,
+        "total": 2,
+        "value": 2,
+        "runs": [
+          {
+            "id": "b58ecf6e-068b-4fec-a796-c95e74a53d98",
+            "name": "runMMWRequest",
+            "total": 3,
+            "value": 5,
+            "ts": 1460643200321,
+            "state": "Done.",
+            "runs": [
+              {
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Laborwerte.json",
+                "id": "b8b23ede-6e3d-4d09-b956-7c6ade719854",
+                "total": 30,
+                "value": 30,
+                "ds": 1460643210028,
+                "de": 1460643210714
+              }
+            ],
+            "te": 1460643210735
+          },
+          {
+            "id": "36868648-a25c-49da-a464-fecf089fef18",
+            "name": "diffTool",
+            "state": "Done.",
+            "total": 2,
+            "value": 2,
+            "ts": 1460643210801,
+            "runs": [
+              {
+                "id": "368dd71b-ecfe-49f7-88b3-bc1f89acc277",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Enexion_Bo_Vohburg_Gas.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460643211991,
+                "te": 1460643212101
+              },
+              {
+                "id": "445cfb18-5643-4847-bd6e-b76b381d6b88",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Laborwerte.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460643212102,
+                "te": 1460643212259
+              }
+            ],
+            "te": 1460643212260
+          }
+        ],
+        "te": 1460643212267,
+        "id": "7036ddba-1c18-4d7e-9080-6156a854f004"
+      }
+    },
+    {
+      "name": "Amaterasu",
+      "color": "#c38f3d",
+      "cid": "QVhZHy86B39Llo2sAAAL",
       "role": "chat",
-      "ts": 1460557541595,
-      "sid": "EHpa4i21g5iOfw23AAC3"
+      "ts": 1460643218495,
+      "sid": "IIL8l3FRsnc4hZsaAADt"
     }
   ],
   "chat": {

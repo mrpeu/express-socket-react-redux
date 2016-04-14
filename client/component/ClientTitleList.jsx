@@ -5,15 +5,13 @@ import * as Actions from './../actions.js';
 import ClientTitle from './ClientTitle.jsx';
 
 const ClientTitleList = ( { clients } ) =>
-  <div>
-    <ul className="client-title-list">
-      { clients.map( c =>
-        <li key={ c.cid }>
-          <ClientTitle client={ c } />
-        </li>
-      ) }
-    </ul>
-  </div>
+  <ul className="client-title-list">
+    { clients.map( c =>
+      <li key={ c.cid }>
+        <ClientTitle client={ c } />
+      </li>
+    ) }
+  </ul>
 ;
 
 ClientTitleList.propTypes = {

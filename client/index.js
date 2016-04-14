@@ -32,7 +32,6 @@ import chalk from 'chalk';
     }
   };
 
-
   /* store.app */
 
   const loadState = () => ( {

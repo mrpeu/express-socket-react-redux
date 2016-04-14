@@ -5,13 +5,11 @@ import * as Actions from './../actions.js';
 import ClientCard from './ClientCard.jsx';
 
 const ClientCardList = ( { clients } ) =>
-  <div>
-    <ul className="client-card-list" style={{ borderBottom: '1px #ddd solid' }}>
-      { clients.filter( c => c.role === 'runner' ).map( c =>
-          <ClientCard key={c.cid} client={ c } />
-      ) }
-    </ul>
-  </div>
+  <ul className="client-card-list" style={{ borderBottom: '1px #ddd solid' }}>
+    { clients.filter( c => c.role === 'runner' ).map( c =>
+        <ClientCard key={ c.cid } client={ c } />
+    ) }
+  </ul>
 ;
 
 ClientCardList.propTypes = {

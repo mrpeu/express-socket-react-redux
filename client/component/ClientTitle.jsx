@@ -4,22 +4,26 @@ import { Provider, connect } from 'react-redux';
 import * as Actions from './../actions.js';
 
 
-const ClientTitle = ( { client } ) =>
-  <div
-    className="client-title"
-    role={ client.role }
-  >
+const ClientTitle = ( { client, children } ) =>
+  <div className="client-title" role={ client.role } >
     <div
       className="icon-left-pad"
       role={ client.role }
       style={{ backgroundColor: client.color }}
     />
-    <span className="name">{ client.name }</span>
+    <div className="content">
+      <div className="name">{ client.name }</div>
+      <div className="subtle">{ children }</div>
+    </div>
   </div>
 ;
 
 ClientTitle.propTypes = {
-  client: PropTypes.object.isRequired
+  client: PropTypes.object.isRequired,
+  children: PropTypes.oneOfType( [
+    PropTypes.arrayOf( PropTypes.node ),
+    PropTypes.node
+  ] )
 };
 
 // Map Redux state to component props
