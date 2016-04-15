@@ -98,12 +98,12 @@ import chalk from 'chalk';
 
   function emitStartClientAction( client, action ) {
     // todo: running status feedback
-    const el = document.getElementById( action.cid );
-    el.style.borderColor = '#57b';
+    const el = document.querySelector( `#${action.cid} .action-list` );
+    el.style.opacity = 0.5;
 
     socket.emit( 'startClientAction', action, ( ...args ) => {
       // console.warn( args );
-      el.style.borderColor = '';
+      el.style.opacity = 1;
     } );
     return client;
   }

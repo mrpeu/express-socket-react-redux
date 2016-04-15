@@ -37,8 +37,7 @@ export function startClientAction( socket, clientAction, cb ) {
 }
 
 export function receiveRunStatus( socket, client, data, cb ) {
-  return { type: Types.receiveRunStatus, socket, client, data,
-    cb: cb || noop };
+  return { type: Types.receiveRunStatus, socket, client, data, cb };
 }
 
 /* messages */

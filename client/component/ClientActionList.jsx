@@ -9,10 +9,6 @@ const ClientActionList = ( { data, startAction } ) =>
     ? ( Array.isArray( data ) ? data : [ data ] ).map(
       act => {
         const buttonInfo = act.doc ? (
-          <Button bsSize="small" className="action-info" >
-            <Glyphicon glyph="info-sign" />
-          </Button>
-        ) : (
           <OverlayTrigger
             trigger="click" placement="left"
             overlay={
@@ -21,18 +17,23 @@ const ClientActionList = ( { data, startAction } ) =>
               </Popover>
             }
           >
-            <Button bsSize="small" className="action-info" disabled >
-              <Glyphicon glyph="info-sign" />
-            </Button>
+        <Button bsSize="small" className="action-info" >
+          <Glyphicon glyph="info-sign" />
+        </Button>
           </OverlayTrigger>
+        ) : (
+          <Button bsSize="small" className="action-info" disabled >
+            <Glyphicon glyph="info-sign" />
+          </Button>
         );
 
         return (
           <ButtonGroup className="action" key={ act.name }
             style={{ display: 'flex', border: 0 }}
-            onClick={ () => startAction( { name: act.name } ) }
           >
-            <Button bsSize="small" className="action-title">
+            <Button bsSize="small" className="action-title"
+              onClick={ () => startAction( { name: act.name } ) }
+            >
               <Glyphicon glyph="play" />
               <span style={ { paddingLeft: '1em' } }>{ act.name }</span>
             </Button>

@@ -1,39 +1,6 @@
 {
   "clients": [
     {
-      "name": "Amaterasu",
-      "color": "#c38f3d",
-      "cid": "QVhZHy86B39Llo2sAAAL",
-      "role": "chat",
-      "ts": 1460718618960,
-      "sid": "6Tt-FL_j4iT_gUncAAAF"
-    },
-    {
-      "name": "testRunner@WKS-TALOS",
-      "color": "#557",
-      "cid": "WKS-TALOS",
-      "role": "runner",
-      "doc": "mRemoteTestRunner\n---\nBasic app to command execution of NodeJS scripts",
-      "actions": [
-        {
-          "name": "taskDifftool",
-          "script": "testTask//taskDifftool.js"
-        },
-        {
-          "name": "taskDummy",
-          "script": "testTask//taskDummy.js"
-        },
-        {
-          "name": "taskRunAndDiff",
-          "script": "testTask//taskRunAndDiff.js",
-          "doc": "This runs a set of *mmwrequests*\nand then compare the responses with a reference set.\n"
-        }
-      ],
-      "ts": 1460718620732,
-      "sid": "tqjWFSJrlx8PmVGeAAAD",
-      "status": {}
-    },
-    {
       "name": "testRunner@SRV-GANDALF1",
       "color": "#557",
       "cid": "SRV-GANDALF1",
@@ -54,8 +21,115 @@
           "doc": "This runs a set of *mmwrequests*\nand then compare the responses with a reference set.\n"
         }
       ],
-      "ts": 1460718637350,
-      "sid": "qSIbTZX2MLIEEkDNAAAG"
+      "ts": 1460729302551,
+      "sid": "cu6XlsJZ-nUuhBTSAAAH",
+      "status": {
+        "name": "dummy",
+        "ts": 1460728011028,
+        "total": 1,
+        "value": 1,
+        "runs": [
+          {
+            "name": "countdown",
+            "id": 1460728011027,
+            "value": 8,
+            "total": 8
+          }
+        ],
+        "te": 1460728015774,
+        "state": "Done.",
+        "id": "d2c75dfc-4ace-43c5-b38e-d0b6a2e6a560"
+      }
+    },
+    {
+      "name": "testRunner@WKS-TALOS",
+      "color": "#557",
+      "cid": "WKS-TALOS",
+      "role": "runner",
+      "doc": "mRemoteTestRunner\n---\nBasic app to command execution of NodeJS scripts",
+      "actions": [
+        {
+          "name": "taskDifftool",
+          "script": "testTask//taskDifftool.js",
+          "doc": "This\r\n===\r\ncompares the responses\r\n- with\r\n- a reference set.\r\n"
+        },
+        {
+          "name": "taskDummy",
+          "script": "testTask//taskDummy.js",
+          "doc": "Code\n---\n`() => console.log`\n"
+        },
+        {
+          "name": "taskRunAndDiff",
+          "script": "testTask//taskRunAndDiff.js",
+          "doc": "This runs a set of *mmwrequests*\nand then compare the responses with a reference set.\n"
+        }
+      ],
+      "ts": 1460729297841,
+      "sid": "UISfAvsruaYHl4uoAAAR",
+      "status": {
+        "name": "runAndDiff",
+        "ts": 1460729216880,
+        "total": 2,
+        "value": 2,
+        "runs": [
+          {
+            "id": "1d7b0f4b-018a-42a6-bbac-bc097fd00104",
+            "name": "runMMWRequest",
+            "total": 3,
+            "value": 5,
+            "ts": 1460729217251,
+            "state": "Done.",
+            "runs": [
+              {
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Enexion_Bo_Vohburg_Gas.json",
+                "id": "9905cfcd-7342-4336-8394-c375055e0e44",
+                "total": 48,
+                "value": 48,
+                "ds": 1460729226088,
+                "de": 1460729226532
+              }
+            ],
+            "te": 1460729226564
+          },
+          {
+            "id": "738a872e-3ca5-4877-90b5-3d6fa48c6f66",
+            "name": "diffTool",
+            "state": "Done.",
+            "total": 2,
+            "value": 2,
+            "ts": 1460729226574,
+            "runs": [
+              {
+                "id": "6f82b682-670c-4652-926a-6c13c5e35244",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Enexion_Bo_Vohburg_Gas.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460729226844,
+                "te": 1460729226858
+              },
+              {
+                "id": "d0e18ada-a479-4b32-9a27-c73cd4aae57b",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Laborwerte.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460729226858,
+                "te": 1460729226872
+              }
+            ],
+            "te": 1460729226873
+          }
+        ],
+        "te": 1460729226880,
+        "id": "b5747ea3-5b0c-47c9-8ac9-4ba28f8cb4f6"
+      }
+    },
+    {
+      "name": "Amaterasu",
+      "color": "#c38f3d",
+      "cid": "QVhZHy86B39Llo2sAAAL",
+      "role": "chat",
+      "ts": 1460729327251,
+      "sid": "ix4USuVoND2Zaky7AAAb"
     }
   ],
   "chat": {

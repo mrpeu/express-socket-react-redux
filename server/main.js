@@ -187,9 +187,6 @@ function refuseClient( state, socket, client, authResponse ) {
 function connectClient( stateClients, socket, client, authResponse ) {
   // console.log( `>> connectClient start ${JSON.stringify( client, 0, 1 )}` );
 
-  // console.warn( chalk.yellow( 'new socket connection: ' + socket.client.id ) );
-  sockets.push( socket );
-
   // console.log( `  Client ${client.ts ? 're' : ''}connected: ` +
   //   `${client.name} #${client.cid} #${client.sid}` );
 
@@ -200,6 +197,10 @@ function connectClient( stateClients, socket, client, authResponse ) {
       )
     );
   }
+
+  // console.warn( chalk.yellow( 'new socket connection: ' + socket.client.id ) );
+  sockets = sockets.filter( s => s.client.id !== client.sid );
+  sockets.push( socket );
 
   client = {
     name: socket.client.hostname
@@ -220,7 +221,7 @@ function connectClient( stateClients, socket, client, authResponse ) {
   } );
 
   socket.on( 'client-status', ( data, cb ) => {
-    // console.warn( chalk.yellow( `client-status: ${JSON.stringify( data )}` ));
+    // console.warn( chalk.yellow( `client-status: ${JSON.stringify( data )}` ) );
     store.dispatch( Actions.receiveRunStatus( socket, client, data, cb ) );
   } );
 
@@ -272,19 +273,19 @@ function authenticateClient( stateClients, socket, client ) {
   if ( stateClients.some( c => c.cid === client.cid ) ) {
     // console.warn( chalk.magenta( `  ACTIVE: ${client.name} #${client.cid}` ) );
     return 'ACTIVE';
+  } else {
+    return 'NEW';
   }
-
-  return true;
 }
 
-function updateClientRuns( { socket, client, status } ) {
-  // console.warn( 'updateClientRuns' );
+function updateClientRuns( { socket, client, data } ) {
+  // console.warn( 'updateClientRuns:', data );
 
   socket.broadcast.emit( 'client-status', {
     cid: client.cid,
     status: {
       ...client.status,
-      ...status
+      ...data
     }
   } );
 
@@ -292,7 +293,7 @@ function updateClientRuns( { socket, client, status } ) {
     ...client,
     status: {
       ...client.status,
-      ...status
+      ...data
     }
   };
 }
