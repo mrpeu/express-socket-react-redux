@@ -328,8 +328,16 @@ li:nth-child(even) .chat-message {
   flex: 1 0 auto;
   text-align: start;
 }
+.action .action-title:hover {
+  color: #57b;
+}
 .action .action-info {
   flex: 0 0 auto;
+}
+/* the style disabled is appropriate, but the state is more "unavailable"
+than "not-allowed" */
+.action .action-info[disabled] {
+  cursor: inherit;
 }
 
 /*----------------*/

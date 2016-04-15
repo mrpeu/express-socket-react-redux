@@ -1,7 +1,6 @@
 
 import React, { Component, PropTypes } from 'react';
 import { Provider, connect } from 'react-redux';
-import * as Actions from './../actions.js';
 
 
 const ClientTitle = ( { client, children } ) =>

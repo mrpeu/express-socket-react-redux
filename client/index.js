@@ -96,6 +96,18 @@ import chalk from 'chalk';
     return newClient;
   }
 
+  function emitStartClientAction( client, action ) {
+    // todo: running status feedback
+    const el = document.getElementById( action.cid );
+    el.style.borderColor = '#57b';
+
+    socket.emit( 'startClientAction', action, ( ...args ) => {
+      // console.warn( args );
+      el.style.borderColor = '';
+    } );
+    return client;
+  }
+
   function onReceiveRunStatus( clients, action ) {
     // console.warn( chalk.yellow( 'receivedStatus action:' ), action.status );
 
@@ -172,10 +184,12 @@ import chalk from 'chalk';
     switch ( action.type ) {
       case Actions.Types.authenticateSocketOnConnection:
         return onConnection( client, action );
-      case Actions.Types.welcome:
-        return authenticationSucceed( client, action );
       case Actions.Types.notwelcome:
         return authenticationFailed( client, action );
+      case Actions.Types.welcome:
+        return authenticationSucceed( client, action );
+      case Actions.Types.startClientAction:
+        return emitStartClientAction( client, action );
 
       default:
         return client;

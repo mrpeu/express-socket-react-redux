@@ -2,6 +2,7 @@ export const Types = {
   authenticateClient: 'authenticateClient',
   connectClient: 'connectClient',
   disconnectClient: 'disconnectClient',
+  startClientAction: 'startClientAction',
   refuseClient: 'refuseClient',
   markClientAlive: 'markClientAlive',
   receiveRunStatus: 'receiveRunStatus',
@@ -29,6 +30,10 @@ export function markClientAlive( client ) {
 
 export function disconnectClient( socket, client ) {
   return { type: Types.disconnectClient, socket, client };
+}
+
+export function startClientAction( socket, clientAction, cb ) {
+  return { type: Types.startClientAction, socket, clientAction, cb };
 }
 
 export function receiveRunStatus( socket, client, data, cb ) {

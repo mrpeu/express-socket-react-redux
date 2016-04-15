@@ -88,6 +88,7 @@ function cleanState( state ) {
     clients: state.clients.filter( c => {
       if ( ( now - c.ts ) > USER_TIMEOUT ) {
         console.log( `Client ${c.name} is no longer active.` );
+        sockets = sockets.filter( s => s.client.id !== c.sid );
         return false;
       }
       return true;
@@ -139,7 +140,7 @@ function refuseMessage( stateChat, socket, client, data ) {
 
 // Client management
 function onClientDisconnection( state, client ) {
-  sockets = sockets.filter( f => f.client.id === client.sid );
+  sockets = sockets.filter( f => f.client.id !== client.sid );
 
   _publishState = true;
 
@@ -186,6 +187,9 @@ function refuseClient( state, socket, client, authResponse ) {
 function connectClient( stateClients, socket, client, authResponse ) {
   // console.log( `>> connectClient start ${JSON.stringify( client, 0, 1 )}` );
 
+  // console.warn( chalk.yellow( 'new socket connection: ' + socket.client.id ) );
+  sockets.push( socket );
+
   // console.log( `  Client ${client.ts ? 're' : ''}connected: ` +
   //   `${client.name} #${client.cid} #${client.sid}` );
 
@@ -198,7 +202,8 @@ function connectClient( stateClients, socket, client, authResponse ) {
   }
 
   client = {
-    name: NAMES[ ~~( ( NAMES.length - 1 ) * Math.random() ) ],
+    name: socket.client.hostname
+      || NAMES[ ~~( ( NAMES.length - 1 ) * Math.random() ) ],
     color: COLORS[ ~~( ( COLORS.length - 1 ) * Math.random() ) ],
     cid: socket.client.id, // client id
     ...client,
@@ -207,6 +212,7 @@ function connectClient( stateClients, socket, client, authResponse ) {
   };
 
   console.log( `  Client connected: ${client.name} #${client.cid} #${client.sid} ${client.color}` );
+  // console.log( `  Client connected: ${JSON.stringify( client, 0, 1 )}` );
 
   socket.on( 'chat-message', ( data, cb ) => {
     // console.warn( `chat-message: ${JSON.stringify(data)}` );
@@ -221,6 +227,24 @@ function connectClient( stateClients, socket, client, authResponse ) {
   socket.on( 'disconnect', () => {
     console.log( `  Client disconnected: ${client.name} #${client.cid} #${client.sid}` );
     store.dispatch( Actions.disconnectClient( socket, client ) );
+  } );
+
+  socket.on( 'startClientAction', ( action, cb ) => {
+    const target = stateClients.find( c => c.cid === action.cid );
+    if ( !target ) console.error( 'TARGET MISSING', action.cid, stateClients.map( c => c.cid ) );
+    // else console.warn( 'TARGET FOUND', target.name );
+
+    const targetSocket = sockets.find( f => f.client.id === target.sid );
+    if ( !targetSocket ) {
+      console.error( 'TARGETSOCKET MISSING',
+     target.sid, sockets.map( s => s.client.id ) );
+    } else {
+      store.dispatch( Actions.startClientAction(
+        targetSocket,
+        action,
+        cb
+      ) );
+    }
   } );
 
   socket.emit( 'welcome', { client } );
@@ -250,13 +274,10 @@ function authenticateClient( stateClients, socket, client ) {
     return 'ACTIVE';
   }
 
-  // authentication failure:
-  // return false;
-
   return true;
 }
 
-function updateClientRuns( client, socket, status ) {
+function updateClientRuns( { socket, client, status } ) {
   // console.warn( 'updateClientRuns' );
 
   socket.broadcast.emit( 'client-status', {
@@ -274,6 +295,13 @@ function updateClientRuns( client, socket, status ) {
       ...status
     }
   };
+}
+
+function emitStartClientAction( { socket, clientAction, cb } ) {
+  console.warn( 'emitStartClientAction:',
+    chalk.yellow( JSON.stringify( clientAction.data ) ),
+    'to', chalk.yellow( clientAction.cid ) );
+  socket.emit( 'start', clientAction.data, cb );
 }
 
 // Store:
@@ -305,8 +333,12 @@ store = createStore( combineReducers( {
       case Actions.Types.receiveRunStatus:
         return [
           ...stateClients.filter( c => c.cid !== action.client.cid ),
-          updateClientRuns( action.client, action.socket, action.data )
+          updateClientRuns( action )
         ];
+
+      case Actions.Types.startClientAction:
+        emitStartClientAction( action );
+        return stateClients;
 
       default:
         // console.warn( `  Unknown action type '${action.type}'`);

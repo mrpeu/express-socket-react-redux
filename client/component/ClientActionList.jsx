@@ -4,18 +4,16 @@ import { Provider, connect } from 'react-redux';
 import Markdown from './Markdown.jsx';
 import { ButtonGroup, Button, OverlayTrigger, Popover, Glyphicon } from 'react-bootstrap';
 
-const ClientActionList = ( { data } ) =>
+const ClientActionList = ( { data, startAction } ) =>
   <ButtonGroup className="action-list" vertical>{ data
     ? ( Array.isArray( data ) ? data : [ data ] ).map(
-      act =>
-        <ButtonGroup className="action" key={ act.name }
-          style={{ display: 'flex', border: 0 }}
-        >
-          <Button bsSize="small" className="action-title">
-            <Glyphicon glyph="play" />
-            <span style={ { paddingLeft: '1em' } }>{ act.name }</span>
+      act => {
+        const buttonInfo = act.doc ? (
+          <Button bsSize="small" className="action-info" >
+            <Glyphicon glyph="info-sign" />
           </Button>
-          { act.doc ? <OverlayTrigger
+        ) : (
+          <OverlayTrigger
             trigger="click" placement="left"
             overlay={
               <Popover title={ act.name } id={ act.name }>
@@ -23,11 +21,27 @@ const ClientActionList = ( { data } ) =>
               </Popover>
             }
           >
-            <Button bsSize="small" className="action-info" >
+            <Button bsSize="small" className="action-info" disabled >
               <Glyphicon glyph="info-sign" />
             </Button>
-          </OverlayTrigger> : null }
-        </ButtonGroup>
+          </OverlayTrigger>
+        );
+
+        return (
+          <ButtonGroup className="action" key={ act.name }
+            style={{ display: 'flex', border: 0 }}
+            onClick={ () => startAction( { name: act.name } ) }
+          >
+            <Button bsSize="small" className="action-title">
+              <Glyphicon glyph="play" />
+              <span style={ { paddingLeft: '1em' } }>{ act.name }</span>
+            </Button>
+
+            { buttonInfo }
+
+          </ButtonGroup>
+        );
+      }
     )
     : 'No action advertised'
   }
@@ -35,17 +49,14 @@ const ClientActionList = ( { data } ) =>
 ;
 
 ClientActionList.propTypes = {
-  data: PropTypes.array.isRequired
+  data: PropTypes.array.isRequired,
+  startAction: PropTypes.func.isRequired
 };
 
 // Map Redux state to component props
 const mapStateToProps = state => state;
 
-// Map Redux actions to component props
-const mapDispatchToProps = ( dispatch ) => ( {} );
-
 // Connected Component:
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+  mapStateToProps
 )( ClientActionList );

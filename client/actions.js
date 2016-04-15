@@ -4,8 +4,9 @@ export const Types = {
   // cleanState: 'cleanState',
 
   authenticateSocketOnConnection: 'authenticateSocketOnConnection',
-  welcome: 'welcome',
   notwelcome: 'notwelcome',
+  welcome: 'welcome',
+  startClientAction: 'startClientAction',
 
   // receiveMessage: 'receiveMessage',
   sendMessage: 'sendMessage',
@@ -33,9 +34,11 @@ export function authenticateSocketOnConnection( socket ) {
 export function notwelcome( data ) {
   return { type: Types.notwelcome, data };
 }
-
 export function welcome( data ) {
   return { type: Types.welcome, data };
+}
+export function startClientAction( cid, data ) {
+  return { type: Types.startClientAction, cid, data };
 }
 
 /* clients */
