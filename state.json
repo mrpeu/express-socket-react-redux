@@ -1,45 +1,12 @@
 {
   "clients": [
     {
-      "name": "testRunner@SRV-GANDALF1",
-      "color": "#557",
-      "cid": "SRV-GANDALF1",
-      "role": "runner",
-      "doc": "mRemoteTestRunner\n---\nBasic app to command execution of NodeJS scripts",
-      "actions": [
-        {
-          "name": "taskDifftool",
-          "script": "testTask//taskDifftool.js"
-        },
-        {
-          "name": "taskDummy",
-          "script": "testTask//taskDummy.js"
-        },
-        {
-          "name": "taskRunAndDiff",
-          "script": "testTask//taskRunAndDiff.js",
-          "doc": "This runs a set of *mmwrequests*\nand then compare the responses with a reference set.\n"
-        }
-      ],
-      "ts": 1460729302551,
-      "sid": "cu6XlsJZ-nUuhBTSAAAH",
-      "status": {
-        "name": "dummy",
-        "ts": 1460728011028,
-        "total": 1,
-        "value": 1,
-        "runs": [
-          {
-            "name": "countdown",
-            "id": 1460728011027,
-            "value": 8,
-            "total": 8
-          }
-        ],
-        "te": 1460728015774,
-        "state": "Done.",
-        "id": "d2c75dfc-4ace-43c5-b38e-d0b6a2e6a560"
-      }
+      "name": "Amaterasu",
+      "color": "#c38f3d",
+      "cid": "QVhZHy86B39Llo2sAAAL",
+      "role": "chat",
+      "ts": 1460963685172,
+      "sid": "lDj5dBSbMPOQwg2AAAAB"
     },
     {
       "name": "testRunner@WKS-TALOS",
@@ -64,124 +31,579 @@
           "doc": "This runs a set of *mmwrequests*\nand then compare the responses with a reference set.\n"
         }
       ],
-      "ts": 1460729297841,
-      "sid": "UISfAvsruaYHl4uoAAAR",
+      "ts": 1460963708299,
+      "sid": "wi5AFZ4Dt__OTknLAAAD",
       "status": {
         "name": "runAndDiff",
-        "ts": 1460729216880,
+        "ts": 1460963661444,
         "total": 2,
         "value": 2,
         "runs": [
           {
-            "id": "1d7b0f4b-018a-42a6-bbac-bc097fd00104",
+            "id": "fa2f8a69-5ed4-4def-89d7-c850180da8f3",
             "name": "runMMWRequest",
             "total": 3,
-            "value": 5,
-            "ts": 1460729217251,
+            "value": 16,
+            "ts": 1460963663032,
             "state": "Done.",
             "runs": [
               {
-                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Enexion_Bo_Vohburg_Gas.json",
-                "id": "9905cfcd-7342-4336-8394-c375055e0e44",
-                "total": 48,
-                "value": 48,
-                "ds": 1460729226088,
-                "de": 1460729226532
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Sort.json",
+                "id": "d4a4fcf9-ef37-47af-a6e0-99f2d5c0cad9",
+                "total": 1,
+                "value": 1,
+                "ds": 1460963677796,
+                "de": 1460963678256
               }
             ],
-            "te": 1460729226564
+            "te": 1460963678276
           },
           {
-            "id": "738a872e-3ca5-4877-90b5-3d6fa48c6f66",
+            "id": "6540996f-b2ec-4c95-8eae-c7cddbe38081",
             "name": "diffTool",
             "state": "Done.",
-            "total": 2,
-            "value": 2,
-            "ts": 1460729226574,
+            "total": 13,
+            "value": 13,
+            "ts": 1460963678303,
             "runs": [
               {
-                "id": "6f82b682-670c-4652-926a-6c13c5e35244",
+                "id": "241dbc16-84a9-497f-a3b0-eb1a2689c3fe",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Abhängige Funktionen.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963678634,
+                "te": 1460963678789
+              },
+              {
+                "id": "89a7e0c1-35f2-4c63-a051-1d401c215cfe",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\ClassPkgs.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963678789,
+                "te": 1460963678810
+              },
+              {
+                "id": "ef7e94cf-ff11-47f8-835d-1494655aab8f",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Error_Messages.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963678810,
+                "te": 1460963678824
+              },
+              {
+                "id": "fe13b313-a387-4413-8733-ebaf63902744",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\General.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963678825,
+                "te": 1460963678840
+              },
+              {
+                "id": "6007523e-0c7a-48fc-9010-fd04ce8c55c2",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\IdenticalDataRequests.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963678840,
+                "te": 1460963678867
+              },
+              {
+                "id": "5baca4ac-9644-456e-ae7b-a2b134fa57bd",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Offline.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963678867,
+                "te": 1460963678893
+              },
+              {
+                "id": "d368bfb3-d201-4b80-a004-e7d709b7ac7c",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\PeriodicDataRequests.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963678893,
+                "te": 1460963678914
+              },
+              {
+                "id": "7d6209f7-202d-49b3-9661-fb14d3c6e66a",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Sort.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963678914,
+                "te": 1460963678936
+              },
+              {
+                "id": "44a43db9-87ac-4164-8190-8688ab734513",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Statistics.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963678936,
+                "te": 1460963678967
+              },
+              {
+                "id": "7af20b26-eb07-4a4d-a942-de0e0857a711",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Table.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963678967,
+                "te": 1460963678998
+              },
+              {
+                "id": "6bce4f3d-cf14-40a4-b0bb-29df2f9dee5d",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\UOM.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963678998,
+                "te": 1460963679016
+              },
+              {
+                "id": "1f87b579-2f6f-47a8-8c35-bde29b6f7e38",
                 "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Enexion_Bo_Vohburg_Gas.json",
                 "total": 1,
                 "value": 1,
-                "ts": 1460729226844,
-                "te": 1460729226858
+                "ts": 1460963679016,
+                "te": 1460963679032
               },
               {
-                "id": "d0e18ada-a479-4b32-9a27-c73cd4aae57b",
+                "id": "2207aafa-5b2e-4377-b914-acca64650e74",
                 "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Laborwerte.json",
                 "total": 1,
                 "value": 1,
-                "ts": 1460729226858,
-                "te": 1460729226872
+                "ts": 1460963679032,
+                "te": 1460963679075
               }
             ],
-            "te": 1460729226873
+            "te": 1460963679075
           }
         ],
-        "te": 1460729226880,
-        "id": "b5747ea3-5b0c-47c9-8ac9-4ba28f8cb4f6"
+        "te": 1460963679083,
+        "id": "249a3ea8-ef54-401e-8428-dc8836456b66"
       }
     },
     {
-      "name": "Amaterasu",
-      "color": "#c38f3d",
-      "cid": "QVhZHy86B39Llo2sAAAL",
+      "name": "testRunner@WKS-Test04",
+      "color": "#557",
+      "cid": "WKS-Test04",
+      "role": "runner",
+      "doc": "mRemoteTestRunner\n---\nBasic app to command execution of NodeJS scripts",
+      "actions": [
+        {
+          "name": "taskDifftool",
+          "script": "testTask//taskDifftool.js",
+          "doc": "This\r\n===\r\ncompares the responses\r\n- with\r\n- a reference set.\r\n"
+        },
+        {
+          "name": "taskDummy",
+          "script": "testTask//taskDummy.js",
+          "doc": "Code\n---\n`() => console.log`\n"
+        },
+        {
+          "name": "taskRunAndDiff",
+          "script": "testTask//taskRunAndDiff.js",
+          "doc": "This runs a set of *mmwrequests*\nand then compare the responses with a reference set.\n"
+        }
+      ],
+      "ts": 1460963708301,
+      "sid": "YXCdCe4xfLf1bioFAAAE",
+      "status": {
+        "name": "dummy",
+        "ts": 1460963664886,
+        "total": 1,
+        "value": 1,
+        "runs": [
+          {
+            "name": "countdown",
+            "id": 1460963664886,
+            "value": 1,
+            "total": 1
+          }
+        ],
+        "te": 1460963665990,
+        "state": "Done.",
+        "id": "9dfca0cc-d91c-4672-a783-59060de55386"
+      }
+    },
+    {
+      "name": "testRunner@SRV-GANDALF1",
+      "color": "#557",
+      "cid": "SRV-GANDALF1",
+      "role": "runner",
+      "doc": "mRemoteTestRunner\n---\nBasic app to command execution of NodeJS scripts",
+      "actions": [
+        {
+          "name": "taskDifftool",
+          "script": "testTask//taskDifftool.js",
+          "doc": "This\r\n===\r\ncompares the responses\r\n- with\r\n- a reference set.\r\n"
+        },
+        {
+          "name": "taskDummy",
+          "script": "testTask//taskDummy.js",
+          "doc": "Code\n---\n`() => console.log`\n"
+        },
+        {
+          "name": "taskRunAndDiff",
+          "script": "testTask//taskRunAndDiff.js",
+          "doc": "This runs a set of *mmwrequests*\nand then compare the responses with a reference set.\n"
+        }
+      ],
+      "ts": 1460963709380,
+      "sid": "ZK6JFgRu4v5G7gN0AAAF",
+      "status": {
+        "name": "dummy",
+        "ts": 1460963665727,
+        "total": 1,
+        "value": 1,
+        "runs": [
+          {
+            "name": "countdown",
+            "id": 1460963665727,
+            "value": 6,
+            "total": 6
+          }
+        ],
+        "te": 1460963666398,
+        "state": "Done.",
+        "id": "18d1bd4f-a559-4df5-b95c-622b6404cf52"
+      }
+    },
+    {
+      "name": "testRunner@WKS-Test05",
+      "color": "#557",
+      "cid": "WKS-Test05",
+      "role": "runner",
+      "doc": "mRemoteTestRunner\n---\nBasic app to command execution of NodeJS scripts",
+      "actions": [
+        {
+          "name": "taskDifftool",
+          "script": "testTask//taskDifftool.js",
+          "doc": "This\r\n===\r\ncompares the responses\r\n- with\r\n- a reference set.\r\n"
+        },
+        {
+          "name": "taskDummy",
+          "script": "testTask//taskDummy.js",
+          "doc": "Code\n---\n`() => console.log`\n"
+        },
+        {
+          "name": "taskRunAndDiff",
+          "script": "testTask//taskRunAndDiff.js",
+          "doc": "This runs a set of *mmwrequests*\nand then compare the responses with a reference set.\n"
+        }
+      ],
+      "ts": 1460963687309,
+      "sid": "f0_kSVg3WUFdu5TaAAAH",
+      "status": {
+        "name": "runAndDiff",
+        "ts": 1460962986238,
+        "total": 2,
+        "value": 2,
+        "runs": [
+          {
+            "id": "9a7fe9be-eeac-4754-80d3-c0fe43fe1435",
+            "name": "runMMWRequest",
+            "total": 3,
+            "value": 37,
+            "ts": 1460962996567,
+            "state": "Done.",
+            "runs": [
+              {
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\Abfrage_D_Rohoel_Einzelzähler.json",
+                "id": "c86d49c3-1624-476e-9e69-f9d84b982b82",
+                "total": 40,
+                "value": 40,
+                "ds": 1460963113692,
+                "de": 1460963125035
+              }
+            ],
+            "te": 1460963125192
+          },
+          {
+            "id": "77ddf504-b663-45a2-ac85-6a79a467244b",
+            "name": "diffTool",
+            "state": "Done.",
+            "total": 33,
+            "value": 33,
+            "ts": 1460963125270,
+            "runs": [
+              {
+                "id": "86131aec-02d0-4038-85f2-55c855ee8cf2",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Abhängige Funktionen.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963127223,
+                "te": 1460963127332
+              },
+              {
+                "id": "92fb2e09-cb0e-43ab-816f-291d742b2986",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\ClassPkgs.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963127332,
+                "te": 1460963127426
+              },
+              {
+                "id": "d5eb7619-a767-476d-97dc-eb32b0d1ad2e",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Error_Messages.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963127426,
+                "te": 1460963127520
+              },
+              {
+                "id": "04eacab3-c8f1-4f77-b522-71d1d130dbf2",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\General.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963127520,
+                "te": 1460963127598
+              },
+              {
+                "id": "0813b8ac-505e-4d10-90ad-9571a2ec002e",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\IdenticalDataRequests.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963127598,
+                "te": 1460963127723
+              },
+              {
+                "id": "6e4d1b6b-0fea-4280-a13b-c45723eff64b",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Offline.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963127723,
+                "te": 1460963127801
+              },
+              {
+                "id": "fa0c10b3-51c8-49f2-a7c4-82aea775f11a",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\PeriodicDataRequests.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963127801,
+                "te": 1460963127910
+              },
+              {
+                "id": "d8d191b4-c19f-4eda-a99a-91ee21111235",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Sort.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963127910,
+                "te": 1460963128004
+              },
+              {
+                "id": "c8016239-cb6a-4fcd-ac2b-8ac66a723b5b",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Statistics.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963128004,
+                "te": 1460963128113
+              },
+              {
+                "id": "2da874e2-e644-4470-81e6-21216c30ec16",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\Table.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963128113,
+                "te": 1460963128207
+              },
+              {
+                "id": "801bab06-dbf7-4b5c-832a-5e8705e00ed0",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\mpro\\UOM.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963128207,
+                "te": 1460963128301
+              },
+              {
+                "id": "2a6ff29e-d979-49b2-b65a-c683b7fae129",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\Abfrage LPG-Bestände.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963128301,
+                "te": 1460963128395
+              },
+              {
+                "id": "875fdfde-6a27-4e0e-bc0c-afcf1398b6f8",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\Abfrage_D_Rohoel_Einzelzähler.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963128395,
+                "te": 1460963128520
+              },
+              {
+                "id": "c200a3dc-39d9-41f9-92b2-9b64faab3500",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\Abfrage_OK_Komponenten_produktion0901.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963128520,
+                "te": 1460963128738
+              },
+              {
+                "id": "35d812bb-95b5-436d-a5cb-5671adf0a6f7",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\Bestand_Absatz_1502.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963128738,
+                "te": 1460963128832
+              },
+              {
+                "id": "e68df6bb-bd4e-452b-91bb-b41299a979af",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\dat_HC.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963128832,
+                "te": 1460963128910
+              },
+              {
+                "id": "7b383bbb-afc2-4e58-8528-ddf668e62cd6",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\Feed+Komp_11_2014.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963128910,
+                "te": 1460963129004
+              },
+              {
+                "id": "0dab6e0a-d9ec-47b6-8195-78696957a0a7",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\GP-Planung DK.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963129004,
+                "te": 1460963129098
+              },
+              {
+                "id": "06c94146-cf40-40e2-91e4-8f614a3945a1",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\GP-Planung Jet.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963129098,
+                "te": 1460963129192
+              },
+              {
+                "id": "484479ca-6d4e-4745-b347-7afaca3afde7",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\GR 3-GR 2Anfall Butan extra und Propanund Tanklager.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963129207,
+                "te": 1460963129285
+              },
+              {
+                "id": "3a2b3f88-29a3-4179-99ba-cecea796f244",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\MD-Additive_nodata.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963129285,
+                "te": 1460963129395
+              },
+              {
+                "id": "a78b8d23-6ec2-4303-925a-1ef259ccc29c",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\Prod-Abfrage.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963129395,
+                "te": 1460963129473
+              },
+              {
+                "id": "aeee871e-d18d-4b88-a1f0-a65249c1959a",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\Rohoeltanke ERE-neu-2010.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963129473,
+                "te": 1460963129582
+              },
+              {
+                "id": "a38c7cc9-19b5-4f04-894d-fbb9e4724105",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\Rohöleinsatz_RD1_dat.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963129582,
+                "te": 1460963129692
+              },
+              {
+                "id": "7d4396a0-195a-4a7e-84bb-2cd9f0ce9390",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\Rohöleinsatz_RD1_dat_approvals.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963129692,
+                "te": 1460963129801
+              },
+              {
+                "id": "b393f285-c5dc-4f75-814e-750111bc5d25",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\Rohöleinsatz_RD1_processing time.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963129801,
+                "te": 1460963129942
+              },
+              {
+                "id": "7cfeec7d-f09b-4ad7-9c8f-d35dc51f7bba",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BPLIN\\Rohöleinsatz_RD2_dat_approvals.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963129942,
+                "te": 1460963130082
+              },
+              {
+                "id": "a59854e5-8875-4074-84fa-ef34f6d1fe5b",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Enexion_Bo_Vohburg_Gas.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963130082,
+                "te": 1460963130145
+              },
+              {
+                "id": "aead0822-e55b-4902-a26b-15a58f6546ee",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Laborwerte.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963130145,
+                "te": 1460963130254
+              },
+              {
+                "id": "80cac5dc-00ea-4160-b935-8f339b4c04c6",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\MinMaxAvg.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963130254,
+                "te": 1460963130317
+              },
+              {
+                "id": "515cee51-2089-4b2b-af3b-7fb2c7257c15",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\Minutendaten.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963130317,
+                "te": 1460963130442
+              },
+              {
+                "id": "fbb0abf2-b1e8-4b04-a578-4dafaedb46da",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\PI-Tags.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963130442,
+                "te": 1460963130504
+              },
+              {
+                "id": "f1081949-b1ed-411c-9c63-72cc7a516ad1",
+                "name": "C:\\Temp\\mpro\\mmwtest\\mmwresponse\\BO\\SigmafineDaten.json",
+                "total": 1,
+                "value": 1,
+                "ts": 1460963130520,
+                "te": 1460963130613
+              }
+            ],
+            "te": 1460963130613
+          }
+        ],
+        "te": 1460963130645,
+        "id": "2849cdc4-b387-43c9-9fa5-3f3623930c03"
+      }
+    },
+    {
+      "name": "Alison",
+      "color": "#ad8989",
+      "cid": "OSEnbQ-7hAPNcpycAABm",
       "role": "chat",
-      "ts": 1460729327251,
-      "sid": "ix4USuVoND2Zaky7AAAb"
+      "ts": 1460963709565,
+      "sid": "8lVHtdwo0iSjrJyCAAAb"
     }
   ],
   "chat": {
-    "messages": [
-      {
-        "color": "#557",
-        "name": "mRemoteTestRunner",
-        "role": "runner",
-        "cid": "#z934izhq34ljie",
-        "t": 1459938167522,
-        "data": "{\"id\":\"a41323c3-64db-4b77-98e4-995aa70001c3\",\"name\":\"runMMWRequest\",\"total\":6,\"value\":4,\"state\":\"Requesting ..\\\\remoteTestRunner\\\\__data\\\\mmwrequest\\\\mpro\\\\Error_Messages.json...\",\"runs\":{\"0d11dc83-577f-4aa8-9108-fc8315954d1a\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\ClassPkgs.json\",\"id\":\"0d11dc83-577f-4aa8-9108-fc8315954d1a\",\"total\":1,\"value\":1,\"ds\":1459938166745,\"de\":1459938167043},\"67a481fd-9c58-4127-bdb7-ccf945069837\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Error_Messages.json\",\"id\":\"67a481fd-9c58-4127-bdb7-ccf945069837\",\"total\":6,\"value\":6,\"ds\":1459938167086,\"de\":1459938167511}}}"
-      },
-      {
-        "color": "#557",
-        "name": "mRemoteTestRunner",
-        "role": "runner",
-        "cid": "#z934izhq34ljie",
-        "t": 1459938167688,
-        "data": "{\"id\":\"a41323c3-64db-4b77-98e4-995aa70001c3\",\"name\":\"runMMWRequest\",\"total\":6,\"value\":5,\"state\":\"Requesting ..\\\\remoteTestRunner\\\\__data\\\\mmwrequest\\\\mpro\\\\Abhängige Funktionen.json...\",\"runs\":{\"0d11dc83-577f-4aa8-9108-fc8315954d1a\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\ClassPkgs.json\",\"id\":\"0d11dc83-577f-4aa8-9108-fc8315954d1a\",\"total\":1,\"value\":1,\"ds\":1459938166745,\"de\":1459938167043},\"67a481fd-9c58-4127-bdb7-ccf945069837\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Error_Messages.json\",\"id\":\"67a481fd-9c58-4127-bdb7-ccf945069837\",\"total\":6,\"value\":6,\"ds\":1459938167086,\"de\":1459938167511},\"c612024d-6558-42a7-829a-9875529e1592\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Abhängige Funktionen.json\",\"id\":\"c612024d-6558-42a7-829a-9875529e1592\",\"total\":1,\"value\":1,\"ds\":1459938167521,\"de\":1459938167671}}}"
-      },
-      {
-        "color": "#557",
-        "name": "mRemoteTestRunner",
-        "role": "runner",
-        "cid": "#z934izhq34ljie",
-        "t": 1459938167710,
-        "data": "{\"id\":\"a41323c3-64db-4b77-98e4-995aa70001c3\",\"name\":\"runMMWRequest\",\"total\":6,\"value\":6,\"state\":\"Done in 5s.\",\"runs\":{\"0d11dc83-577f-4aa8-9108-fc8315954d1a\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\ClassPkgs.json\",\"id\":\"0d11dc83-577f-4aa8-9108-fc8315954d1a\",\"total\":1,\"value\":1,\"ds\":1459938166745,\"de\":1459938167043},\"67a481fd-9c58-4127-bdb7-ccf945069837\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Error_Messages.json\",\"id\":\"67a481fd-9c58-4127-bdb7-ccf945069837\",\"total\":6,\"value\":6,\"ds\":1459938167086,\"de\":1459938167511},\"c612024d-6558-42a7-829a-9875529e1592\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Abhängige Funktionen.json\",\"id\":\"c612024d-6558-42a7-829a-9875529e1592\",\"total\":1,\"value\":1,\"ds\":1459938167521,\"de\":1459938167671}}}"
-      },
-      {
-        "color": "#557",
-        "name": "mRemoteTestRunner",
-        "role": "runner",
-        "cid": "#z934izhq34ljie",
-        "t": 1459938167719,
-        "data": "{\"id\":\"a41323c3-64db-4b77-98e4-995aa70001c3\",\"name\":\"runMMWRequest\",\"total\":6,\"value\":6,\"state\":\"Done.\",\"runs\":{\"0d11dc83-577f-4aa8-9108-fc8315954d1a\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\ClassPkgs.json\",\"id\":\"0d11dc83-577f-4aa8-9108-fc8315954d1a\",\"total\":1,\"value\":1,\"ds\":1459938166745,\"de\":1459938167043},\"67a481fd-9c58-4127-bdb7-ccf945069837\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Error_Messages.json\",\"id\":\"67a481fd-9c58-4127-bdb7-ccf945069837\",\"total\":6,\"value\":6,\"ds\":1459938167086,\"de\":1459938167511},\"c612024d-6558-42a7-829a-9875529e1592\":{\"name\":\"C:\\\\Temp\\\\mpro\\\\mmwtest\\\\mmwresponse\\\\mpro\\\\Abhängige Funktionen.json\",\"id\":\"c612024d-6558-42a7-829a-9875529e1592\",\"total\":1,\"value\":1,\"ds\":1459938167521,\"de\":1459938167671}}}"
-      },
-      {
-        "color": "#2a5fe3",
-        "name": "Arisu",
-        "role": "chat",
-        "cid": "S0Cl30uFIKrgHK0-AAAD",
-        "t": 1459945012288,
-        "data": "alouhette"
-      },
-      {
-        "color": "#2a5fe3",
-        "name": "Iseul",
-        "role": "chat",
-        "cid": "Mnn3-XzIPUegoLFHAAAB",
-        "t": 1460033075233,
-        "data": "ghdfgh"
-      }
-    ]
+    "messages": []
   }
 }

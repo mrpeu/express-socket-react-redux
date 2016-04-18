@@ -278,7 +278,7 @@ function authenticateClient( stateClients, socket, client ) {
   }
 }
 
-function updateClientRuns( { socket, client, data } ) {
+function updateClientRuns( clients, { socket, client, data } ) {
   // console.warn( 'updateClientRuns:', data );
 
   socket.broadcast.emit( 'client-status', {
@@ -289,13 +289,19 @@ function updateClientRuns( { socket, client, data } ) {
     }
   } );
 
-  return {
-    ...client,
-    status: {
-      ...client.status,
-      ...data
+  return clients.map( c => {
+    if ( c.cid !== client.cid ) {
+      return c;
+    } else {
+      return {
+        ...client,
+        status: {
+          ...client.status,
+          ...data
+        }
+      };
     }
-  };
+  } );
 }
 
 function emitStartClientAction( { socket, clientAction, cb } ) {
@@ -308,6 +314,8 @@ function emitStartClientAction( { socket, clientAction, cb } ) {
 // Store:
 store = createStore( combineReducers( {
   clients: ( stateClients = {}, action ) => {
+    // console.warn( chalk.cyan( `REDUX: ${JSON.stringify( action.type )}` ) );
+
     if ( action.client ) {
       // console.warn('a',stateClients.map(c=>c.ts/1000).join());
       stateClients = markClientAlive( stateClients, action.client );
@@ -332,10 +340,7 @@ store = createStore( combineReducers( {
         return stateClients;
 
       case Actions.Types.receiveRunStatus:
-        return [
-          ...stateClients.filter( c => c.cid !== action.client.cid ),
-          updateClientRuns( action )
-        ];
+        return updateClientRuns( stateClients, action );
 
       case Actions.Types.startClientAction:
         emitStartClientAction( action );

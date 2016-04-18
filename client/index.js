@@ -99,11 +99,16 @@ import chalk from 'chalk';
   function emitStartClientAction( client, action ) {
     // todo: running status feedback
     const el = document.querySelector( `#${action.cid} .action-list` );
-    el.style.opacity = 0.5;
+    // el.style.opacity = 0.5;
+    Array.prototype.forEach.call( el.childNodes, ( elChild ) => {
+      elChild.setAttribute( 'disabled', true );
+    } );
 
     socket.emit( 'startClientAction', action, ( ...args ) => {
       // console.warn( args );
-      el.style.opacity = 1;
+      Array.prototype.forEach.call( el.childNodes, ( elChild ) => {
+        elChild.removeAttribute( 'disabled' );
+      } );
     } );
     return client;
   }
@@ -111,13 +116,16 @@ import chalk from 'chalk';
   function onReceiveRunStatus( clients, action ) {
     // console.warn( chalk.yellow( 'receivedStatus action:' ), action.status );
 
-    return [
-      ...clients.filter( c => c.cid !== action.cid ),
-      {
-        ...clients.find( c => c.cid === action.cid ),
-        status: { ...action.status }
+    return clients.map( c => {
+      if ( c.cid !== action.cid ) {
+        return c;
+      } else {
+        return {
+          ...c,
+          status: action.status
+        };
       }
-    ];
+    } );
   }
 
 

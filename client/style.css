@@ -161,7 +161,8 @@ button primary {
 
 .client-card>.content {
   padding: .5em;
-  flex: 1 1 auto;
+  flex: 1 1 100%;
+  overflow: auto;
 }
 .client-card>.content>* {
   border-bottom: .1em #ddd solid;
@@ -306,13 +307,18 @@ li:nth-child(even) .chat-message {
   flex: 0 0 auto;
 }
 .action {
-  color: #aaa;
   display: flex;
-  flex-flow: row nowrap;
+  border: 0;
+  border-radius: inherit;
+  text-align: left;
+}
+.action:hover {
+  color: #57b;
 }
 .action.btn-group>button {
   width: auto !important;
   border: 0;
+  padding: .2em .5em;
 }
 .action:hover {
   color: #555;
@@ -323,21 +329,6 @@ li:nth-child(even) .chat-message {
 .action:hover>.markdown {
   display: block;
   color: inherit;
-}
-.action .action-title {
-  flex: 1 0 auto;
-  text-align: start;
-}
-.action .action-title:hover {
-  color: #57b;
-}
-.action .action-info {
-  flex: 0 0 auto;
-}
-/* the style disabled is appropriate, but the state is more "unavailable"
-than "not-allowed" */
-.action .action-info[disabled] {
-  cursor: inherit;
 }
 
 /*----------------*/

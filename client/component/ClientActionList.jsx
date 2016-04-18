@@ -2,45 +2,33 @@
 import React, { Component, PropTypes } from 'react';
 import { Provider, connect } from 'react-redux';
 import Markdown from './Markdown.jsx';
-import { ButtonGroup, Button, OverlayTrigger, Popover, Glyphicon } from 'react-bootstrap';
+import { ButtonGroup, Button, OverlayTrigger, Tooltip, Glyphicon } from 'react-bootstrap';
 
 const ClientActionList = ( { data, startAction } ) =>
   <ButtonGroup className="action-list" vertical>{ data
     ? ( Array.isArray( data ) ? data : [ data ] ).map(
       act => {
-        const buttonInfo = act.doc ? (
-          <OverlayTrigger
-            trigger="click" placement="left"
-            overlay={
-              <Popover title={ act.name } id={ act.name }>
-              { act.doc ? <Markdown data={ act.doc } /> : 'no doc' }
-              </Popover>
-            }
+        const btn = (
+          <Button bsSize="small" className="action"
+            onClick={ () => startAction( { name: act.name } ) }
           >
-        <Button bsSize="small" className="action-info" >
-          <Glyphicon glyph="info-sign" />
-        </Button>
-          </OverlayTrigger>
-        ) : (
-          <Button bsSize="small" className="action-info" disabled >
-            <Glyphicon glyph="info-sign" />
+            <Glyphicon glyph="play" />
+            <span style={ { paddingLeft: '1em' } }>{ act.name }</span>
           </Button>
         );
 
-        return (
-          <ButtonGroup className="action" key={ act.name }
-            style={{ display: 'flex', border: 0 }}
+        return act.doc ? (
+          <OverlayTrigger placement="top" delay="2000"
+            overlay={
+              <Tooltip title={ act.name } id={ act.name }>
+              { act.doc ? <Markdown data={ act.doc } /> : 'no doc' }
+              </Tooltip>
+            }
           >
-            <Button bsSize="small" className="action-title"
-              onClick={ () => startAction( { name: act.name } ) }
-            >
-              <Glyphicon glyph="play" />
-              <span style={ { paddingLeft: '1em' } }>{ act.name }</span>
-            </Button>
-
-            { buttonInfo }
-
-          </ButtonGroup>
+          { btn }
+          </OverlayTrigger>
+        ) : (
+          { btn }
         );
       }
     )
