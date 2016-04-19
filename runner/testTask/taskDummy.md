@@ -1,0 +1,3 @@
+Code
+---
+`() => console.log`

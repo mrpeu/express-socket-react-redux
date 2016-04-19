@@ -1,0 +1,18 @@
+{
+  "name": "remotetestrunner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mRemoteTestRunner.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./mRemoteTestRunner.js"
+  },
+  "author": "gpe",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "node-uuid": "^1.4.7",
+    "async": "^1.4.0",
+    "socket.io": "^1.4.5"
+  }
+}
