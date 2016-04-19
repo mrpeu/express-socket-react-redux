@@ -5,15 +5,30 @@ import * as Actions from './../actions.js';
 import ClientTitleList from './ClientTitleList.jsx';
 import ClientCardList from './ClientCardList.jsx';
 import Chat from './Chat.jsx';
+import { OverlayTrigger, Popover } from 'react-bootstrap';
 
 const AppMain = ( { value, onIncreaseClick, client, clients, chat } ) =>
   <div id="app">
-    <div id="header">
-      <ClientTitleList />
-    </div>
+    <header id="header">
+      {/* <ClientTitleList /> */}
+    </header>
+
     <div id="content">
       <ClientCardList />
+
+      <pre>
+      //todo:
+      - fix:  on connection of runner, the web ui has to be restarted to be able
+      to start an action of this runner
+      - enh:  develop runner's action documentation.
+      - add:  develop runner's action configuration.
+      - add:  use Lokijs ( http://lokijs.org/#/docs ) as DB.
+      - add:  add some kind of Router.
+      - add:  develop a runner for ESP8266.
+      - add:  add historic of activity durations.
+      </pre>
     </div>
+
     <Chat client={ client } />
   </div>
 ;

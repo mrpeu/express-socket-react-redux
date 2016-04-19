@@ -8,7 +8,8 @@ import ClientActionList from './ClientActionList.jsx';
 const ClientCard = ( { client, clients, startAction } ) =>
   <div className="client-card" role={ client.role } id={ client.cid }>
     <ClientTitle client={ client }>
-      {`Running since ${new Date( client.ts ).toLocaleString()}`}
+      <div>cid: { client.cid }</div>
+      <div>{`Running since ${new Date( client.ts ).toLocaleString()}`}</div>
     </ClientTitle>
     <div className="content">
       { client.status ? <RunStatus data={client.status} /> : null }

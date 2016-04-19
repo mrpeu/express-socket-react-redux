@@ -136,6 +136,10 @@ button primary {
   padding: 1em;
   display: flex;
   flex-flow: row wrap;
+  justify-content: flex-start;
+  align-content: space-between;
+  align-items: center;
+  overflow: auto;
 }
 .client-card-list li {
   /* list-style: none; */
@@ -145,8 +149,10 @@ button primary {
   box-shadow: .0em .0em .5em #aaa;
 }*/
 .client-card {
-  width: 24em;
-  height: 26em;
+  flex: 0 1 30%;
+  min-width: 16em;
+  max-width: 28em;
+  height: 24em;
   overflow: auto;
   margin: .3em;
   border: .1em #ddd solid;

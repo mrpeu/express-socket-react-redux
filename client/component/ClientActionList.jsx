@@ -18,7 +18,8 @@ const ClientActionList = ( { data, startAction } ) =>
         );
 
         return act.doc ? (
-          <OverlayTrigger placement="top" delay="2000"
+          <OverlayTrigger key={ act.id || act.name }
+            placement="top" delayShow={ 2000 } delayHide={500}
             overlay={
               <Tooltip title={ act.name } id={ act.name }>
               { act.doc ? <Markdown data={ act.doc } /> : 'no doc' }
