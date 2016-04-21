@@ -5,7 +5,7 @@ import * as Actions from './../actions.js';
 import ClientCard from './ClientCard.jsx';
 
 const ClientCardList = ( { clients, startClientAction } ) =>
-  <ul className="client-card-list" style={{ borderBottom: '1px #ddd solid' }}>
+  <ul className="client-card-list">
     { clients.filter( c => c.role === 'runner' ).map( c =>
         <ClientCard key={ c.cid } client={ c }
           startAction={ ( caction ) => startClientAction( c.cid, caction ) }

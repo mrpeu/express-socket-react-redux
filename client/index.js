@@ -97,17 +97,21 @@ import chalk from 'chalk';
   }
 
   function emitStartClientAction( client, action ) {
-    // todo: running status feedback
-    const el = document.querySelector( `#${action.cid} .action-list` );
-    // el.style.opacity = 0.5;
-    Array.prototype.forEach.call( el.childNodes, ( elChild ) => {
-      elChild.setAttribute( 'disabled', true );
+    // todo: use an action
+    const children = document.querySelectorAll(
+      `#${action.cid} .action-list .action .title`
+    );
+
+    Array.prototype.forEach.call( children, ( elChild ) => {
+      if ( elChild.innerText !== 'stop' ) {
+        elChild.parentNode.setAttribute( 'disabled', true );
+      }
     } );
 
     socket.emit( 'startClientAction', action, ( ...args ) => {
       // console.warn( args );
-      Array.prototype.forEach.call( el.childNodes, ( elChild ) => {
-        elChild.removeAttribute( 'disabled' );
+      Array.prototype.forEach.call( children, ( elChild ) => {
+        elChild.parentNode.removeAttribute( 'disabled' );
       } );
     } );
     return client;

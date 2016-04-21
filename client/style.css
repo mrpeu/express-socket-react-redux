@@ -27,7 +27,7 @@ button {
     background: #fff;
     border: 1px solid #ddd;
     color: #555;
-    font-weight: bold;
+    font-weight: bold !important;
     border-radius: .1em;
     padding: .5em;
     cursor: pointer;
@@ -101,7 +101,7 @@ button primary {
 }
 .client-title>* {
   flex: 0 0 auto;
-  padding: 0 .25em;
+  padding: 0 .3em;
 }
 .icon-left-pad {
   flex: 0 1 auto;
@@ -109,9 +109,11 @@ button primary {
   min-height: 1.5em;
   margin-right: -1em;
   align-self: stretch;
-  border-top-left-radius: .15em;
+  /* border-top-left-radius: .15em; */
   /* border-bottom-left-radius: .15em; */
   color: #fff;
+  box-shadow: inset 0em -1em 2em -1.1em #ddd;
+  text-shadow: 0px 0px 1px #ddd;
 }
 .icon-left-pad:not([role])::after {
   content: "∞";
@@ -138,7 +140,7 @@ button primary {
   flex-flow: row wrap;
   justify-content: flex-start;
   align-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   overflow: auto;
 }
 .client-card-list li {
@@ -309,25 +311,29 @@ li:nth-child(even) .chat-message {
   width: 100%;
   position: static;
   bottom: 0px;
-  border-top: 1px #ddd solid;
   flex: 0 0 auto;
 }
 .action {
   display: flex;
-  border: 0;
+  border-left: 0;
+  border-right: 0;
   border-radius: inherit;
   text-align: left;
 }
-.action:hover {
+.action:last-child {
+  border-bottom: 0;
+}
+.action:hover:not([disabled]) {
   color: #57b;
+  border-color: #ccc;
 }
 .action.btn-group>button {
   width: auto !important;
   border: 0;
   padding: .2em .5em;
 }
-.action:hover {
-  color: #555;
+.action>.title {
+  padding-left: 1em;
 }
 .action>.markdown {
   display: none;
@@ -353,5 +359,4 @@ li:nth-child(even) .chat-message {
   display: flex;
   flex-flow: row wrap;
 }
-
 /*----------------*/

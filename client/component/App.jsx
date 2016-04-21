@@ -16,18 +16,43 @@ const AppMain = ( { value, onIncreaseClick, client, clients, chat } ) =>
     <div id="content">
       <ClientCardList />
 
-      <pre>
-      //todo:
-      - fix:  on connection of runner, the web ui has to be restarted to be able
-      to start an action of this runner
-      - enh:  develop runner's action documentation.
-      - add:  develop runner's action configuration.
-      - add:  use Lokijs ( http://lokijs.org/#/docs ) as DB.
-      - add:  add some kind of Router.
-      - add:  develop a runner for ESP8266.
-      - add:  add historic of activity durations.
-      </pre>
     </div>
+    <pre style={{ color: 'green' }}>
+    //todo:
+    <br /><div><input type="checkbox" checked="" disabled
+      style={{ verticalAlign: 'sub', marginRight: '.5em' }}
+    />
+    fix: on connection of runner, the web ui has to be restarted to be able
+    <br />to start an action of this runner
+    <br /></div><div><input type="checkbox" checked="" disabled
+      style={{ verticalAlign: 'sub', marginRight: '.5em' }}
+    />
+    enh: develop runner's action documentation.
+    <br /></div><div><input type="checkbox" checked="" disabled
+      style={{ verticalAlign: 'sub', marginRight: '.5em' }}
+    />
+    add: develop runner's action configuration.
+    <br /></div><div><input type="checkbox" checked="" disabled
+      style={{ verticalAlign: 'sub', marginRight: '.5em' }}
+    />
+    add: use Lokijs ( http://lokijs.org/#/docs ) as DB.
+    <br /></div><div><input type="checkbox" checked="" disabled
+      style={{ verticalAlign: 'sub', marginRight: '.5em' }}
+    />
+    add: add some kind of Router.
+    <br /></div><div><input type="checkbox" checked="" disabled
+      style={{ verticalAlign: 'sub', marginRight: '.5em' }}
+    />
+    add: develop a runner for ESP8266.
+    <br /></div><div><input type="checkbox" checked="" disabled
+      style={{ verticalAlign: 'sub', marginRight: '.5em' }}
+    />
+    add: add historic of activity durations.
+    <br /></div><div><input type="checkbox" checked="" disabled
+      style={{ verticalAlign: 'sub', marginRight: '.5em' }}
+    />
+    add: develop a workflow system.
+    <br /></div></pre>
 
     <Chat client={ client } />
   </div>

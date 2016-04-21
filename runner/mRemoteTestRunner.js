@@ -12,6 +12,7 @@ var pathTasks = 'testTask/';
 var controlPort = 33334;
 var runnerPort = 33333;
 var child = null;
+var _child_uuid_cached = null;
 var httpsocket = null;
 var identity = {
   cid: os.hostname(), // todo improve
@@ -28,6 +29,23 @@ var identity = {
 };
 
 var noop = function(){return arguments};
+
+if (process.platform === "win32") {
+  var rl = require("readline").createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  rl.on("SIGINT", function () {
+    process.emit("SIGINT");
+  });
+}
+
+process.on("SIGINT", function () {
+  //graceful shutdown
+  quit();
+  process.exit();
+});
 
 
 dserver.bind( function ()
@@ -66,7 +84,7 @@ function executeMessage( message, clientInfo, cb ) {
   if( message && Buffer.isBuffer(message) )
     msgJson = JSON.parse(message.toString());
 
-  // console.warn(JSON.stringify(msgJson,0,2))
+    // console.warn( chalk.magenta( JSON.stringify(msgJson,0,2)) )
 
   if( !msgJson.targets && msgJson.cmd!=='ping?' ) {
     var errorMessage = '[testRunner] Invalid arguments';
@@ -94,24 +112,21 @@ function executeMessage( message, clientInfo, cb ) {
       break;
 
     case 'stop':
-      if (child) {
-        console.log(chalk.blue("Stopping child process..."));
-        child.kill();
-      } else {
-        console.log(chalk.blue("No child to stop."));
-      }
+      stopChild();
       break;
 
     case 'quit':
-      console.log("Quitting...");
-      if (child) child.kill();
-      broadcast( { out: "Quitting" }, function ( err )
-      {
-        dclient.close();
-        dserver.close();
-        process.exit(0);
-      } );
+      quit();
       break;
+  }
+}
+
+function stopChild() {
+  if (child) {
+    console.log(chalk.blue("Stopping child process..."));
+    child.kill();
+  } else {
+    console.log(chalk.blue("No child to stop."));
   }
 }
 
@@ -132,23 +147,23 @@ function startChild( msgJson, clientInfo, cb ){
   var appName = msgJson.prms[0];
   var cmdArgs = msgJson.prms.slice(1);
 
-  // if(cmdArgs[cmdArgs.length-1]!=='--colors') cmdArgs.push( '--colors' );
+  console.log(chalk.blue('\nStarting child "'+appName+'" with params: '+ JSON.stringify(cmdArgs)));
+  // console.log('\n%s'.magenta, path.resolve( appName ))
 
-  try
-  {
-    console.log(chalk.blue('\nStarting child '+appName+' with params: '+cmdArgs.join(', ')));
-    // console.log('\n%s'.magenta, path.resolve( appName ))
+  _child_uuid_cached = msgJson.rid || uuid.v4();
 
+  console.log(chalk.blue('broadcast uuid/rid: %s'), _child_uuid_cached);
+  broadcast( { rid: _child_uuid_cached, start: true, origin: msgJson, name: 'booting...', value: 1, total: 1 } );
+
+  try  {
     child = spawn( appName, cmdArgs, { stdio: [null,null,null,'ipc'] } );
-    child.uuid = msgJson.rid || uuid.v4();
-    console.log(chalk.blue('%s'), child.uuid);
+    console.log(chalk.blue('spawn uuid/rid: %s, pid: %s'),
+      _child_uuid_cached, child.pid);
 
     // End results, returned(=broadcasted) only at the end of the run,
     // but can be gathered during execution.
     child.results = [];
-
-    broadcast( { rid: child.uuid, start: true, origin: msgJson, name: 'booting...', value: 1, total: 1 } );
-
+    child.uuid = _child_uuid_cached;
 
     child.stdout.on( 'data', function ( data ){
       console.log( data.toString().trim() );
@@ -196,7 +211,7 @@ function startChild( msgJson, clientInfo, cb ){
   catch(e)
   {
       console.error( chalk.red(e.message) );
-      broadcast( { err: 'exception: ' + e.message.toString() }, function ( err )
+      broadcast( { rid: _child_uuid_cached || uuid.v4(), exit: 1, err: 'exception: ' + e.message.toString() }, function ( err )
       {
       } );
       console.log(chalk.red("Stopping child process (after exception)..."));
@@ -204,6 +219,31 @@ function startChild( msgJson, clientInfo, cb ){
       child = null;
       if( cb ) cb( e.message );
   }
+}
+
+function quit() {
+  console.log( 'Quitting...' );
+  broadcast( { out: "Quitting" }, function ( err )
+  {
+    if( dclient ) {
+      console.log( 'dclient.close()...' );
+      dclient.close();
+    }
+    if( dserver ) {
+      console.log( 'dserver.close()...' );
+      dserver.close();
+    }
+    if( child ) {
+      console.log( 'child.kill()...' );
+      child.kill();
+    }
+    if( httpsocket ) {
+      console.log( 'httpsocket.disconnect()...' );
+      httpsocket.disconnect();
+    }
+    console.log( 'process.exit(0)...' );
+    process.exit(0);
+  } );
 }
 
 function init() {
@@ -225,7 +265,10 @@ function init() {
             });
           } else {
             if( /\.js$/.test(file) ){
-              var action = { name: file.replace(/.*[/|\\](.+?)\.js$/,'$1'), script: file };
+              var action = {
+                name: file.replace(/.*[/|\\](.+?)\.js$/,'$1'),
+                script: file
+              };
               var pathMd = file.replace(/\.js$/,'\.md');
               if (fs.existsSync(pathMd)) {
                   // Do something
@@ -242,7 +285,16 @@ function init() {
 
   walk( pathTasks, function( err, res ){
     if( err ) console.error( err );
-    else identity.actions = res;
+
+    identity.actions = res.map( function( a ) {
+      a.id = a.id || uuid.v4();
+      return a;
+    });
+
+    identity.actions.push( {
+      id: uuid.v4(),
+      name: 'stop'
+    } );
 
     dclient.bind(runnerPort);
 
@@ -268,17 +320,23 @@ function init() {
         }, 30000 );
       } );
 
-      httpsocket.on( 'start', function( data, cb ){
-        // console.warn( data, clientInfo );
-        executeMessage( {
-          targets: [os.hostname()],
-          cmd: 'start',
-          prms: [ 'bin/jx', pathTasks+data.name ]//, data.prms]
-        }, {}, cb );
+      httpsocket.on( 'start', function( data, cb ) {
+        if ( data.name === 'stop' ) {
+          stopChild();
+          cb( null, data );
+        } else {
+          // console.warn( 'start', data, clientInfo );
+          executeMessage( {
+            targets: [os.hostname()],
+            cmd: 'start',
+            prms: [ 'bin/jx', pathTasks+data.name ]//, data.prms]
+          }, {}, cb );
+        }
       } );
 
-    });
-  });
+    } );
+
+  } );
 
 }
 

@@ -7,31 +7,23 @@ import { ButtonGroup, Button, OverlayTrigger, Tooltip, Glyphicon } from 'react-b
 const ClientActionList = ( { data, startAction } ) =>
   <ButtonGroup className="action-list" vertical>{ data
     ? ( Array.isArray( data ) ? data : [ data ] ).map(
-      act => {
-        const btn = (
-          <Button bsSize="small" className="action"
+      act => (
+        <OverlayTrigger key={ act.id }
+          placement="top" delayShow={ 2000 } delayHide={500}
+          overlay={
+            <Tooltip title={ act.name } id={ act.name }>
+              { act.doc ? <Markdown data={ act.doc } /> : 'no doc' }
+            </Tooltip>
+          }
+        >
+          <Button bsSize="small" className="action" key={ act.id }
             onClick={ () => startAction( { name: act.name } ) }
           >
-            <Glyphicon glyph="play" />
-            <span style={ { paddingLeft: '1em' } }>{ act.name }</span>
+            <Glyphicon glyph={ act.name === 'stop' ? 'stop' : 'play' } />
+            <span className="title">{ act.name }</span>
           </Button>
-        );
-
-        return act.doc ? (
-          <OverlayTrigger key={ act.id || act.name }
-            placement="top" delayShow={ 2000 } delayHide={500}
-            overlay={
-              <Tooltip title={ act.name } id={ act.name }>
-              { act.doc ? <Markdown data={ act.doc } /> : 'no doc' }
-              </Tooltip>
-            }
-          >
-          { btn }
-          </OverlayTrigger>
-        ) : (
-          { btn }
-        );
-      }
+        </OverlayTrigger>
+      )
     )
     : 'No action advertised'
   }
