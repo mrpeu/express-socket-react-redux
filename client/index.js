@@ -202,6 +202,8 @@ import chalk from 'chalk';
         return authenticationSucceed( client, action );
       case Actions.Types.startClientAction:
         return emitStartClientAction( client, action );
+      case Actions.Types.editClientAction:
+        return client;
 
       default:
         return client;

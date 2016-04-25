@@ -2,17 +2,16 @@
 import React, { Component, PropTypes } from 'react';
 import { Provider, connect } from 'react-redux';
 import ClientTitle from './ClientTitle.jsx';
-import RunStatus from './RunStatus.jsx';
 import ClientActionList from './ClientActionList.jsx';
 
-const ClientCard = ( { client, clients, startAction } ) =>
+const ClientCard = ( { client, clients, startAction, editAction } ) =>
   <div className="client-card" role={ client.role } id={ client.cid }>
     <ClientTitle client={ client }>
       <div>cid: { client.cid }</div>
       <div>{`Running since ${new Date( client.ts ).toLocaleString()}`}</div>
     </ClientTitle>
     <div className="content">
-      { client.status ? <RunStatus data={client.status} /> : null }
+
     </div>
     <ClientActionList data={ client.actions } startAction={ startAction } />
   </div>
@@ -21,7 +20,8 @@ const ClientCard = ( { client, clients, startAction } ) =>
 ClientCard.propTypes = {
   client: PropTypes.object.isRequired,
   clients: PropTypes.array,
-  startAction: PropTypes.func.isRequired
+  startAction: PropTypes.func.isRequired,
+  editAction: PropTypes.func.isRequired
 };
 
 // Map Redux state to component props

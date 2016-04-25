@@ -4,7 +4,7 @@ import { Provider, connect } from 'react-redux';
 import * as Actions from './../actions.js';
 import ClientCard from './ClientCard.jsx';
 
-const ClientCardList = ( { clients, startClientAction } ) =>
+const ClientCardList = ( { clients, startClientAction, editClientAction } ) =>
   <ul className="client-card-list">
     { clients.filter( c => c.role === 'runner' ).map( c =>
         <ClientCard key={ c.cid } client={ c }
@@ -16,7 +16,8 @@ const ClientCardList = ( { clients, startClientAction } ) =>
 
 ClientCardList.propTypes = {
   clients: PropTypes.array.isRequired,
-  startClientAction: PropTypes.func.isRequired
+  startClientAction: PropTypes.func.isRequired,
+  editClientAction: PropTypes.func.isRequired
 };
 
 // Map Redux state to component props

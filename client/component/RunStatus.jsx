@@ -16,7 +16,13 @@ const RunStatus = ( { data } ) =>
     </span>
     <div className="progress-bg">
       <div className="progress-bar" style={ {
-        width: `${100 / data.total * data.value}%`
+        width: !data.runs ?
+          `${100 / data.total * data.value}%` :
+          `${100 /
+            data.runs.reduce( ( t, r ) => t + r.total, 0 )
+            *
+            data.runs.reduce( ( t, r ) => t + r.value, 0 )
+          }%`
       } }
       >&nbsp;</div>
     </div>

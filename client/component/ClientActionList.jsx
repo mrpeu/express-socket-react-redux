@@ -2,37 +2,38 @@
 import React, { Component, PropTypes } from 'react';
 import { Provider, connect } from 'react-redux';
 import Markdown from './Markdown.jsx';
-import { ButtonGroup, Button, OverlayTrigger, Tooltip, Glyphicon } from 'react-bootstrap';
+import { ButtonToolbar, ButtonGroup, Button, Glyphicon } from 'react-bootstrap';
 
-const ClientActionList = ( { data, startAction } ) =>
-  <ButtonGroup className="action-list" vertical>{ data
+// <Markdown data={ act.doc } />
+
+const ClientActionList = ( { data, startAction, editAction } ) =>
+  <ButtonToolbar className="action-list" vertical>{ data
     ? ( Array.isArray( data ) ? data : [ data ] ).map(
       act => (
-        <OverlayTrigger key={ act.id }
-          placement="top" delayShow={ 2000 } delayHide={500}
-          overlay={
-            <Tooltip title={ act.name } id={ act.name }>
-              { act.doc ? <Markdown data={ act.doc } /> : 'no doc' }
-            </Tooltip>
-          }
-        >
-          <Button bsSize="small" className="action" key={ act.id }
-            onClick={ () => startAction( { name: act.name } ) }
+        <ButtonGroup key={ act.id } bsSize="small" className="actionTODO" key={ act.id }>
+          <Button
+            onClick={ () => startAction( { name: act.name, config: act.configClient } ) }
           >
             <Glyphicon glyph={ act.name === 'stop' ? 'stop' : 'play' } />
             <span className="title">{ act.name }</span>
           </Button>
-        </OverlayTrigger>
+          <Button
+            onClick={ () => editAction( { name: act.name, config: act.configClient } ) }
+          >
+            <Glyphicon glyph="list" />
+          </Button>
+        </ButtonGroup>
       )
     )
     : 'No action advertised'
   }
-  </ButtonGroup>
+  </ButtonToolbar>
 ;
 
 ClientActionList.propTypes = {
   data: PropTypes.array.isRequired,
-  startAction: PropTypes.func.isRequired
+  startAction: PropTypes.func.isRequired,
+  editAction: PropTypes.func.isRequired
 };
 
 // Map Redux state to component props

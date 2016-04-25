@@ -1,78 +1,12 @@
 {
   "clients": [
     {
-      "name": "testRunner@WKS-TALOS",
-      "color": "#557",
-      "cid": "WKS-TALOS",
-      "role": "runner",
-      "doc": "mRemoteTestRunner\n---\nBasic app to command execution of NodeJS scripts",
-      "actions": [
-        {
-          "name": "taskDifftool",
-          "script": "testTask//taskDifftool.js",
-          "doc": "This\r\n===\r\ncompares the responses\r\n- with\r\n- a reference set.\r\n",
-          "id": "fb9acb99-d73e-4dad-bb62-114a41c2f961"
-        },
-        {
-          "name": "taskDummy",
-          "script": "testTask//taskDummy.js",
-          "doc": "Code\n---\n`() => console.log`\n",
-          "id": "72f016ca-6ccf-4e44-b629-51b97e4de575"
-        },
-        {
-          "name": "taskRunAndDiff",
-          "script": "testTask//taskRunAndDiff.js",
-          "doc": "This runs a set of *mmwrequests*\nand then compare the responses with a reference set.\n",
-          "id": "9609841d-d89e-48a2-b44d-c29a7ea3402f"
-        },
-        {
-          "id": "68de702f-74af-412d-8a1c-3312678ea11d",
-          "name": "stop"
-        }
-      ],
-      "ts": 1461240889767,
-      "sid": "1fMDfahMInM2cdndAAB6"
-    },
-    {
-      "name": "testRunner@SRV-GANDALF1",
-      "color": "#557",
-      "cid": "SRV-GANDALF1",
-      "role": "runner",
-      "doc": "mRemoteTestRunner\n---\nBasic app to command execution of NodeJS scripts",
-      "actions": [
-        {
-          "name": "taskDifftool",
-          "script": "testTask//taskDifftool.js",
-          "doc": "This\r\n===\r\ncompares the responses\r\n- with\r\n- a reference set.\r\n",
-          "id": "0fef37d0-70e9-453d-a406-fff07a9bc017"
-        },
-        {
-          "name": "taskDummy",
-          "script": "testTask//taskDummy.js",
-          "doc": "Code\n---\n`() => console.log`\n",
-          "id": "7b984bc4-7f4c-4139-9f92-9d351e1aecc9"
-        },
-        {
-          "name": "taskRunAndDiff",
-          "script": "testTask//taskRunAndDiff.js",
-          "doc": "This runs a set of *mmwrequests*\nand then compare the responses with a reference set.\n",
-          "id": "a1a1af3c-4151-4527-8efd-89ba28b74a59"
-        },
-        {
-          "id": "c79afc68-06c4-4ef8-af75-5a5b8295d771",
-          "name": "stop"
-        }
-      ],
-      "ts": 1461240886101,
-      "sid": "HyulrlBbKTquC2L2AAB7"
-    },
-    {
       "name": "Desmond",
       "color": "#2a5fe3",
       "cid": "9VOrTmig7OO1-O0bAAAd",
       "role": "chat",
-      "ts": 1461240903704,
-      "sid": "8zMCsFPO85cAQwmXAAB8"
+      "ts": 1461330587122,
+      "sid": "Spvf09rWoa7swpuKAADi"
     }
   ],
   "chat": {

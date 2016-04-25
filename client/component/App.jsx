@@ -15,8 +15,8 @@ const AppMain = ( { value, onIncreaseClick, client, clients, chat } ) =>
 
     <div id="content">
       <ClientCardList />
-
     </div>
+    
     <pre style={{ color: 'green' }}>
     //todo:
     <br /><div><input type="checkbox" checked="" disabled
