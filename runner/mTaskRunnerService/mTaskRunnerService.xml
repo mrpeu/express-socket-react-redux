@@ -1,0 +1,14 @@
+<service>
+  <id>mtaskrunnerservice</id>
+  <name>mTaskRunnerService</name>
+  <description>This service runs an instance of mTaskRunner.</description>
+  <executable>..\mTaskRunner.exe</executable>
+  <logpath>%BASE%\log</logpath>
+  <logmode>rotate</logmode>
+  <serviceaccount>
+    <domain>MPRO</domain>
+    <user>mtest</user>
+    <password>cpd1730</password>
+    <allowservicelogon>true</allowservicelogon>
+  </serviceaccount>
+</service>

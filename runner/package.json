@@ -1,18 +1,16 @@
 {
-  "name": "remotetestrunner",
+  "name": "mtaskrunner",
   "version": "1.0.0",
   "description": "",
-  "main": "mRemoteTestRunner.js",
+  "main": "mTaskRunner.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./mRemoteTestRunner.js"
   },
   "author": "gpe",
   "license": "ISC",
   "dependencies": {
-    "colors": "^1.1.2",
+    "chalk": "^1.1.3",
+    "async": "^2.0.0-rc.3",
     "node-uuid": "^1.4.7",
-    "async": "^1.4.0",
     "socket.io": "^1.4.5"
   }
 }
