@@ -4,15 +4,22 @@ import { Provider, connect } from 'react-redux';
 import * as Actions from './../actions.js';
 import ClientCard from './ClientCard.jsx';
 
-const ClientCardList = ( { clients, startClientAction, editClientAction } ) =>
-  <ul className="client-card-list">
-    { clients.filter( c => c.role === 'runner' ).map( c =>
-        <ClientCard key={ c.cid } client={ c }
-          startAction={ ( caction ) => startClientAction( c.cid, caction ) }
-        />
-    ) }
-  </ul>
-;
+const ClientCardList = ( { clients, startClientAction, editClientAction } ) => {
+  const runners = clients.filter( c => c.role === 'runner' );
+  return runners.length > 0 ? (
+    <ul className="client-card-list">
+      { runners.map( c =>
+          <ClientCard key={ c.cid } client={ c }
+            startAction={ ( caction ) => startClientAction( c.cid, caction ) }
+          />
+      ) }
+    </ul>
+  ) : (
+    <h1 className="subtle" style={{ margin: 'auto' }}>
+      Add runners to this network to see them listed here
+    </h1>
+  );
+};
 
 ClientCardList.propTypes = {
   clients: PropTypes.array.isRequired,
