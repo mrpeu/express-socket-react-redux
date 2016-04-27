@@ -7,16 +7,16 @@ import ClientCardList from './ClientCardList.jsx';
 import Chat from './Chat.jsx';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 
-const AppMain = ( { value, onIncreaseClick, client, clients, chat } ) =>
+const AppMain = ( { value, editClientAction, client, clients, chat } ) =>
   <div id="app">
     <header id="header">
       {/* <ClientTitleList /> */}
     </header>
 
     <div id="content">
-      <ClientCardList />
+      <ClientCardList editClientAction={ editClientAction } />
     </div>
-    
+
     <pre style={{ color: 'green' }}>
     //todo:
     <br /><div><input type="checkbox" checked="" disabled
@@ -60,7 +60,7 @@ const AppMain = ( { value, onIncreaseClick, client, clients, chat } ) =>
 
 AppMain.propTypes = {
   value: PropTypes.number.isRequired,
-  onIncreaseClick: PropTypes.func.isRequired,
+  editClientAction: PropTypes.func.isRequired,
   client: PropTypes.object.isRequired,
   clients: PropTypes.array.isRequired,
   chat: PropTypes.object.isRequired

@@ -3,31 +3,23 @@ import React, { Component, PropTypes } from 'react';
 import { Provider, connect } from 'react-redux';
 import Markdown from './Markdown.jsx';
 import { ButtonToolbar, ButtonGroup, Button, Glyphicon } from 'react-bootstrap';
+import ClientAction from './ClientAction.jsx';
 
 // <Markdown data={ act.doc } />
 
 const ClientActionList = ( { data, startAction, editAction } ) =>
-  <ButtonToolbar className="action-list" vertical>{ data
-    ? ( Array.isArray( data ) ? data : [ data ] ).map(
-      act => (
-        <ButtonGroup key={ act.id } bsSize="small" className="actionTODO" key={ act.id }>
-          <Button
-            onClick={ () => startAction( { name: act.name, config: act.configClient } ) }
-          >
-            <Glyphicon glyph={ act.name === 'stop' ? 'stop' : 'play' } />
-            <span className="title">{ act.name }</span>
-          </Button>
-          <Button
-            onClick={ () => editAction( { name: act.name, config: act.configClient } ) }
-          >
-            <Glyphicon glyph="list" />
-          </Button>
-        </ButtonGroup>
-      )
-    )
+  <ul className="action-list">{ data
+    ? ( Array.isArray( data ) ? data : [ data ] )
+        .map( act => (
+          !!act.id ?
+            <ClientAction data={ act }
+              startAction={ startAction } editAction={ editAction }
+            /> :
+            <div className="subtle">ClientAction without id: <i>{act.name}</i></div>
+      ) )
     : 'No action advertised'
   }
-  </ButtonToolbar>
+  </ul>
 ;
 
 ClientActionList.propTypes = {

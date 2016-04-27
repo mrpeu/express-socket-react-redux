@@ -4,7 +4,7 @@ import { Provider, connect } from 'react-redux';
 import * as Actions from './../actions.js';
 import ClientCard from './ClientCard.jsx';
 
-const ClientCardList = ( { clients, startClientAction, editClientAction } ) => {
+const ClientCardList = ( { clients, startClientAction } ) => {
   const runners = clients.filter( c => c.role === 'runner' );
   return runners.length > 0 ? (
     <ul className="client-card-list">
@@ -23,8 +23,7 @@ const ClientCardList = ( { clients, startClientAction, editClientAction } ) => {
 
 ClientCardList.propTypes = {
   clients: PropTypes.array.isRequired,
-  startClientAction: PropTypes.func.isRequired,
-  editClientAction: PropTypes.func.isRequired
+  startClientAction: PropTypes.func.isRequired
 };
 
 // Map Redux state to component props

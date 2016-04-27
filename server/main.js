@@ -305,9 +305,10 @@ function updateClientRuns( clients, { socket, client, data } ) {
 }
 
 function emitStartClientAction( { socket, clientAction, cb } ) {
-  console.warn( 'emitStartClientAction:',
-    chalk.yellow( JSON.stringify( clientAction.data ) ),
-    'to', chalk.yellow( clientAction.cid ) );
+  console.warn(
+    'emitStartClientAction:', chalk.yellow( JSON.stringify( clientAction.data ) ),
+    'to cid:', chalk.yellow( clientAction.cid )
+  );
   socket.emit( 'start', clientAction.data, cb );
 }
 
@@ -343,6 +344,10 @@ store = createStore( combineReducers( {
         return updateClientRuns( stateClients, action );
 
       case Actions.Types.startClientAction:
+// console.warn( chalk.yellow(
+//   stateClients.find( c => c.cid === action.cid )
+//   .sid
+// ) );
         emitStartClientAction( action );
         return stateClients;
 

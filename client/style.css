@@ -112,7 +112,7 @@ button primary {
   /* border-top-left-radius: .15em; */
   /* border-bottom-left-radius: .15em; */
   color: #fff;
-  box-shadow: inset 0em -1em 2em -1.1em #ddd;
+  box-shadow: inset .5em -1em 2em -1.1em #ddd;
   text-shadow: 0px 0px 1px #ddd;
 }
 .icon-left-pad:not([role])::after {
