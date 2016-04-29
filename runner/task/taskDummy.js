@@ -57,6 +57,7 @@ function start( cfg, updcb, onReady ) {
     doc: getDoc( 'taskDummy.md' ),
     help: docUsage,
     config: cfg,
+    statusNames: [ 'dummy' ],
     status: {
       name: 'dummy',
       ts: Date.now(),

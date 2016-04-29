@@ -154,8 +154,8 @@ button primary {
   flex: 0 1 30%;
   min-width: 16em;
   max-width: 28em;
-  height: 24em;
-  overflow: auto;
+  height: 30em;
+  overflow: hidden;
   margin: .3em;
   border: .1em #ddd solid;
   border-radius: .15em;
@@ -187,6 +187,10 @@ button primary {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: smaller;
+}
+.run-status:first-child {
+  border-left: 0;
+  padding-right: 1em;
 }
 .client-card>.content>.run-status {
   padding-left: 0;
@@ -311,14 +315,13 @@ li:nth-child(even) .chat-message {
   width: 100%;
   position: static;
   bottom: 0px;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
+  overflow: auto;
+  margin: 0;
 }
 .action {
-  display: flex;
-  border-left: 0;
-  border-right: 0;
-  border-radius: inherit;
-  text-align: left;
+  border-bottom: .1em #ddd solid;
+  padding: .5em .25em;
 }
 .action:last-child {
   border-bottom: 0;
@@ -327,18 +330,23 @@ li:nth-child(even) .chat-message {
   color: #57b;
   border-color: #ccc;
 }
-.action.btn-group>button {
-  width: auto !important;
+.action .header {
+  padding: 0 .75em;
+  display: flex;
+  align-items: center;
+}
+.action .header button {
+  padding: 0 .25em;
+  margin: 0 .5em;
   border: 0;
-  padding: .2em .5em;
 }
-.action>.title {
-  padding-left: 1em;
+.action .title {
+  flex: 1 0 auto;
 }
-.action>.markdown {
+.action .markdown {
   display: none;
 }
-.action:hover>.markdown {
+.action:hover .markdown {
   display: block;
   color: inherit;
 }

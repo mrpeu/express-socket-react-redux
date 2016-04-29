@@ -2,28 +2,44 @@
 import React, { Component, PropTypes } from 'react';
 import { Provider, connect } from 'react-redux';
 import Markdown from './Markdown.jsx';
-import { ButtonToolbar, ButtonGroup, Button, Glyphicon } from 'react-bootstrap';
 import ClientAction from './ClientAction.jsx';
+import { ListGroup } from 'react-bootstrap';
 
 // <Markdown data={ act.doc } />
 
-const ClientActionList = ( { data, startAction, editAction } ) =>
-  <ul className="action-list">{ data
-    ? ( Array.isArray( data ) ? data : [ data ] )
-        .map( act => (
-          !!act.id ?
-            <ClientAction data={ act }
-              startAction={ startAction } editAction={ editAction }
-            /> :
-            <div className="subtle">ClientAction without id: <i>{act.name}</i></div>
-      ) )
-    : 'No action advertised'
+const ClientActionList = ( { data, status, startAction, editAction } ) =>
+  <ListGroup className="action-list" accordion defaultActiveKey="1" >{
+    data ?
+      ( Array.isArray( data ) ? data : [ data ] )
+      .map( ( act, i ) =>
+        <ClientAction
+          key={i}
+          data={act}
+          status={
+            status && act.statusNames && act.statusNames.indexOf( status.name ) >= 0
+            ? status
+            : null
+          }
+          startAction={startAction}
+          editAction={editAction}
+        > {
+          !act.id ?
+            <div className="subtle" key={i}>
+              ClientAction without id: <i>{act.name}</i>
+            </div>
+            :
+            null
+        } </ClientAction>
+      )
+    :
+      'No action advertised'
   }
-  </ul>
+  </ListGroup>
 ;
 
 ClientActionList.propTypes = {
   data: PropTypes.array.isRequired,
+  status: PropTypes.object,
   startAction: PropTypes.func.isRequired,
   editAction: PropTypes.func.isRequired
 };

@@ -8,11 +8,13 @@ const ClientCardList = ( { clients, startClientAction } ) => {
   const runners = clients.filter( c => c.role === 'runner' );
   return runners.length > 0 ? (
     <ul className="client-card-list">
-      { runners.map( c =>
-          <ClientCard key={ c.cid } client={ c }
-            startAction={ ( caction ) => startClientAction( c.cid, caction ) }
-          />
-      ) }
+      {runners.map( c =>
+        <ClientCard
+          key={c.cid}
+          client={c}
+          startAction={( caction ) => startClientAction( c.cid, caction )}
+        />
+      )}
     </ul>
   ) : (
     <h1 className="subtle" style={{ margin: 'auto' }}>

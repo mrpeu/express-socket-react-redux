@@ -266,7 +266,7 @@ import chalk from 'chalk';
 
   // React component
   ReactDOM.render(
-    <Provider store = { store }>
+    <Provider store={store}>
       <App />
     </Provider>,
     document.getElementById( 'main' )
