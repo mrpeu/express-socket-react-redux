@@ -72,7 +72,7 @@ import chalk from 'chalk';
 
     if ( action.data.err ||
       !newClient || !newClient.name || !newClient.cid || !newClient.color ) {
-      console.error( `Authentication failed to succeed! ${JSON.stringify( action, 0, 1 )}` );
+      console.error( `Authentication failed! ${JSON.stringify( action, 0, 1 )}` );
       return client;
     }
 

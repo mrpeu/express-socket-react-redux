@@ -14,9 +14,8 @@ process.env.DEBUG = '';
 const app = express();
 const http = _http.Server( app );
 const io = _io( http );
-let sockets = [];
 let store = {};
-let _publishState = false;
+let isStoreDirty = false;
 
 const USER_TIMEOUT = 60 * 1000;
 
@@ -52,10 +51,10 @@ function broadcastState() {
 
   io.of( '' ).emit( 'app-state', {
     chat: state.chat,
-    clients: state.clients
+    clients: state.clients.map( c => _.omit( c, 'socket' ) )
   } );
 
-  _publishState = false;
+  isStoreDirty = false;
 
   console.log( chalk.gray( 'broadcast' ) );
 
@@ -69,7 +68,10 @@ function broadcastState() {
 }
 
 function saveState( state ) {
-  fs.writeFile( 'state.json', JSON.stringify( state, null, 2 ),
+  fs.writeFile( 'state.json', JSON.stringify( {
+    ...state,
+    clients: state.clients.map( c => _.omit( c, 'socket' ) )
+  }, null, 2 ),
     ( err ) => {
       if ( err ) console.error( `saveState: ${err}` );
     }
@@ -88,7 +90,6 @@ function cleanState( state ) {
     clients: state.clients.filter( c => {
       if ( ( now - c.ts ) > USER_TIMEOUT ) {
         console.log( `Client ${c.name} is no longer active.` );
-        sockets = sockets.filter( s => s.client.id !== c.sid );
         return false;
       }
       return true;
@@ -122,7 +123,7 @@ function addMessage( stateChat, socket, client, data ) {
 
   // socket.broadcast.emit( 'chat-message', msg );
 
-  _publishState = true;
+  isStoreDirty = true;
 
   return {
     ...stateChat,
@@ -140,9 +141,7 @@ function refuseMessage( stateChat, socket, client, data ) {
 
 // Client management
 function onClientDisconnection( state, client ) {
-  sockets = sockets.filter( f => f.client.id !== client.sid );
-
-  _publishState = true;
+  isStoreDirty = true;
 
   return {
     ...state,
@@ -169,7 +168,7 @@ function markClientAlive( stateClients, client ) {
 }
 
 function disconnectClient( state, socket, client ) {
-  _publishState = true;
+  isStoreDirty = true;
 
   return state.filter( c => c.cid !== client.cid );
 }
@@ -193,26 +192,28 @@ function connectClient( stateClients, socket, client, authResponse ) {
   if ( authResponse !== true ) {
     console.warn(
       chalk.magenta(
-        `  ${authResponse}: ${client.name} #${client.cid}`
+        `  ${authResponse}: ${client.name} cid: ${client.cid}`
       )
     );
   }
-
-  // console.warn( chalk.yellow( 'new socket connection: ' + socket.client.id ) );
-  sockets = sockets.filter( s => s.client.id !== client.sid );
-  sockets.push( socket );
 
   client = {
     name: socket.client.hostname
       || NAMES[ ~~( ( NAMES.length - 1 ) * Math.random() ) ],
     color: COLORS[ ~~( ( COLORS.length - 1 ) * Math.random() ) ],
-    cid: socket.client.id, // client id
+    cid: socket.client.hostname + socket.client.id, // client id
     ...client,
     ts: Date.now(),
+    socket,
     sid: socket.client.id // session id
   };
 
-  console.log( `  Client connected: ${client.name} #${client.cid} #${client.sid} ${client.color}` );
+  console.log(
+    `  Client connected: name:  ${client.name}\n` +
+    `                    color: ${client.color}\n` +
+    `                    cid:   ${client.cid}\n` +
+    `                    sid:   ${client.sid}`
+  );
   // console.log( `  Client connected: ${JSON.stringify( client, 0, 1 )}` );
 
   socket.on( 'chat-message', ( data, cb ) => {
@@ -232,27 +233,31 @@ function connectClient( stateClients, socket, client, authResponse ) {
 
   socket.on( 'startClientAction', ( action, cb ) => {
     const target = stateClients.find( c => c.cid === action.cid );
-    if ( !target ) console.error( 'TARGET MISSING', action.cid, stateClients.map( c => c.cid ) );
+    if ( !target ) {
+      console.error( 'TARGET MISSING cid:%s',
+        action.cid, stateClients.map( c => c.cid )
+      );
+    }
     // else console.warn( 'TARGET FOUND', target.name );
 
-    const targetSocket = sockets.find( f => f.client.id === target.sid );
-    if ( !targetSocket ) {
-      console.error( 'TARGETSOCKET MISSING',
-     target.sid, sockets.map( s => s.client.id ) );
+    if ( !target.socket ) {
+      console.error( 'TARGETSOCKET MISSING sid:%s', target.sid, target.socket );
     } else {
       store.dispatch( Actions.startClientAction(
-        targetSocket,
+        target.socket,
         action,
         cb
       ) );
     }
   } );
 
-  socket.emit( 'welcome', { client } );
+  socket.emit( 'welcome', { client: _.omit( client, 'socket' ) } );
+
+  broadcastState();
 
   // console.warn( `<< connectClient end ${JSON.stringify( client )}` );
 
-  _publishState = true;
+  isStoreDirty = true;
 
   return [
     ...stateClients.filter( c => c.cid !== client.cid ),
@@ -307,8 +312,9 @@ function updateClientRuns( clients, { socket, client, data } ) {
 function emitStartClientAction( { socket, clientAction, cb } ) {
   console.warn(
     'emitStartClientAction:', chalk.yellow( JSON.stringify( clientAction.data ) ),
-    'to cid:', chalk.yellow( clientAction.cid )
+    'to cid:', chalk.yellow( JSON.stringify( clientAction ) )
   );
+  console.log( `${store.getState().clients.find( c => c.cid === clientAction.cid )}` );
   socket.emit( 'start', clientAction.data, cb );
 }
 
@@ -389,7 +395,7 @@ io.on( 'connection', ( socket ) => {
 store.subscribe(
   _.throttle(
     () => {
-      if ( _publishState ) {
+      if ( isStoreDirty ) {
         broadcastState( saveState( cleanState( store.getState() ) ) );
       }
     }
